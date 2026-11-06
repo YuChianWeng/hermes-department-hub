@@ -1012,16 +1012,24 @@ const EN = {
   subscriptionLabel: 'Subscription',
   ownerLabel: 'Session owner',
   wakeLabel: 'Wake confirmed',
-  'subscription.subscribed': (matching, foreign) =>
-    `subscribed · ${matching} matching · ${foreign} foreign`,
-  'subscription.missing': 'not subscribed',
-  'subscription.duplicate': (matching) => `duplicate subscriptions (${matching})`,
-  'subscription.foreign_only': (matching, foreign) => `foreign subscription only (${foreign})`,
-  'subscription.unknown': 'subscription state unknown',
-  'owner.unverified': code => `unverified (${code})`,
-  'owner.verified': 'verified',
-  'wake.unconfirmed': code => `unconfirmed (${code})`,
-  'wake.confirmed': 'confirmed',
+  // Nested on purpose: the Desktop resolver walks dot paths into NESTED objects
+  // (`runtime.ts` resolvePath). A flat `'subscription.missing'` key is invisible
+  // to it and renders as the raw key. Keep these groups nested.
+  subscription: {
+    subscribed: (matching, foreign) => `subscribed · ${matching} matching · ${foreign} foreign`,
+    missing: 'not subscribed',
+    duplicate: (matching) => `duplicate subscriptions (${matching})`,
+    foreign_only: (matching, foreign) => `foreign subscription only (${foreign})`,
+    unknown: 'subscription state unknown'
+  },
+  owner: {
+    unverified: code => `unverified (${code})`,
+    verified: 'verified'
+  },
+  wake: {
+    unconfirmed: code => `unconfirmed (${code})`,
+    confirmed: 'confirmed'
+  },
   reviewUnknown: detail => `review evidence unreadable: ${detail}`,
   createHeading: 'Create department',
   createReadOnly: 'validated only — nothing is written by this page',
@@ -1051,17 +1059,19 @@ const EN = {
   none: '—',
   never: 'never',
   statusTitle: status => `Kanban status: ${status}`,
-  'status.blocked': 'Blocked',
-  'status.done': 'Done',
-  'status.review': 'In review',
-  'status.running': 'Running',
-  'status.ready': 'Ready',
-  'status.todo': 'Queued',
-  'status.triage': 'Triage',
-  'status.scheduled': 'Scheduled',
-  'status.archived': 'Archived',
-  'status.queued': 'Queued',
-  'status.unknown': 'Unknown'
+  status: {
+    blocked: 'Blocked',
+    done: 'Done',
+    review: 'In review',
+    running: 'Running',
+    ready: 'Ready',
+    todo: 'Queued',
+    triage: 'Triage',
+    scheduled: 'Scheduled',
+    archived: 'Archived',
+    queued: 'Queued',
+    unknown: 'Unknown'
+  }
 }
 
 const ZH_HANT = {
@@ -1161,16 +1171,22 @@ const ZH_HANT = {
   subscriptionLabel: '訂閱',
   ownerLabel: 'Session owner',
   wakeLabel: '已確認喚醒',
-  'subscription.subscribed': (matching, foreign) =>
-    `已訂閱 · ${matching} 筆符合 · ${foreign} 筆外來`,
-  'subscription.missing': '未訂閱',
-  'subscription.duplicate': matching => `重複訂閱（${matching}）`,
-  'subscription.foreign_only': (matching, foreign) => `僅有外來訂閱（${foreign}）`,
-  'subscription.unknown': '訂閱狀態未知',
-  'owner.unverified': code => `未驗證（${code}）`,
-  'owner.verified': '已驗證',
-  'wake.unconfirmed': code => `未確認（${code}）`,
-  'wake.confirmed': '已確認',
+  // 巢狀是必要的：Desktop 解析器只走巢狀物件，扁平點號鍵會被當成原始鍵名顯示。
+  subscription: {
+    subscribed: (matching, foreign) => `已訂閱 · ${matching} 筆符合 · ${foreign} 筆外來`,
+    missing: '未訂閱',
+    duplicate: matching => `重複訂閱（${matching}）`,
+    foreign_only: (matching, foreign) => `僅有外來訂閱（${foreign}）`,
+    unknown: '訂閱狀態未知'
+  },
+  owner: {
+    unverified: code => `未驗證（${code}）`,
+    verified: '已驗證'
+  },
+  wake: {
+    unconfirmed: code => `未確認（${code}）`,
+    confirmed: '已確認'
+  },
   reviewUnknown: detail => `審查證據無法讀取：${detail}`,
   createHeading: '新增部門',
   createReadOnly: '僅驗證——此頁不會寫入任何內容',
@@ -1200,17 +1216,19 @@ const ZH_HANT = {
   none: '—',
   never: '從未',
   statusTitle: status => `Kanban 狀態：${status}`,
-  'status.blocked': '阻塞',
-  'status.done': '完成',
-  'status.review': '審查中',
-  'status.running': '執行中',
-  'status.ready': '待執行',
-  'status.todo': '排隊中',
-  'status.triage': '待規格化',
-  'status.scheduled': '已排程',
-  'status.archived': '已封存',
-  'status.queued': '排隊中',
-  'status.unknown': '未知'
+  status: {
+    blocked: '阻塞',
+    done: '完成',
+    review: '審查中',
+    running: '執行中',
+    ready: '待執行',
+    todo: '排隊中',
+    triage: '待規格化',
+    scheduled: '已排程',
+    archived: '已封存',
+    queued: '排隊中',
+    unknown: '未知'
+  }
 }
 
 export default {

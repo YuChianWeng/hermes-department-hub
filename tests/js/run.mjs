@@ -8,14 +8,28 @@
  * evidence text the page derives from a backend payload. Real pixels remain a
  * separate acceptance step (screenshot or hands-on).
  */
-import { readFileSync, writeFileSync, mkdirSync } from 'node:fs'
+import { readFileSync, writeFileSync, mkdirSync, copyFileSync, rmSync } from 'node:fs'
 import { join, dirname } from 'node:path'
 import { pathToFileURL, fileURLToPath } from 'node:url'
 
 const here = dirname(fileURLToPath(import.meta.url))
 const pluginPath = join(here, '..', '..', 'desktop', 'department-hub', 'plugin.js')
 const sdk = await import('./mocks/sdk.mjs')
-const { state } = sdk
+const { state, setLocale } = sdk
+// The REAL Desktop v0.23.0 resolver, sliced verbatim out of the app source by
+// mocks/extract-i18n-resolver.mjs. Never substitute a local lookup here.
+const { translateFrom } = await import('./mocks/i18n-resolver.mjs')
+const { build, findAppRoot, PINNED, RESOLVER_FILE, PLUGIN_FILE, readGenerated, sha256 } = await import(
+  './mocks/extract-i18n-resolver.mjs'
+)
+
+// sha256 of the two GENERATED mock files, so a hand edit is caught even on a
+// machine without the Desktop source installed. Regenerate with:
+//   node tests/js/mocks/extract-i18n-resolver.mjs
+const GENERATED_SHA256 = {
+  'i18n-resolver.mjs': '9c18a8566ac738e4506f002be2165c6fddd271e3e803b9f58f9136cd3458cca6',
+  'i18n-plugin.mjs': '5da8301dc18329b5005c0dea0894f57d2a8fd1db4f405b1e06e573f1e4641fd3'
+}
 
 const source = readFileSync(pluginPath, 'utf8')
   .replace("from '@hermes/plugin-sdk'", "from '../mocks/sdk.mjs'")
@@ -65,7 +79,48 @@ const textOf = node =>
     .map(item => item.text || '')
     .join(' ')
     .replace(/\s+/g, ' ')
+function bundleKeys(node, prefix = '', out = []) {
+  for (const [key, value] of Object.entries(node)) {
+    const path = prefix ? `${prefix}.${key}` : key
+    if (value && typeof value === 'object' && !Array.isArray(value)) bundleKeys(value, path, out)
+    else out.push(path)
+  }
+  return out
+}
 const nodes = node => flatten(node).filter(item => item.type !== undefined)
+
+/** Resolve `key` against ONE bundle using the real resolver. The source ignores
+ *  the locale, so a miss returns the raw key instead of silently borrowing the
+ *  English string — that is what makes this usable as a completeness probe. */
+const resolveIn = (bundle, key, args = [], locale = 'en') => translateFrom(() => bundle, locale, key, args)
+
+const LOCALES = () => [
+  ['en', state.bundles.en],
+  ['zh-hant', state.bundles['zh-hant']]
+]
+
+/** A copy of `bundle` where every leaf is a marker function. Resolving a key
+ *  against it yields '__HIT__' if and only if the REAL resolver can walk to a
+ *  leaf — so this distinguishes "reaches a label" from "returns the raw key"
+ *  even when the English label happens to equal the key ('active' → 'active'). */
+const MARKER = '__HIT__'
+function markerBundle(node) {
+  if (node && typeof node === 'object' && !Array.isArray(node)) {
+    const out = {}
+    for (const [key, value] of Object.entries(node)) out[key] = markerBundle(value)
+    return out
+  }
+  return () => MARKER
+}
+const reachCache = new Map()
+const reaches = (locale, key) => {
+  if (!reachCache.has(locale)) reachCache.set(locale, markerBundle(state.bundles[locale] || {}))
+  return translateFrom(() => reachCache.get(locale), locale, key, ['a', 'b']) === MARKER
+}
+
+// The three i18n doors the page can reach: `usePluginI18n` (React) and
+// `ctx.i18n.t` (handlers) both end in translateFrom; assert both.
+const RAW_KEY = /(?:^|[\s(（])(?:subscription|owner|wake|status)\.[a-z_]+/
 
 // ── registration ────────────────────────────────────────────────────────────
 check('plugin id is department-hub', plugin.id === 'department-hub', plugin.id)
@@ -88,16 +143,10 @@ const ctx = {
   setTimeout: () => () => {},
   setInterval: () => () => {},
   addEventListener: () => () => {},
-  i18n: {
-    register: bundles => {
-      state.bundles = bundles
-      return () => {}
-    },
-    t: (key, ...args) =>
-      typeof state.bundles.en[key] === 'function'
-        ? state.bundles.en[key](...args)
-        : state.bundles.en[key] || key
-  },
+  // Both translation doors come from mocks/sdk.mjs and both end in the REAL
+  // v0.23.0 `translateFrom`. A hand-written lookup here is the bug this test
+  // exists to catch — do not inline one again.
+  i18n: sdk.createPluginI18n('department-hub'),
   storage: { get: () => undefined, set: () => {}, remove: () => {} }
 }
 plugin.register(ctx)
@@ -116,8 +165,10 @@ check(
 check('registers a palette command', Boolean(palette) && palette.data.id === 'department-hub.open')
 
 // ── i18n coverage ───────────────────────────────────────────────────────────
-const enKeys = Object.keys(state.bundles.en).sort()
-const zhKeys = Object.keys(state.bundles['zh-hant'] || {}).sort()
+// Keys are compared on their DEEP (dotted) form: the real resolver walks nested
+// objects, so the top-level key list is not the contract — the leaf path set is.
+const enKeys = bundleKeys(state.bundles.en).sort()
+const zhKeys = bundleKeys(state.bundles['zh-hant'] || {}).sort()
 check('ships en + zh-hant bundles', enKeys.length > 30 && zhKeys.length > 30, `${enKeys.length}/${zhKeys.length}`)
 check(
   'locale bundles have identical keys',
@@ -132,12 +183,300 @@ check(
     String(state.bundles['zh-hant'].nav) === '部門'
 )
 
-const literalKeys = new Set()
-for (const match of source.matchAll(/\bt\('([A-Za-z0-9_.]+)'/g)) literalKeys.add(match[1])
-const missingEn = [...literalKeys].filter(key => !(key in state.bundles.en))
-check('every literal t() key exists in en', missingEn.length === 0, missingEn.join(','))
-const missingZh = [...literalKeys].filter(key => !(key in state.bundles['zh-hant']))
-check('every literal t() key exists in zh-hant', missingZh.length === 0, missingZh.join(','))
+// ── GUARD: the flat-dotted-key class cannot come back ───────────────────────
+// Regression class (ARCHITECTURAL): a page string keyed as a dotted FLAT name
+// ('owner.unverified') is invisible to the Desktop resolver, which walks NESTED
+// objects and returns the key on a miss. It therefore renders literally as
+// `owner.unverified`. M2 shipped 40 such keys while 136 mocked checks passed,
+// because the mock resolved with a whole-string flat lookup. Both halves are
+// pinned here: the resolver IS the real one, and every reachable key must
+// resolve through it.
+
+// (a) negative control — proves the harness can tell the two apart at all.
+check(
+  'guard(a): flat dotted key is NOT resolvable by the real resolver',
+  translateFrom(() => ({ 'a.b': 'x' }), 'en', 'a.b', []) === 'a.b',
+  'the harness would not detect a flat key'
+)
+check(
+  'guard(a): the same key nested IS resolvable',
+  translateFrom(() => ({ a: { b: 'x' } }), 'en', 'a.b', []) === 'x'
+)
+check(
+  'guard(a): a miss returns the raw key (fallback contract)',
+  translateFrom(() => ({ a: {} }), 'en', 'a.nope', []) === 'a.nope'
+)
+check(
+  'guard(a): active locale wins, then the default locale, then the key',
+  translateFrom(l => (l === 'en' ? { k: 'EN' } : { k: 'ZH' }), 'zh-hant', 'k', []) === 'ZH' &&
+    translateFrom(l => (l === 'en' ? { k: 'EN' } : {}), 'zh-hant', 'k', []) === 'EN' &&
+    translateFrom(() => ({}), 'zh-hant', 'k', []) === 'k'
+)
+
+// (b) provenance — the resolver under test is the shipped one, byte for byte.
+const appRoot = findAppRoot()
+let built = null
+let buildError = null
+try {
+  built = build()
+} catch (err) {
+  buildError = err
+}
+if (appRoot && built) {
+  for (const [rel, pinned] of Object.entries(PINNED)) {
+    check(`guard(b): pinned sha256 ${rel}`, built.hashes[rel] === pinned, built.hashes[rel])
+  }
+  check(
+    'guard(b): generated resolver == a fresh verbatim extraction (no hand edits)',
+    readGenerated(RESOLVER_FILE) === built.files[RESOLVER_FILE],
+    're-run: node tests/js/mocks/extract-i18n-resolver.mjs'
+  )
+  check(
+    'guard(b): generated plugin registry == a fresh verbatim extraction (no hand edits)',
+    readGenerated(PLUGIN_FILE) === built.files[PLUGIN_FILE],
+    're-run: node tests/js/mocks/extract-i18n-resolver.mjs'
+  )
+} else {
+  console.log(
+    `skip guard(b): Desktop source not installed at ${appRoot || '(not found)'} — ` +
+      `set HERMES_APP_ROOT to verify the source hash pins. ${
+        buildError ? buildError.message.split('\n')[0] : ''
+      }`
+  )
+}
+// (b1) the pin must actually bite: a ONE-BYTE change to a copied source has to
+// make build() refuse. Without this, a pin that silently never runs would look
+// identical to a pin that passes.
+if (appRoot) {
+  const pinRoot = join(here, '.tmp', 'pin-probe')
+  rmSync(pinRoot, { recursive: true, force: true })
+  for (const rel of Object.keys(PINNED)) {
+    mkdirSync(dirname(join(pinRoot, rel)), { recursive: true })
+    copyFileSync(join(appRoot, rel), join(pinRoot, rel))
+  }
+  const target = join(pinRoot, 'apps/desktop/src/i18n/runtime.ts')
+  writeFileSync(target, `${readFileSync(target, 'utf8')} `)
+  let pinError = null
+  try {
+    build(pinRoot)
+  } catch (err) {
+    pinError = err
+  }
+  check(
+    'guard(b): one changed byte in a source file makes the pin fail',
+    Boolean(pinError) && /sha256 mismatch/.test(pinError.message),
+    pinError ? pinError.message.split('\n')[0] : 'build() accepted a modified source'
+  )
+}
+check(
+  'guard(b): committed resolver files match their own sha256 pins',
+  sha256(readGenerated(RESOLVER_FILE)) === GENERATED_SHA256[RESOLVER_FILE] &&
+    sha256(readGenerated(PLUGIN_FILE)) === GENERATED_SHA256[PLUGIN_FILE],
+  `${sha256(readGenerated(RESOLVER_FILE))} / ${sha256(readGenerated(PLUGIN_FILE))}`
+)
+
+// (c) backend enumeration — every state the backend can send that the page
+// routes through t(). Sources read directly, not inferred from the bundle:
+//   subscription/owner/wake → department_lib/dashboard.py _manager_status()
+//   work                     → department_lib/dashboard.py _work_state() rollup
+//   board                    → hermes_cli/kanban_workflow.py DEFAULT_STATUSES
+const BACKEND_STATES = {
+  subscription: ['unknown', 'missing', 'duplicate', 'subscribed', 'foreign_only'],
+  // The backend only ever emits 'unverified' (dashboard.py L703). 'verified' has
+  // no producer today; it stays in the bundle so the page can render it if M1
+  // ever attests a live session owner.
+  owner: ['unverified'],
+  wake: ['unconfirmed'],
+  work: ['unknown', 'blocked', 'review', 'running', 'done', 'queued'],
+  board: ['triage', 'todo', 'scheduled', 'ready', 'running', 'blocked', 'review', 'done', 'archived']
+}
+const ENUMERATED = [
+  ['subscription', ['subscribed', 'missing', 'duplicate', 'foreign_only', 'unknown'], ['1', '1']],
+  ['owner', ['unverified', 'verified'], ['session_owner_unverified']],
+  ['wake', ['unconfirmed', 'confirmed'], ['ensured_not_awake']],
+  // 9 board columns + the backend's own 'queued'/'unknown' rollup values.
+  [
+    'status',
+    ['blocked', 'done', 'review', 'running', 'ready', 'todo', 'triage', 'scheduled', 'archived', 'queued', 'unknown'],
+    ['blocked']
+  ]
+]
+for (const [locale, bundle] of LOCALES()) {
+  for (const [group, states, args] of ENUMERATED) {
+    for (const state_ of states) {
+      const key = `${group}.${state_}`
+      const out = resolveIn(bundle, key, args, locale)
+      check(
+        `guard(c)[${locale}]: ${key} resolves through the real resolver`,
+        reaches(locale, key) && typeof out === 'string' && out.length > 0 && out !== key && !out.includes('undefined'),
+        out
+      )
+    }
+  }
+  for (const [group, states] of Object.entries(BACKEND_STATES)) {
+    const prefix = group === 'work' || group === 'board' ? 'status' : group
+    const missing = states.filter(state_ => !reaches(locale, `${prefix}.${state_}`))
+    check(
+      `guard(c)[${locale}]: every backend ${group} state has a label`,
+      missing.length === 0,
+      missing.join(',')
+    )
+  }
+  const flat = Object.keys(bundle).filter(key => key.includes('.'))
+  check(`guard(c)[${locale}]: no flat dotted top-level key left in the bundle`, flat.length === 0, flat.join(','))
+}
+
+// (d) static scan — every literal key the page asks for, and every dynamic
+//     prefix. Multi-line `t(\n 'key')` calls count too; the old single-line
+//     regex silently missed four of them.
+const literalKeys = [
+  ...new Set([...source.matchAll(/(?<![A-Za-z0-9_$])t\(\s*'([^']+)'/g)].map(match => match[1]))
+].sort()
+check(
+  'guard(d): the literal scan sees multi-line t() calls too',
+  ['already_delivered', 'eventLine', 'identityFull', 'readyToDeliver'].every(key => literalKeys.includes(key)),
+  `scanned ${literalKeys.length} keys`
+)
+const dynamicPrefixes = [...new Set([...source.matchAll(/(?<![A-Za-z0-9_$])t\(`([A-Za-z0-9_]+)\.\$\{/g)].map(m => m[1]))].sort()
+check(
+  'guard(d): the only dynamic t() prefixes are the three enumerated groups',
+  JSON.stringify(dynamicPrefixes) === JSON.stringify(['owner', 'subscription', 'wake']),
+  dynamicPrefixes.join(',')
+)
+for (const [locale, bundle] of LOCALES()) {
+  const unresolved = literalKeys.filter(key => !reaches(locale, key))
+  check(
+    `guard(d)[${locale}]: every literal t() key resolves (${literalKeys.length} keys)`,
+    unresolved.length === 0,
+    unresolved.join(',')
+  )
+  // A page key written as a dotted FLAT literal is the same defect by another
+  // route: guard(c)'s no-flat-top-level check plus this one cover both halves.
+  const flatLiteral = literalKeys.filter(key => key.includes('.') && Object.keys(bundle).includes(key))
+  check(`guard(d)[${locale}]: no literal t() key names a flat dotted top-level key`, flatLiteral.length === 0, flatLiteral.join(','))
+}
+
+// (e) render layer — a fixture byte-matched to Oneal's 2026-11-06 screenshot:
+//     manager subscription 'missing', owner 'unverified' with its code, wake
+//     'unconfirmed', work state 'unknown', zero bound cards.
+const screenshotDept = {
+  id: 'ops',
+  name: 'Operations',
+  active: true,
+  manager: 'manager-a',
+  members: [],
+  reviewers: [],
+  max_repair_rounds: 2,
+  root_task_id: 't-root',
+  task_count: 0,
+  tasks_truncated: false,
+  work: {
+    state: 'unknown',
+    by_status: {},
+    blocked: 0,
+    awaiting_review: 0,
+    review_held: 0,
+    held_codes: {},
+    last_activity_at: null,
+    state_source: 'derived from Kanban task statuses'
+  },
+  manager_status: {
+    profile: 'manager-a',
+    subscription: { state: 'missing', matching: 0, foreign: 0, wake_mode: false },
+    owner: { state: 'unverified', code: 'session_owner_unverified' },
+    wake: { state: 'unconfirmed', code: 'ensured_not_awake' },
+    verified: false
+  },
+  membership: { state: 'unbound', rebind_required: false, explicit_bindings: 0 },
+  final_report: { state: 'none', count: 0, delivered_count: 0 },
+  unknown_tasks: 0
+}
+state.query.list = {
+  data: {
+    schema: 'department-hub/dashboard/v1',
+    source: 'kanban',
+    generated_at: Math.floor(Date.now() / 1000) - 30,
+    board: { available: true },
+    degraded: [],
+    departments: [screenshotDept]
+  },
+  isLoading: false,
+  error: null
+}
+state.query.detail = {
+  data: {
+    schema: 'department-hub/department/v1',
+    generated_at: Math.floor(Date.now() / 1000) - 10,
+    department: { ...screenshotDept, tasks: [], unknown_task_details: [] },
+    events: []
+  },
+  isLoading: false,
+  error: null
+}
+
+const SCREENSHOT_EXPECTATIONS = {
+  en: ['not subscribed', 'unverified (session_owner_unverified)', 'unconfirmed (ensured_not_awake)', 'Unknown'],
+  'zh-hant': ['未訂閱', '未驗證（', '未確認（', '未知']
+}
+for (const [locale, expectations] of Object.entries(SCREENSHOT_EXPECTATIONS)) {
+  setLocale(locale)
+  const rendered = textOf(page.render())
+  for (const expected of expectations) {
+    check(`guard(e)[${locale}]: renders ${JSON.stringify(expected)}`, rendered.includes(expected), rendered.slice(0, 200))
+  }
+  check(
+    `guard(e)[${locale}]: no raw subscription./owner./wake./status. key is rendered`,
+    !RAW_KEY.test(rendered),
+    rendered.match(RAW_KEY)?.[0]
+  )
+}
+setLocale('en')
+
+// every board status the page can badge, in both locales
+const boardTask = status_ => ({
+  task_id: `s-${status_}`,
+  role: 'work',
+  title: `Card ${status_}`,
+  status: status_,
+  assignee: 'worker-a',
+  updated_at: Math.floor(Date.now() / 1000) - 60,
+  review: null,
+  acceptance: null,
+  final_report: null
+})
+state.query.detail = {
+  data: {
+    schema: 'department-hub/department/v1',
+    generated_at: Math.floor(Date.now() / 1000) - 10,
+    department: {
+      ...screenshotDept,
+      work: { ...screenshotDept.work, state: 'blocked' },
+      tasks: ENUMERATED[3][1].map(boardTask),
+      unknown_task_details: []
+    },
+    events: []
+  },
+  isLoading: false,
+  error: null
+}
+for (const [locale, bundle] of LOCALES()) {
+  setLocale(locale)
+  const statusText = textOf(page.render())
+  const raw = [
+    ...new Set((statusText.match(/status\.[a-z_]+/g) || []).filter(token => token.startsWith('status.')))
+  ]
+  check(`guard(e)[${locale}]: 11 card badges render as text, never as status.*`, raw.length === 0, raw.join(','))
+  const unlabelled = ENUMERATED[3][1].filter(
+    state_ => !statusText.includes(resolveIn(bundle, `status.${state_}`, ['x'], locale))
+  )
+  check(`guard(e)[${locale}]: every board status badge shows its label`, unlabelled.length === 0, unlabelled.join(','))
+}
+setLocale('en')
+
+// restore the pristine query boxes the later sections assume
+state.query.detail = { data: undefined, isLoading: false, error: null }
+state.query.list = { data: undefined, isLoading: false, error: null }
+
 
 // ── list page against the real backend payload shape ───────────────────────
 const listPayload = {

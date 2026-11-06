@@ -308,6 +308,7 @@ node tests/js/run.mjs                # ALL PASS (rc 0)
 
 證據：`.research/m2-node-check.log`、`.research/m2-js-mock.log`。
 SDK mock 驗證的是 registration surface、i18n key 覆蓋、listbox 鍵盤、狀態文字、錯誤狀態、snapshot 標示；**不是**真實渲染。
+i18n key 覆蓋不是用自製查表：`tests/js/mocks/sdk.mjs` 的 `usePluginI18n` 與 `ctx.i18n.t` 都走 `tests/js/mocks/i18n-resolver.mjs`，那是從 Desktop v0.23.0 `apps/desktop/src/i18n/runtime.ts`（`resolvePath` / `render` / `translateFrom`，加 `@hermes/shared/i18n` 的 `isRecord` 與 `DEFAULT_LOCALE`）**逐字抽出的真實 resolver**，來源 sha256 釘在測試裡。因此頁面字串必須是**巢狀物件**（`subscription: { missing: … }`）；扁平點號鍵（`'subscription.missing'`）會被 resolver 當成 miss 而回傳原始鍵名。
 
 ### 6.3 Standalone backend import
 

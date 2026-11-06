@@ -1,9 +1,24 @@
 // Stubs for the exact @hermes/plugin-sdk surface desktop/plugin.js imports.
+//
+// i18n is deliberately NOT stubbed with a lookup of our own. `usePluginI18n`
+// and `ctx.i18n.t` both route through the REAL Desktop v0.23.0 resolver that
+// `extract-i18n-resolver.mjs` slices verbatim out of the installed app source:
+// `translatePlugin` → `translateFrom` → `resolvePath`, i.e. a dot path is
+// walked into NESTED objects and a miss returns the raw key.
+//
+// This matters because a flat whole-string lookup (`bundle[key]`) here is
+// exactly what let 40 flat dotted keys pass every mocked check while the real
+// Desktop rendered `owner.unverified` literally. Do not reintroduce one.
+import { DEFAULT_LOCALE } from './i18n-resolver.mjs'
+import { registerPluginLocales, translatePlugin } from './i18n-plugin.mjs'
+
 export const state = {
   // Separate boxes: the page's list query vs a department detail query.
   query: { list: { data: undefined, isLoading: false, error: null }, detail: { data: undefined, isLoading: false, error: null } },
+  // The bundle object the plugin registered (for key-set assertions only —
+  // resolution always goes through the real resolver, never through this map).
   bundles: {},
-  locale: 'en',
+  locale: DEFAULT_LOCALE,
   navigated: [],
   rest: async () => ({})
 }
@@ -30,14 +45,30 @@ export function useQuery(options) {
   }
 }
 
-export function usePluginI18n() {
-  return (key, ...args) => {
-    const bundle = state.bundles[state.locale] || state.bundles.en || {}
-    const value = bundle[key]
-    if (typeof value === 'function') return value(...args)
-    if (typeof value === 'string') return value
-    return key
+/** Switch the locale the translators resolve against (mirrors the app's
+ *  `display.language` being changed). */
+export function setLocale(locale) {
+  state.locale = locale
+}
+
+/** Mirror of `createPluginI18n` in apps/desktop/src/i18n/plugin-i18n.ts
+ *  (L111-118): the disposer tracking is dropped, the resolution is identical. */
+export function createPluginI18n(pluginId = 'department-hub') {
+  return {
+    register: bundles => {
+      state.bundles = bundles
+      return registerPluginLocales(pluginId, bundles)
+    },
+    onLocaleChange: () => () => {},
+    registerAppLocale: () => () => {},
+    t: (key, ...args) => translatePlugin(pluginId, state.locale, key, args)
   }
+}
+
+/** Mirror of `usePluginI18n` (L122-134): same `translatePlugin` call, with the
+ *  locale read at call time instead of from a React store subscription. */
+export function usePluginI18n(pluginId = 'department-hub') {
+  return (key, ...args) => translatePlugin(pluginId, state.locale, key, args)
 }
 
 const passthrough = props => (props && props.children !== undefined ? props.children : '')
