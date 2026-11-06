@@ -12,6 +12,13 @@ Real components, isolated state only:
 * real M1 ``DepartmentService`` (Board CLI adapter, durable Store, gate);
 * real M2 ``DashboardService`` + read-only ``KanbanDbBoard``.
 
+v5 semantics (``department-hub/m1-contract/v5``): artifact identity is produced
+only by ``department_submit`` (a worker-declared SHA-256 of a real local file);
+the reviewer never declares bytes; ``department_deliver`` commits one immutable
+report in the plugin SQLite (``deliveries.body_json``) and writes **zero**
+final board comments. ``department_bind`` answers ``session_owner_unverified``
+by design, so this harness never treats ``report.ok`` as the bind verdict.
+
 No production profile, board, gateway, notification or FreshTape is touched:
 ``HERMES_HOME`` + ``HERMES_KANBAN_HOME`` point into this task's scratch and the
 delegated-child fence marker is removed for this isolated subprocess only.
@@ -35,7 +42,10 @@ HOME = SCRATCH / "home"
 KANBAN_HOME = SCRATCH / "kanban-home"
 HERMES_CLI = os.environ.get("HERMES_CLI") or "/home/ubuntu/.hermes/hermes-agent/venv/bin/hermes"
 AGENT_ROOT = Path(os.environ.get("HERMES_AGENT_ROOT", "/home/ubuntu/.hermes/hermes-agent"))
-SHA = "a" * 64
+# A caller-declared digest that never went through ``department_submit``. v5
+# must refuse to treat it as identity (``artifact_unbound``), so it is
+# deliberately *not* the produced SHA.
+UNBOUND_SHA = "a" * 64
 
 failures: list[str] = []
 
@@ -155,7 +165,15 @@ def main() -> int:
 
     # ── bind: board-verified root + manager wake subscription ───────────────
     report = svc.bind_department("dev", root_id, [child_id])
-    check("bind verified root + bound work item", report.ok, f"ensured={report.ensured}")
+    # ``session_owner_unverified`` is the documented v5 answer: ownership is
+    # bound, but the public notify list cannot attest the runtime session owner.
+    # It is *not* a bind failure, so ``report.ok`` must not gate this check.
+    check("bind ensured the root and the work item",
+          set(report.ensured) >= {root_id, child_id}, f"ensured={report.ensured}")
+    check("bind reports session ownership as unverified, not proven awake",
+          bool(report.issues)
+          and {i.code for i in report.issues} == {"session_owner_unverified"},
+          f"issues={[i.code for i in report.issues]}")
     # ``department_bind`` verifies/routes the extra task ids; the durable
     # ownership row is written by M1's resolver once ancestry exists. This E2E
     # graph has no parent link (a production root card stays open while its
@@ -198,7 +216,7 @@ def main() -> int:
         check("board evidence shows the failed review", failed.verdict.kind == "REQUEST_CHANGES",
               f"run={failed.verdict.run_id} revision={failed.revision}")
         held = svc.accept(AcceptanceClaim(child_id, failed.revision, failed.verdict.run_id,
-                                         SHA, "dept-manager"))
+                                         UNBOUND_SHA, "dept-manager"))
         check("a failed review cannot be accepted", held.status == "held" and held.reason == "review_rejected",
               f"{held.status}/{held.reason}")
 
@@ -223,11 +241,13 @@ def main() -> int:
         review2 = kb.claim_review_task(conn, child_id, claimer="e2e:reviewer-2")
         check("independent reviewer claimed the re-review", review2 is not None)
         run_review2 = kb.latest_run(conn, child_id)
+        # v5: the reviewer proves PASS and nothing else. Artifact identity comes
+        # from ``department_submit``, so no ``artifact_sha256`` is declared here.
         ok = kb.complete_task(
             conn, child_id, summary="PASS: verified the corrected widget",
-            metadata={"artifact_sha256": SHA, "note": "independent re-review"},
+            metadata={"note": "independent re-review"},
             expected_run_id=run_review2.id)
-        check("reviewer completed with a bound artifact", bool(ok))
+        check("reviewer completed with PASS (no byte attestation)", bool(ok))
     finally:
         conn.close()
 
@@ -236,13 +256,38 @@ def main() -> int:
     check("passing review ingested", ing.revision == 2 and ing.board_status == "done",
           f"revision={ing.revision} status={ing.board_status}")
     snap = board.get(child_id)
-    evidence = evidence_from_board(dept, snap)
+    # v5 producer: the worker (a department member) hashes a real local file at
+    # the current revision. Neither board metadata nor a reviewer declaration
+    # can supply this identity.
+    artifact_path = SCRATCH / "work" / "widget-v2.md"
+    artifact_path.parent.mkdir(parents=True, exist_ok=True)
+    artifact_path.write_text(
+        "# Corrected widget\n\nv2 fixes the review finding.\n", encoding="utf-8")
+    unbound = evidence_from_board(dept, snap, artifact_lookup=store.artifact_identity)
+    check("before submit the artifact is still unbound",
+          unbound.artifact_sha256 is None, str(unbound.artifact_sha256))
+    pre_accept = svc.accept(AcceptanceClaim(child_id, unbound.revision,
+                                            unbound.verdict.run_id, UNBOUND_SHA,
+                                            "dept-manager"))
+    check("v5 identity is producer-only: a caller-declared SHA cannot be accepted",
+          pre_accept.status == "held" and pre_accept.reason == "artifact_unbound",
+          f"{pre_accept.status}/{pre_accept.reason}")
+    sub = svc.submit_artifact(child_id, str(artifact_path), caller_profile="worker-a")
+    check("department_submit records the artifact identity", bool(sub.get("success")),
+          json.dumps(sub)[:220])
+    produced = sub["artifact"]["sha256"]
+    check("submit bound the identity to the current revision",
+          sub["revision"] == unbound.revision, f"revision={sub.get('revision')}")
+    check("produced sha is the real file digest, not a declared value",
+          produced != UNBOUND_SHA and len(produced) == 64, produced)
+    evidence = evidence_from_board(dept, snap, artifact_lookup=store.artifact_identity)
     check("latest verdict is the independent PASS",
           evidence.verdict.kind == "PASS" and evidence.verdict.reviewer_profile == "reviewer-a",
           f"run={evidence.verdict.run_id}")
-    check("artifact sha is bound to the verdict", evidence.artifact_sha256 == SHA)
+    check("artifact identity is the produced sha", evidence.artifact_sha256 == produced,
+          str(evidence.artifact_sha256))
 
-    claim = AcceptanceClaim(child_id, evidence.revision, evidence.verdict.run_id, SHA,
+    claim = AcceptanceClaim(child_id, evidence.revision, evidence.verdict.run_id, produced,
                             "dept-manager")
     pre = svc.release(claim)
     check("delivery is held until the manager explicitly accepts",
@@ -258,12 +303,25 @@ def main() -> int:
           again.action == "already_delivered", again.action)
 
     root_snap = board.get(root_id)
-    check("final handoff landed on the department root card", len(root_snap.comments) == 1,
+    check("v5 delivery writes zero final board comments", len(root_snap.comments) == 0,
           f"comments={len(root_snap.comments)}")
-    comment_body = str(root_snap.comments[0].get("body", "")) if root_snap.comments else ""
-    check("handoff body names the accepted task and PASS run",
-          child_id in comment_body and "department-hub/final/v1" in comment_body
-          and str(evidence.verdict.run_id) in comment_body, comment_body[:180])
+    status_view = svc.status("dev")
+    finals = [d for d in status_view["deliveries"] if d["kind"] == "final"]
+    check("exactly one final report row exists in the plugin DB", len(finals) == 1,
+          json.dumps(finals)[:240])
+    report_body = (finals[0]["report"] or {}) if finals else {}
+    report_identity = (finals[0]["identity"] or {}) if finals else {}
+    check("final report carries the v5 plugin-DB schema",
+          report_body.get("schema") == "department-hub/final/v2",
+          json.dumps(report_body)[:240])
+    check("final report identity is the canonical four fields",
+          report_identity.get("artifact_sha256") == produced
+          and report_identity.get("revision") == claim.revision
+          and report_identity.get("verdict_run_id") == evidence.verdict.run_id
+          and report_identity.get("task_id") == child_id,
+          json.dumps(report_identity)[:240])
+    check("final report body names the accepted task",
+          child_id in json.dumps(report_body), json.dumps(report_body)[:240])
 
     # ── M2 backend read-back from the durable state + Kanban ───────────────
     fresh_store = Store(Path(settings["state_path"]))
@@ -308,11 +366,14 @@ def main() -> int:
         "child_task": child_id,
         "revision": evidence.revision,
         "verdict_run_id": evidence.verdict.run_id,
-        "artifact_sha256": SHA,
+        "artifact_sha256": produced,
+        "artifact_path": str(artifact_path),
         "review_fail_run": failed.verdict.run_id,
         "delivery": delivered.action,
         "delivery_repeat": again.action,
         "root_comments": len(root_snap.comments),
+        "report_schema": report_body.get("schema"),
+        "report_identity": report_identity,
         "dashboard_work_state": dept_view["work"]["state"],
         "dashboard_final_report": dept_view["final_report"],
         "durable_event_kinds": kinds,

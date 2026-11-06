@@ -27,3 +27,13 @@ tests/js/.tmp/
 .research/route-lab-377/xdg/
 .research/route-lab-377/runtime/
 .research/route-lab-377/tmp/
+
+# ── Evidence archives that must never be committed ────────────────────────
+# Both files stay on disk as historical evidence (INTEGRATION-REPORT.md §5);
+# they are untracked only. The zip contains synthetic runtime state DBs
+# (route-lab-377/os-home/.hermes/state.db, .../profiles/manager/state.db,
+# .../board/kanban.db) and the tar is a source snapshot. No real PII or
+# credentials, but "no state DB / snapshot in git" is still the rule.
+# INTEGRATION-MANIFEST.sha256 continues to cover their on-disk bytes.
+.research/p0-route-followup-evidence.zip
+.research/department-hub-m2-candidate.tar.gz

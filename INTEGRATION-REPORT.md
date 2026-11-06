@@ -230,3 +230,49 @@ sha256sum -c /home/ubuntu/.hermes/kanban/attachments/t_68287415/candidate-manife
 ## 10. 這個目錄現在是否等於受審候選？
 
 **是。** 產品內容 56/56 逐檔 sha256 相同（55 檔在 git、1 檔 generated bundle 在磁碟且可由 `node tests/js/run.mjs` 重現相同 bytes）；`plugin.yaml` 0.5.0；409 tests passed；node mock 136/136；doctor rc=0；validate（plugin subject）16/16。唯一差異是任務要求新增的 `.gitignore`／manifest／本報告／測試 log，以及被 `.gitignore` 排除的備份與 sandbox。
+
+---
+
+## 11. 文件／repo 衛生修訂（2026-11-06，`t_00130130`）
+
+`t_e3d284ae` 的整合驗收給「程式與 parity PASS、文件與 repo 衛生 REQUEST_CHANGES」。本節記錄該
+裁決後的修訂。**產品邏輯沒有變更**：55 個共同檔中 53 檔 byte-identical，改變的只有 2 個文件
+（README、`docs/m2-desktop.md`）加 harness 與 `.gitignore`。
+
+| 檔案 | 舊 sha256 | 新 sha256 | 變更 |
+|---|---|---|---|
+| `README.md` | `2c2878c584cd3457762209f2c095ade2809a12bc362978ff3d3802c1a7b8599a` | `e3072effe89e1248ccf5b6d103626ce627af297e326b8bba8113de514e40cb2d` | 真實現況、Installation（agent／desktop／config／gateway／rollback）、Windows 與遠端 Desktop 路徑、validate 對象、E2E v5、Known limitations、supersedes |
+| `docs/m2-desktop.md` | `7683d6d52ce35c8c1c06b8c971ea4078bb385ae1a78e1febc8ec86aad87bc8fa` | `efc0fb83f4166e86a8612bfb87ba90350a325abfacbbc7ef98b9f62b4a41fef7` | §6.5.1 v5 E2E、§7 實測安裝步驟、§9 限制、§11 supersedes |
+| `.research/m2-e2e.py` | `1c4c539b89a962cc51301252de89fac80fa180c9df3c44a2c0261803f3fa959e` | `3ba2b947cd81c1eaf084ce25de7cd38cd0b61763bff746de9d71c36cc44a92a2` | v4→v5 harness（submit-first、無 root-comment 斷言、不以 `report.ok` 判 bind） |
+| `.gitignore` | `c3cd4f14498d4dbee056679d53eac09b198b9b8f3a17fdff3ac8f910eb6a4aa0` | `0ba4b724ef49931b6e502273ab0f929008c70f3d6ed77f233a1e7e8ed4a9037a` | 新增兩個 evidence archive 的排除 |
+
+### 11.1 repo 衛生
+
+`.research/p0-route-followup-evidence.zip`（內含 `route-lab-377/os-home/.hermes/state.db`、
+`.../profiles/manager/state.db`、`.../board/kanban.db`，內容為 synthetic）與
+`.research/department-hub-m2-candidate.tar.gz`（純 source snapshot）已自索引移除：
+`git rm --cached`，**兩檔仍在磁碟、位元組未動**（sha256
+`c88d8891136a1f6e41b218d7786d61665a4e283c6623c8238fd9c2ba6ce0cc93` /
+`cdd15ad32adc239979b19c88844f95385fb88f106877ff56dd8cdf4c662d6ef6`）。
+`git ls-files` 由 263 → 261；`INTEGRATION-MANIFEST.sha256` 仍是 **261 條**並涵蓋這兩個磁碟檔，
+manifest 的「磁碟內容」語義不變。新 manifest sha256 =
+`9dd7f593732621533e52232c8f3b480c2ab3e3205181fe3c0ab9901bc53dc2a3`。
+
+### 11.2 重跑結果
+
+| 檢查 | 結果 |
+|---|---|
+| `sha256sum -c INTEGRATION-MANIFEST.sha256` | 261/261 OK、rc=0 |
+| `sha256sum -c candidate-manifest.sha256` | 54/56 OK；**只有** `README.md`、`docs/m2-desktop.md` FAILED（即 docs delta） |
+| 自寫 product-tree walk（排除 `.git`／`.research`／cache） | 共同 55 檔 **53/55 相同**；差異僅上述 2 檔；專案獨有 `.gitignore`／manifest／本報告；候選獨有 0 |
+| `pytest tests -q` | **409 passed** |
+| `node --check desktop/department-hub/plugin.js`；`node tests/js/run.mjs` | rc=0；**ALL PASS**（136 checks）；`tests/js/.tmp/plugin.mjs` 仍是 `ab484b89…c64d` |
+| `hermes plugins doctor . --ci` | rc=0、7 tools / 2 hooks |
+| `hermes plugins validate <staging>` | **ok=true、16/16、0 warnings、rc=0** |
+| `.research/m2-e2e.py`（v5） | **RESULT: PASS（53 checks）**、rc=0 |
+
+### 11.3 仍然未驗證
+
+真實 Desktop 畫面（渲染／native grant／OAuth）仍 **UNVERIFIED**；本修訂只補文件與 harness，
+不改變這個事實。載入器層級（v0.23.0 `runtime-loader.ts`）對 `plugin.js` 的實測見 README 與
+`docs/m2-desktop.md` §7.2。

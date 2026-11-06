@@ -1,7 +1,13 @@
 # Department Hub — M2 Desktop 管理介面與後端
 
-狀態：**M2 已對齊 `department-hub/m1-contract/v5`（`t_68287415` 候選），尚未獨立驗收（真實 Desktop 畫面待 Oneal 手動執行）**。
-本文件是 M2 的交接與限制說明，不是驗收通過證明。
+狀態（2026-11-06）：**M1 v5.1 + M2 v5 已整合進 repo（`014f372`），並於 2026-11-06 07:41–07:46 UTC
+在本機手動安裝過（config 備份 + gateway restart，安裝檔與 repo byte-identical）。**
+`t_e3d284ae` 的整合驗收對程式／parity 給 PASS、只對文件與 repo 衛生給 REQUEST_CHANGES；
+本文件與 README 是該文件修正。**真實 Desktop 畫面（渲染、native grant／OAuth、實際載入）
+仍未經獨立驗證**，不得宣稱 Desktop 已驗收。測試基準：Hermes Agent **v0.23.0（2026.9.24）**。
+
+安裝以 **§7** 為準（含 Windows 路徑、遠端 Desktop、rollback）。本文件其餘部分是 M2 的
+交接與限制說明，不是驗收通過證明。
 
 - 專案：`/home/ubuntu/projects/hermes-department-orchestrator/`
 - 計畫：`/home/ubuntu/.hermes/plans/2026-11-05_132450-hermes-department-orchestrator-hackathon.md`
@@ -325,7 +331,12 @@ hermes plugins validate <clean staging copy excluding .research> --json
 
 > 注意：直接對 repo root 跑 validate 會掃到 `.research` 的 P0 lab（824 MB / 28k files），因此驗證對象是排除 `.research` 的 shipping package staging copy；這與 M1 的做法一致。
 
-### 6.5 隔離真實全鏈 E2E（v4.1 時代證據；v5 未重跑）
+### 6.5 隔離真實全鏈 E2E（v5 harness）
+
+> `.research/m2-e2e.py` 原本是 v4.1 語義的 harness（沒有 `department_submit`、期待 root card
+> 有 final comment），對 v5 **照做必失敗**。2026-11-06 已更新為 v5：先 `department_submit`、
+> 不再要求 final comment、不以 `report.ok` 判定 bind。舊的 44-check 輸出是歷史，不是現況；
+> 現行指令與結果見 §6.5.1。
 
 ```bash
 PYTHONPATH=/home/ubuntu/.hermes/hermes-agent:. \
@@ -333,7 +344,7 @@ PYTHONPATH=/home/ubuntu/.hermes/hermes-agent:. \
   .research/m2-e2e.py <scratch>/m2-e2e-run
 ```
 
-本次結果：**RESULT: PASS（44 checks）**。實際使用：
+v4.1 時代的結果是 **RESULT: PASS（44 checks）**。v5 重跑結果見 §6.5.1。實際使用：
 
 - 真 `hermes kanban` CLI：`init/create/show/notify-subscribe/notify-list/comment`；
 - 真 `hermes_cli.kanban_db`：`claim_task` / `claim_review_task` / `request_changes` / `complete_task`（dispatcher 實際使用的 API；沒有 CLI 的 review-claim 動詞）；
@@ -348,16 +359,37 @@ PYTHONPATH=/home/ubuntu/.hermes/hermes-agent:. \
 4. reviewer claim → `request-changes("widget is not fixed yet")` → M1 ingest；
 5. board evidence = `REQUEST_CHANGES`、revision 1；`accept` 被 gate 擋下 `review_rejected`；
 6. M2 頁面顯示 `REQUEST_CHANGES`、repair_rounds=1、尚無 final report；
-7. worker 修正 → 第二次 `request-review` → 獨立 reviewer claim → `complete` 帶 `REVIEW: PASS`；
-   **v4 起 reviewer 不必（也不會）宣告 SHA：artifact identity 由 worker/manager 先呼叫
-   `department_submit` 產生（見 `docs/m1-v4-contract.md` §2）。本節第 8 步以後的 SHA 綁定
-   描述是 v3 舊語義，M2-R 重跑 E2E 時必須改成 producer 流程。**
-8. M1 ingest → revision 2、latest verdict `PASS`（run 4、reviewer-a、SHA 綁定）；
+7. worker 修正 → 第二次 `request-review` → 獨立 reviewer claim → `complete` 帶 `PASS`（**不宣告 SHA**）；
+   artifact identity 由 worker 先呼叫 `department_submit` 對真實本機檔案算 SHA-256 產生
+   （v5 producer-only；見 `docs/m1-v5-contract.md`）。
+8. worker 先 `department_submit`（對真實檔案算 SHA-256）→ M1 ingest → revision 2、latest verdict
+   `PASS`（run 4、reviewer-a）；identity 來自 producer，不是 reviewer 宣告；
 9. `release` 在未 accept 時 held `acceptance_missing`；`accept` 後 releasable；`release` → `delivered`；
 10. 第二次 `release` → `already_delivered`；root card **沒有** final comment——報告已在 plugin DB `deliveries.body_json`（v4.1 時代的單則 comment 描述是歷史，v5 已改）；
 11. M2 重新開 store + 唯讀 board 讀回：work_state `done`、last activity、PASS run id、manager acceptance、final report `confirmed`、department rollup `delivered`、0 unknown、durable events 包含 `changes_requested`/`completed`。
 
 隔離保證：`HERMES_HOME` / `HERMES_KANBAN_HOME` 都在 task scratch；E2E 在連線前清除所有 `HERMES_KANBAN_*` 並 assert `kanban_db_path()` 必須位於 scratch，否則拒絕執行。開發除錯時曾有一次因未清除 dispatcher 注入的 `HERMES_KANBAN_DB` 而解析到 production DB；當時使用的兩個隨機 task id 在 production board 不存在（`claim_task` 回 `None`），事後以唯讀查詢確認兩個 id 都不存在、當下 task=331 / task_runs=432，無任何列變更證據。正式腳本已加 guard，後續 E2E 全程只碰 scratch board。
+
+### 6.5.1 v5 重跑（2026-11-06）
+
+```bash
+cd /home/ubuntu/projects/hermes-department-orchestrator
+PYTHONPATH=/home/ubuntu/.hermes/hermes-agent:. \
+  /home/ubuntu/.hermes/hermes-agent/venv/bin/python \
+  .research/m2-e2e.py /tmp/m2-e2e-v5
+```
+
+harness 已改成 v5：reviewer 只給 PASS（**不宣告 SHA**）；worker 先 `department_submit` 對真實
+檔案算 SHA-256（並驗證 caller 宣告的 SHA 會 `held/artifact_unbound`）；bind 不以 `report.ok`
+判定（`session_owner_unverified` 是預期答案，root 與 work card 各一筆）；不期待 root final
+comment，改讀 plugin SQLite `deliveries.body_json` 的 `department-hub/final/v2` 報告與
+canonical 四欄 identity。
+
+結果：**RESULT: PASS（53 checks，0 FAIL）**、rc=0。`kanban_db_path()` 在 scratch
+（`<scratch>/kanban-home/kanban.db`）；`root_comments=0`、`delivery=delivered`、
+`delivery_repeat=already_delivered`、`report_schema=department-hub/final/v2`、報告 identity 的
+`artifact_sha256` 等於真實檔案 SHA。`session_owner_unverified` 如實回報，沒有偽造 wake。
+原始 log 附在 `t_00130130` 的交付證據。
 
 ### 6.6 未證明的項目
 
@@ -369,17 +401,152 @@ PYTHONPATH=/home/ubuntu/.hermes/hermes-agent:. \
 
 ---
 
-## 7. 安裝步驟（草案，尚未執行）
+## 7. 安裝步驟（2026-11-06 實測；v0.23.0）
 
-> 以下步驟**沒有**在本次 run 執行，也**沒有**經過獨立複審。在 M2-R 與獨立複審確認「不覆寫/刪除既有同名資料、可完整回復」之前，不得把手動安裝當成已驗證交付。本次沒有安裝、重啟或修改任何既有 profile/gateway/board/通知/FreshTape。
+> 本節步驟在 2026-11-06 07:41–07:46 UTC 於本機**實際執行過**：config 備份
+> `~/.hermes/config.yaml.pre-department-hub.20261106-074114`（含 `.sha256`）、agent half 與
+> desktop half 複製、`hermes -p default gateway restart --yes`。安裝後的檔案與 repo
+> **byte-identical**。這是**安裝足跡，不是驗收**：真實 Desktop 畫面仍未經獨立驗證。
+> 測試基準 Hermes Agent **v0.23.0（2026.9.24）**，伺服器 Linux、Desktop Windows。
+> 本套件**沒有 installer**，以下全是 operator 手動步驟，不是原子安裝。
 
-1. 將 plugin package 放到 `~/.hermes/plugins/department-hub/`（含 `plugin.yaml`、`__init__.py`、`department_lib/`、`dashboard/`）。
-2. 將 Desktop 檔放到 `~/.hermes/desktop-plugins/department-hub/plugin.js`（folder name 必須等於 plugin id）。
-3. 在 `config.yaml` 的 `plugins.enabled` 加入 `department-hub`；在 `plugins.entries.department-hub.settings` 設定 `state_path` 與 `departments`。
-4. 確認 manager/member/reviewer profiles 已存在；manager 必須啟用 `kanban` toolset。
-5. 重啟 gateway 讓 plugin 設定重新載入。
-6. 用 `department_status` / `department_bind` 驗證 board-verified root 與 wake subscription。
-7. Desktop：Settings → Plugins 開啟 Department Hub，開啟 `/department-hub`。
+### 7.1 Agent half（跑 gateway 的機器）
+
+```bash
+cd /home/ubuntu/projects/hermes-department-orchestrator
+install -d ~/.hermes/plugins/department-hub
+cp -a plugin.yaml __init__.py department_lib dashboard \
+      ~/.hermes/plugins/department-hub/
+```
+
+不要複製 `tests/`、`docs/`、`desktop/`、`.research/` 到 plugin 目錄。確認：
+
+```bash
+test -f ~/.hermes/plugins/department-hub/plugin.yaml
+test -f ~/.hermes/plugins/department-hub/__init__.py
+test -f ~/.hermes/plugins/department-hub/dashboard/plugin_api.py
+test -f ~/.hermes/plugins/department-hub/department_lib/artifacts.py
+```
+
+### 7.2 Desktop half（跑 Desktop 的機器）
+
+只複製 `desktop/department-hub/plugin.js`；資料夾名必須等於 plugin id `department-hub`。
+根目錄是 `<HERMES_HOME>/desktop-plugins`：
+
+| 主機 | 路徑 |
+|---|---|
+| Linux / macOS（預設） | `~/.hermes/desktop-plugins/department-hub/plugin.js` |
+| Windows（預設，未設 `HERMES_HOME`） | `%LOCALAPPDATA%\hermes\desktop-plugins\department-hub\plugin.js` |
+| 任何 OS 有設 `HERMES_HOME` | `$HERMES_HOME/desktop-plugins/department-hub/plugin.js` |
+
+Windows 預設會展開成
+`C:\Users\<你>\AppData\Local\hermes\desktop-plugins\department-hub\plugin.js`，
+**不是** `%USERPROFILE%\.hermes\...`。放錯根目錄不會報錯，app 只是永遠看不到這個 plugin
+（2026-11-06 實測：`plugin.js` 51,158 bytes、與 repo 一致，放進
+`C:\Users\weng1\.hermes\desktop-plugins\department-hub\` 時 Desktop 看不到）。
+
+兩個容易誤解的點：
+
+- **遠端 Desktop 讀自己的磁碟**：Electron 的 `desktopPluginsRoot` 讀本機 disk。把
+  `plugin.js` 放到伺服器的 `~/.hermes/desktop-plugins/` 對另一台機器上的 Desktop 無效；
+  必須放到**那一台**的 desktop-plugins 根目錄。agent half（`plugins/department-hub`）才裝在伺服器。
+- **瀏覽器版 `hermes dashboard`（預設 9119）不載入 Desktop 外掛**：dashboard surface 的
+  `desktop_plugins=False`，只有 `webapp`（Desktop app）surface 為 true。不要用 9119 驗證
+  Desktop half。
+
+v0.23.0 載入器對「手放檔案」的實際行為（`runtime-loader.ts` L76–362 原始碼 + 對本 `plugin.js`
+實測）：
+
+- **它會是一張獨立的 Desktop 卡**（`desktop:department-hub`，名稱＝plugin 的 `name`
+  "Department Hub"，徽章 "Desktop"），**不會**跟 agent 卡（`department-hub`、徽章 "Agent"）
+  合併。合併鍵是 `.hermes-package.json` 的 `packageName`，手放的檔案沒有這個標記；遠端模式下
+  unified 半邊**永遠不會自動複製到本機**。Agent 卡的 Desktop 欄顯示「—」是**正常**（agent 套件
+  沒有 `desktop/` 目錄），不是故障。**不要**替手放的檔案補 `.hermes-package.json`：
+  Electron 的 reconcile 會在本機來源不存在時 prune 有標記的半邊。
+- **Opt-in 開關**：plugin 宣告 `defaultEnabled: false`，載入器對這種 plugin「只盤點、不呼叫
+  `register()`」，直到使用者在 Capabilities → Plugins 打開**那張 Desktop 卡**的開關（Agent 卡
+  的開關不影響它）。打開後立即註冊：路由 `/department-hub`、側邊欄 nav 列（codicon
+  organization，標籤 Departments／部門）、`Ctrl+K` 指令；**不需重啟**。載入失敗才會有 toast
+  與紅色 failed 卡。
+- **Windows 重新掃描**：`Ctrl+K` →「Reload desktop plugins」。Desktop 讀檔上限 512 KiB
+  （本 `plugin.js` 51,158 bytes，安全）；資料夾名必須等於 plugin id `department-hub`。
+
+以上是**載入器層級證據，不是 UI 驗收**：unsupported imports `[]`、3 個 specifier 被改寫、
+改寫後 `node --check` OK、替身模組載入後 default export 合法
+（`id`/`name`/`defaultEnabled:false`/`register` 為函式）、`register(ctx)` 產生 3 筆
+（page／nav／palette）、SDK 14 個 import 名稱在 v0.23.0 `sdk/index.ts` 全部存在。
+**畫面仍未驗證（UNVERIFIED）**。
+
+### 7.3 `config.yaml`（gateway 機器）
+
+在 `plugins.enabled` 加 `department-hub`，並建立／合併
+`plugins.entries.department-hub.settings`（`entries` 這個 key 可能原本不存在）：
+
+```yaml
+plugins:
+  enabled:
+    - department-hub        # ← 新增
+  disabled: []
+  entries:                  # ← 這個 key 原本可能不存在
+    department-hub:
+      settings:
+        state_path: ~/.hermes/department-hub/state.db
+        departments:
+          - id: dev
+            name: Development
+            manager:
+              profile: default          # 必須存在並啟用 `kanban` toolset
+              platform: api_server      # 佔位；真實 wake 需 manager 實際 platform/chat_id
+              chat_id: api-dev-session
+            members: [normal-worker]
+            reviewers: [reviewer]
+            max_repair_rounds: 2
+```
+
+- 用空白縮排，不要 tabs；YAML 縮排錯會讓 gateway 起不來（備份已於 §7.4 建立）。
+- `manager.profile` 必須存在並已啟用 `kanban` toolset。若 manager 不是 `default`，把 agent half
+  也裝到 `~/.hermes/profiles/<manager>/plugins/department-hub/`，並在該 profile 的 `config.yaml`
+  加同樣的 `plugins.enabled` / `plugins.entries`，`state_path` 指到**同一個絕對路徑**。
+  會呼叫 `department_submit` / `department_ingest` 的 member／reviewer profile 同理。
+- `platform` / `chat_id` 是 wake subscription 的比對值。佔位值會讓 `department_bind` 回
+  `session_owner_unverified`、UI 顯示 `unconfirmed (ensured_not_awake)`——這是正確行為，
+  不是安裝失敗。要測真實 wake 請填 manager 實際值，**不要猜 credentials**。
+
+### 7.4 備份、重啟、驗證
+
+```bash
+CFG="$HOME/.hermes/config.yaml"
+STAMP=$(date +%Y%m%d-%H%M%S)
+cp -a "$CFG" "$CFG.pre-department-hub.$STAMP"
+sha256sum "$CFG" > "$CFG.pre-department-hub.$STAMP.sha256"
+
+hermes -p default gateway restart --yes     # 會中斷正在跑的 worker；請在 idle 時段執行
+hermes -p default gateway status
+hermes plugins doctor ~/.hermes/plugins/department-hub --ci   # 7 tool(s), 2 hook(s)
+```
+
+- plugin HTTP 路由由 dashboard surface 提供，需要已驗證的 principal。
+  `curl http://127.0.0.1:8644/api/plugins/department-hub/health` 在本機回 **404**：
+  8644 是 OpenAI-compatible API，不是 dashboard。對 dashboard 路由的未驗證請求回 **401**
+  （正確拒絕，不是安裝壞掉）。請用 Desktop app 或已驗證的 dashboard session。
+- Desktop：Settings → Plugins 開啟 Department Hub，開 `/department-hub`。
+
+### 7.5 Rollback
+
+```bash
+CFG="$HOME/.hermes/config.yaml"
+STAMP=<§7.4 印出的 stamp>
+hermes -p default gateway stop
+cp -a "$CFG.pre-department-hub.$STAMP" "$CFG"
+sha256sum -c "$CFG.pre-department-hub.$STAMP.sha256"
+rm -rf "$HOME/.hermes/plugins/department-hub"
+hermes -p default gateway start
+```
+
+Desktop 機器另外刪 `~/.hermes/desktop-plugins/department-hub/`（Windows 為
+`%LOCALAPPDATA%\hermes\desktop-plugins\department-hub\`）。
+`~/.hermes/department-hub/state.db` **刻意保留**：它保存不可變的 final reports；只有確定要
+丟掉交付歷史時才刪。
 
 ---
 
@@ -396,7 +563,11 @@ PYTHONPATH=/home/ubuntu/.hermes/hermes-agent:. \
 
 ## 9. 已知限制
 
-1. **M1 v5 已 PASS，但 M2 未驗收**：`t_090d5884` 對 M1 v5 修復版給 **REVIEW: PASS**（P1-1 direct-boundary durable-conflict fence 已修）。M2 本輪只做唯讀對齊與候選測試，不代表 M2-R PASS，也不代表已安裝到 Desktop。
+1. **程式／整合已 PASS，Desktop 畫面未驗收**：`t_090d5884` 對 M1 v5 修復版給 **REVIEW: PASS**
+   （direct-boundary durable-conflict fence 已修）；`t_e3d284ae` 對 M1 v5.1 + M2 v5 整合樹給
+   「程式與 parity PASS、文件／repo 衛生 REQUEST_CHANGES」。2026-11-06 07:41–07:46 已有手動安裝
+   足跡（檔案 byte-identical、config 已備份），但**真實 Desktop 畫面、native grant／OAuth
+   仍未經獨立驗證**。
 2. **P0 已知限制**：default 訂閱繼承穿透、共享 board metadata exposure、identity 不是認證、序號可被燒耗、已交付後更正語意未定。M2 只如實顯示，不修、不宣稱隔離。
 3. **Kanban SQLite schema 依賴**：M2 以唯讀 URI 直接讀 `tasks/task_events/task_runs/task_links`；schema 缺失/漂移會 fail closed（503/unknown），不會回假資料。這是為了 bounded refresh 與避免私有 Python import 的取捨；M2-R 應把 schema 變更視為需要對齊的介面。
 4. **沒有寫入路徑**：create/edit/delete 一律 409；department 設定只能由 operator 改 `config.yaml`。這是刻意的最小權限設計，不是功能缺漏。
@@ -413,6 +584,14 @@ PYTHONPATH=/home/ubuntu/.hermes/hermes-agent:. \
     canonical 四欄 identity 與目前 board evidence 比較後計算「第二世代不可交付」，並分開顯示
     current／stored identity；報告本身從 `deliveries.body_json` 讀取，因此 board 不可用或
     之後出現新 rejection 時仍可讀。artifact SHA 仍是宣告值，delivery 不重新 hash bytes。
+11. **identity 不是認證**：artifact SHA 與交付 identity 都是 worker 宣告值；profile 只是
+    routing/identity binding，不是 credential。沒有任何東西證明 reviewer 真的看過那些 bytes。
+12. **Desktop half 必須手動安裝，真實畫面未獨立驗證**：`plugin.js` 必須放到 Desktop 機器自己的
+    `<HERMES_HOME>/desktop-plugins/department-hub/`（Windows 預設
+    `%LOCALAPPDATA%\hermes\desktop-plugins\department-hub\`，不是 `%USERPROFILE%\.hermes\`）。
+    目前沒有截圖或 hands-on 記錄，渲染、native grant、OAuth 都未驗證。
+13. **沒有 profile ACL**：manager 檢查是 `ctx.profile_name` 比對，不是對抗惡意 runtime／database
+    owner 的 ACL；plugin store 與 board 沒有 per-profile 存取控制。
 
 ---
 
@@ -423,7 +602,26 @@ M2-R 應獨立：
 1. 重跑 `pytest tests/ -q`（本輪 409 passed）與 `node tests/js/run.mjs`；
 2. 重跑 `hermes plugins validate` 於排除 `.research` 的 staging copy（ok=true, 16 checks, 0 warnings）；
 3. 以 by-path 載入 `dashboard/plugin_api.py`，確認 standalone import；
-4. 重跑 `.research/m2-e2e.py`，確認 44 checks PASS，且 `kanban_db_path()` 在 scratch 內；
+4. 重跑 `.research/m2-e2e.py`（**v5 harness**，見 §6.5／§6.5.1）：`RESULT: PASS`，且
+   `kanban_db_path()` 在 scratch 內；
 5. **實際開 Desktop 看 `/department-hub`**（截圖或 hands-on），確認 route/sidebar/palette、鍵盤、zh-TW/en、錯誤與空狀態、read-only 標示；未看到畫面不得給 PASS；
 6. 核對 M1-R 是否已 current-run PASS；若 M1 API/欄位/錯誤碼有變，檢查 `dashboard.py` 是否需對齊；
 7. 檢查六項 installer P1 是否被錯誤宣稱已滿足（本 M2 沒有 installer，應標為 not applicable / open）。
+
+---
+
+## 11. Supersedes：`.research/M2-DESKTOP-MANUAL-ACCEPTANCE.md`
+
+那份文件保留為歷史證據，**不可再當作安裝指南**：
+
+- 它的安裝來源是 v4.1 時代的 `t_c410652a/candidate`（bundle sha256
+  `cdd15ad3…6ef6`），不是本 repo。
+- 它開頭寫**「不要安裝 `/home/ubuntu/projects/hermes-department-orchestrator/`」**，理由是該目錄
+  仍是 v1；這句話在 2026-11-06 整合後已 **false**，而且 07:41 的手動安裝（config 備份名
+  `config.yaml.pre-department-hub.20261106-074114` 與該文件的 `$STAMP` 格式一致）顯示有人正是
+  照它操作。
+- **正確的安裝來源是 repo root**，步驟以本文 §7 為準（含 Windows 路徑、遠端 Desktop、
+  rollback）。該文件的 config 備份／還原模式仍有效，已收進 §7.4–§7.5。
+
+同理，`.research/m2-e2e.py` 的舊 44-check 輸出是 v4.1 歷史證據；現行 harness 已更新為 v5
+（§6.5）。
