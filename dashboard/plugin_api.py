@@ -7,10 +7,22 @@ layer). Design constraints, all covered by ``tests/test_dashboard_api.py``:
   SQLite URI) plus the plugin's own SQLite state. No route writes the board, a
   profile, ``config.yaml`` or a gateway setting.
 * **Authorization is verified, not assumed.** The gateway already gates these
-  routes; on top of that every request resolves a principal from the gateway's
-  request state. A request that arrives without one on an auth-required gateway
-  is refused with 401. Mutations are refused with a stable ``blocked`` code —
-  this build has no safe, reversible config/profile mutation path.
+  routes; on top of that every request resolves a principal from a *server-side
+  stamp* on the request state — never from anything the caller can write. The
+  gateway has exactly three stamps, checked in this order:
+
+  - ``request.state.native_http_principal`` — a native-app grant
+    (``hermes_cli/dashboard_auth/native_http.py`` L311).
+  - ``request.state.token_authenticated`` — a registered service token
+    (``hermes_cli/dashboard_auth/token_auth.py`` L84-85).
+  - ``request.state.session`` — the dashboard sign-in wall's verified ``Session``,
+    minted for a bearer token (RFC 8252 native app — the remote Desktop's
+    ``hermes:api`` transport) or a cookie login
+    (``hermes_cli/dashboard_auth/middleware.py`` L199 / L258 / L303).
+
+  A request that arrives without one on an auth-required gateway is refused with
+  401. Mutations are refused with a stable ``blocked`` code — this build has no
+  safe, reversible config/profile mutation path.
 * **Minimal data.** No chat ids, platform ids, workspace paths, transcripts,
   comment bodies or event payloads are served.
 * **Handlers are sync ``def``** so FastAPI runs them in a worker thread; the
@@ -86,7 +98,20 @@ def build_service(settings: dict | None = None):
 def _principal(request: Request) -> dict:
     """Resolve who is calling, from the gateway's authenticated request state.
 
-    Never from a header, query parameter or body: a caller cannot name itself.
+    Only the three server-side stamps the gateway writes are trusted:
+
+    * ``native_http_principal`` — ``hermes_cli/dashboard_auth/native_http.py`` L311.
+    * ``token_authenticated`` — ``hermes_cli/dashboard_auth/token_auth.py`` L84-85.
+    * ``session`` — the verified dashboard ``Session`` the sign-in wall stamps for a
+      bearer token (RFC 8252 native app; the remote Desktop's ``hermes:api``
+      transport) or a cookie login: ``hermes_cli/dashboard_auth/middleware.py``
+      L199 (refreshed session), L258 (native bearer) and L303 (cookie session).
+
+    Never from a header, query parameter or body: a caller cannot name itself. Each
+    stamp is read with ``getattr`` and must be truthy, so ``None``/``False``/empty
+    values fall through to the ``auth_required`` refusal (fail-closed). Only
+    ``kind`` and ``profile_bound`` leave this function — nothing from the session
+    object (provider, subject, email, tokens) is copied into a response.
     """
     state = getattr(request, "state", None)
     native = getattr(state, "native_http_principal", None)
@@ -94,6 +119,10 @@ def _principal(request: Request) -> dict:
         return {"kind": "native", "profile_bound": True}
     if getattr(state, "token_authenticated", False):
         return {"kind": "token", "profile_bound": True}
+    # The sign-in wall's verified identity. Truthy only when the gate actually
+    # verified a bearer/cookie session — a caller can never set ``request.state``.
+    if getattr(state, "session", None):
+        return {"kind": "session", "profile_bound": False}
     app_state = getattr(getattr(request, "app", None), "state", None)
     if getattr(app_state, "auth_required", False):
         raise HTTPException(status_code=401, detail="authentication required")

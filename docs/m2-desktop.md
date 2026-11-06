@@ -88,12 +88,13 @@
 
 授權：
 
-- `_principal(request)` 只從 gateway 的 `request.state` 讀：
+- `_principal(request)` 只從 gateway 的 `request.state` 蓋章讀（共 3 種，依序）：
   - `native_http_principal` → `{"kind":"native","profile_bound":true}`
   - `token_authenticated` → `{"kind":"token","profile_bound":true}`
-  - 否則若 `app.state.auth_required` → **401**
+  - `session`（登入牆驗證過的 Session：bearer 原生 app 或 cookie；`dashboard_auth/middleware.py` L199/L258/L303）→ `{"kind":"session","profile_bound":false}`
+  - 否則若 `app.state.auth_required` → **401**（`session` 為 `None`/`False`/空值同樣不算，fail-closed）
   - 否則 → `{"kind":"loopback","profile_bound":false}`（誠實標示 loopback，不假裝 profile 身分）
-- **不**從 header/query/body 取 caller；測試 `test_principal_never_comes_from_the_caller`。
+- **不**從 header/query/body 取 caller；測試 `test_principal_never_comes_from_the_caller`、`test_caller_supplied_credentials_never_authorize`。
 - 所有 handler 是 sync `def`，FastAPI 會丟到 threadpool，不阻塞 gateway event loop。
 
 資料最小化：
