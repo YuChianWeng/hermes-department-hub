@@ -52,6 +52,7 @@
 - 版面：左側部門 listbox（`role="listbox"`、`aria-activedescendant`、方向鍵/Home/End/Enter、`aria-selected`），右側詳情
 - 狀態一律有文字（`status.blocked` / `done` / `review` / `running` / `ready` / `todo` / `triage` / `scheduled` / `archived` / `unknown`），不以顏色單獨表達
 - 資料：`ctx.rest('/departments', …)`、`ctx.rest('/departments/{id}', …)`、`ctx.rest('/departments/plan', …)`；`refetchInterval = 10_000 ms`、`staleTime = 5_000 ms`
+- Refresh（使用者手動）：一次點擊以 `queryClient.refetchQueries({ queryKey: ['department-hub'] })` 同時重抓部門清單與目前開啟的部門詳情（含事件清單），按鈕在兩者都完成前維持 `Refreshing…`／`disabled`／`aria-busy="true"` 且至少 600 ms，完成後 header 的 snapshot 旁顯示 `Updated HH:MM:SS` 約 3 秒後消失、失敗則顯示 `Refresh failed — showing the last snapshot`；10 秒背景輪詢不會觸發這兩種提示。
 - 錯誤：清單與詳情各自有 `ErrorState`；後端沒有回應時顯示「後端沒有回應：…」，**不會**顯示空部門清單
 - 誠實標示：
   - `Read-only view.`

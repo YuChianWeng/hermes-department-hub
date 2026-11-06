@@ -16,6 +16,10 @@ const here = dirname(fileURLToPath(import.meta.url))
 const pluginPath = join(here, '..', '..', 'desktop', 'department-hub', 'plugin.js')
 const sdk = await import('./mocks/sdk.mjs')
 const { state, setLocale } = sdk
+// Hooks are per component FUNCTION and survive across renders (see the header
+// of mocks/react.mjs: it is a stand-in, not React).
+const { withComponent, resetHooks } = await import('./mocks/react.mjs')
+const { installClock, advance } = await import('./mocks/fake-clock.mjs')
 // The REAL Desktop v0.23.0 resolver, sliced verbatim out of the app source by
 // mocks/extract-i18n-resolver.mjs. Never substitute a local lookup here.
 const { translateFrom } = await import('./mocks/i18n-resolver.mjs')
@@ -66,7 +70,9 @@ function flatten(node, out = []) {
   if (typeof node === 'object' && node.props) {
     out.push({ type: node.type, props: node.props })
     if (typeof node.type === 'function') {
-      flatten(node.type(node.props), out)
+      // Each component function gets its own hook frame, exactly like a
+      // component instance would. Output shape is unchanged.
+      flatten(withComponent(node.type, () => node.type(node.props)), out)
     } else {
       flatten(node.props.children, out)
     }
@@ -1012,6 +1018,413 @@ check(
 
 const createToggle = nodes(page.render()).find(n => n.props['aria-label'] === 'New department')
 check('new-department control is labelled', Boolean(createToggle))
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Refresh UX (page layer) + the duplicated membership sentence.
+//
+// Evidence level: stand-in component logic + the REAL Desktop i18n resolver.
+// This is NOT a Desktop render test — "the button visibly reacts" still needs
+// Oneal's screenshot or hands-on acceptance.
+//
+// The two rules that were invisible before live here:
+//   * a click must refetch the list AND the open department detail (prefix
+//     match), and only be "done" when both are;
+//   * the in-progress state must be observable for >= 600 ms, and the
+//     confirmation for ~3 s — proven on the fake clock, never a real sleep.
+// ═══════════════════════════════════════════════════════════════════════════
+const countOf = (haystack, needle) => haystack.split(needle).length - 1
+const pad2 = value => String(value).padStart(2, '0')
+const clockStamp = ms => {
+  const at = new Date(ms)
+  return `${pad2(at.getHours())}:${pad2(at.getMinutes())}:${pad2(at.getSeconds())}`
+}
+
+const refreshDept = (membership = { state: 'unbound', rebind_required: false, explicit_bindings: 0 }) => ({
+  id: 'ops',
+  name: 'Operations',
+  active: true,
+  manager: 'manager-a',
+  members: [],
+  reviewers: [],
+  max_repair_rounds: 2,
+  root_task_id: 't-root',
+  task_count: 0,
+  tasks_truncated: false,
+  work: {
+    state: 'unknown',
+    by_status: {},
+    blocked: 0,
+    awaiting_review: 0,
+    review_held: 0,
+    held_codes: {},
+    last_activity_at: null,
+    state_source: 'derived from Kanban task statuses'
+  },
+  manager_status: {
+    profile: 'manager-a',
+    subscription: { state: 'missing', matching: 0, foreign: 0, wake_mode: false },
+    owner: { state: 'unverified', code: 'session_owner_unverified' },
+    wake: { state: 'unconfirmed', code: 'ensured_not_awake' },
+    verified: false
+  },
+  membership,
+  final_report: { state: 'none', count: 0, delivered_count: 0 },
+  unknown_tasks: 0
+})
+
+const SERVER_SNAPSHOT = Math.floor(Date.UTC(2026, 10, 6, 11, 40, 0) / 1000)
+
+/** Fresh mount: new hook state, no recorded query calls, fresh payloads. */
+function mountPage(options = {}) {
+  resetHooks()
+  sdk.resetQueryLog()
+  const dept = refreshDept(options.membership)
+  state.query.list = {
+    data: {
+      schema: 'department-hub/dashboard/v1',
+      source: 'kanban',
+      generated_at: SERVER_SNAPSHOT,
+      board: { available: true },
+      degraded: [],
+      departments: [dept]
+    },
+    isLoading: false,
+    error: null
+  }
+  state.query.detail = {
+    data: {
+      schema: 'department-hub/department/v1',
+      generated_at: SERVER_SNAPSHOT,
+      department: { ...dept, tasks: [], unknown_task_details: [] },
+      events: []
+    },
+    isLoading: false,
+    error: null
+  }
+}
+
+const renderPage = () => {
+  const tree = page.render()
+  return { tree, text: textOf(tree) }
+}
+
+const buttonNode = (tree, label) => nodes(tree).find(n => n.props['aria-label'] === label)
+const refreshStateNode = tree => nodes(tree).find(n => n.props['data-refresh-state'] !== undefined)
+
+// The fake clock also replaces Date.now, so the page's completion stamp is
+// reproducible instead of wall-clock. START has 700 ms so a 600 ms wait always
+// crosses a second boundary — that distinguishes "completion time" from
+// "click time" without depending on the machine's timezone.
+const START = Date.UTC(2026, 10, 6, 11, 45, 3, 700)
+check(
+  'refresh: fake-clock precondition — a 600 ms wait crosses a whole second',
+  clockStamp(START) !== clockStamp(START + 600),
+  `${clockStamp(START)} -> ${clockStamp(START + 600)}`
+)
+const clock = installClock(START)
+
+// ── happy path: scope, in-progress, minimum duration, confirmation ─────────
+mountPage()
+state.fetchDelays = { detail: 400 } // the detail is slower than the list
+let refreshed = renderPage()
+let refreshNode = buttonNode(refreshed.tree, 'Refresh')
+check('refresh: the header exposes a labelled Refresh control', Boolean(refreshNode) && typeof refreshNode.props.onClick === 'function')
+
+const pendingRefresh = refreshNode.props.onClick()
+refreshed = renderPage()
+refreshNode = buttonNode(refreshed.tree, 'Refresh')
+check(
+  'refresh: one click refetches the list and the open department detail (prefix match)',
+  state.refetches.length === 1 &&
+    JSON.stringify(state.refetches[0].matched.map(key => key.join('|')).sort()) ===
+      JSON.stringify(['department-hub|departments', 'department-hub|department|ops'].sort()),
+  JSON.stringify(state.refetches)
+)
+check(
+  'refresh: the click sends exactly one batch of requests',
+  state.refetchCalls === 1,
+  String(state.refetchCalls)
+)
+check(
+  'refresh: both queries were really fetched (not just the list)',
+  JSON.stringify([...new Set(state.fetches.map(entry => entry.box))].sort()) === JSON.stringify(['detail', 'list']),
+  JSON.stringify(state.fetches.map(entry => entry.box))
+)
+check(
+  'refresh: the button shows the in-progress label on the same render',
+  Boolean(refreshNode) && refreshed.text.includes('Refreshing…'),
+  refreshed.text.slice(0, 160)
+)
+check('refresh: the in-progress button is disabled', Boolean(refreshNode) && refreshNode.props.disabled === true)
+check('refresh: the in-progress button is aria-busy', Boolean(refreshNode) && refreshNode.props['aria-busy'] === 'true')
+check(
+  'refresh: the in-progress state is announced politely in the header',
+  Boolean(refreshStateNode(refreshed.tree)) &&
+    refreshStateNode(refreshed.tree).props['aria-live'] === 'polite' &&
+    refreshStateNode(refreshed.tree).props['data-refresh-state'] === 'refreshing'
+)
+
+await advance(100)
+refreshed = renderPage()
+check(
+  'refresh: still in progress at 100 ms while the detail fetch is pending',
+  refreshed.text.includes('Refreshing…') && buttonNode(refreshed.tree, 'Refresh').props.disabled === true
+)
+await advance(499) // t = 599 ms — both fetches are done, the floor is not
+refreshed = renderPage()
+check(
+  'refresh: still in progress at 599 ms even though both fetches finished',
+  refreshed.text.includes('Refreshing…'),
+  refreshed.text.slice(0, 160)
+)
+check(
+  'refresh: the 600 ms floor is not satisfied by the fetch alone',
+  refreshed.text.includes('Refreshing…') && !refreshed.text.includes('Updated '),
+  refreshed.text.slice(0, 200)
+)
+await advance(1) // t = 600 ms
+await pendingRefresh
+refreshed = renderPage()
+const doneNode = buttonNode(refreshed.tree, 'Refresh')
+check('refresh: the button is restored at 600 ms', Boolean(doneNode) && doneNode.props.disabled !== true)
+check(
+  'refresh: completion reads Updated <completion time>',
+  refreshed.text.includes(`Updated ${clockStamp(START + 600)}`),
+  refreshed.text.slice(0, 240)
+)
+check(
+  'refresh: the confirmation is the completion time, not the click time',
+  !refreshed.text.includes(`Updated ${clockStamp(START)}`),
+  refreshed.text.slice(0, 240)
+)
+const doneState = refreshStateNode(refreshed.tree)
+check(
+  'refresh: the confirmation is a polite live region next to the snapshot',
+  Boolean(doneState) &&
+    doneState.props['aria-live'] === 'polite' &&
+    doneState.props.role === 'status' &&
+    doneState.props['data-refresh-state'] === 'done'
+)
+check(
+  'refresh: the confirmation is stronger than the grey snapshot text, not colour-only',
+  Boolean(doneState) && String(doneState.props.className).includes('text-(--ui-text-secondary)'),
+  doneState && doneState.props.className
+)
+await advance(2999) // t = 3599 ms
+check('refresh: the confirmation is still visible at 2999 ms', renderPage().text.includes('Updated '))
+await advance(1) // t = 3600 ms
+check('refresh: the confirmation is gone at 3000 ms', !renderPage().text.includes('Updated '))
+check('refresh: no confirmation is left behind', !renderPage().text.includes('Refreshing…'))
+
+// ── double click: a second press must not send a second batch ───────────────
+mountPage()
+state.fetchDelays = { detail: 400 }
+refreshed = renderPage()
+const firstClick = buttonNode(refreshed.tree, 'Refresh').props.onClick()
+refreshed = renderPage()
+buttonNode(refreshed.tree, 'Refresh').props.onClick() // clicked again while busy
+check(
+  'refresh: pressing again while in progress sends no second batch',
+  state.refetchCalls === 1 && state.refetches.length === 1,
+  `calls=${state.refetchCalls} batches=${state.refetches.length}`
+)
+await advance(600)
+await firstClick
+check(
+  'refresh: the double click still finishes once',
+  buttonNode(renderPage().tree, 'Refresh').props.disabled !== true
+)
+
+// ── failure path: reported from query state, never stuck ───────────────────
+mountPage()
+state.failBoxes = new Set(['detail'])
+refreshed = renderPage()
+const failingClick = buttonNode(refreshed.tree, 'Refresh').props.onClick()
+await advance(600)
+await failingClick
+refreshed = renderPage()
+check(
+  'refresh: a failing detail refetch is reported to the user',
+  refreshed.text.includes('Refresh failed — showing the last snapshot'),
+  refreshed.text.slice(0, 240)
+)
+check(
+  'refresh: the failure is not presented as a success',
+  !refreshed.text.includes('Updated ') && !refreshed.text.includes('Refreshing…')
+)
+check(
+  'refresh: the button is usable again after a failure',
+  buttonNode(refreshed.tree, 'Refresh').props.disabled !== true
+)
+check(
+  'refresh: the failure still refetched both queries',
+  state.refetches.length === 1 && state.refetches[0].matched.length === 2,
+  JSON.stringify(state.refetches)
+)
+await advance(5000)
+check(
+  'refresh: the failure message stays until the next manual refresh',
+  renderPage().text.includes('Refresh failed — showing the last snapshot')
+)
+
+// same for a failing LIST refetch (the other half of "any one failure")
+mountPage()
+state.failBoxes = new Set(['list'])
+refreshed = renderPage()
+const listFailClick = buttonNode(refreshed.tree, 'Refresh').props.onClick()
+await advance(600)
+await listFailClick
+check(
+  'refresh: a failing list refetch is reported to the user',
+  renderPage().text.includes('Refresh failed — showing the last snapshot')
+)
+check('refresh: a failing list refetch never leaves Refreshing… on screen', !renderPage().text.includes('Refreshing…'))
+
+// hardening only: if a future implementation rejects instead of resolving, the
+// page must still recover. (Real v5 resolves — see the probe in the report.)
+mountPage()
+state.refetchThrows = true
+refreshed = renderPage()
+// `.catch` here only keeps an un- catching implementation (the base version)
+// from turning into an unhandled rejection; the page itself must not rely on it.
+const throwClick = Promise.resolve(buttonNode(refreshed.tree, 'Refresh').props.onClick()).catch(() => {})
+await advance(600)
+await throwClick
+refreshed = renderPage()
+check(
+  'refresh: a rejecting refetch is caught and still restores the button',
+  refreshed.text.includes('Refresh failed — showing the last snapshot') &&
+    buttonNode(refreshed.tree, 'Refresh').props.disabled !== true
+)
+sdk.resetQueryLog()
+
+// ── background polling must never show the manual-refresh notices ──────────
+mountPage()
+refreshed = renderPage()
+const quietClick = buttonNode(refreshed.tree, 'Refresh').props.onClick()
+await advance(600)
+await quietClick
+await advance(3000) // let the confirmation expire
+const beforePoll = renderPage()
+check('refresh: the confirmation expired before the poll check', !beforePoll.text.includes('Updated '))
+state.query.list = {
+  ...state.query.list,
+  data: { ...state.query.list.data, generated_at: SERVER_SNAPSHOT + 10 }
+}
+const afterPoll = renderPage()
+check(
+  'refresh: a background poll updates the snapshot line',
+  afterPoll.text.includes('snapshot') && afterPoll.text !== beforePoll.text
+)
+check(
+  'refresh: a background poll never shows Refreshing… or Updated',
+  !afterPoll.text.includes('Refreshing…') && !afterPoll.text.includes('Updated '),
+  afterPoll.text.slice(0, 200)
+)
+await advance(10000)
+check(
+  'refresh: ten more seconds of polling still show no manual notice',
+  !renderPage().text.includes('Refreshing…') && !renderPage().text.includes('Updated ')
+)
+
+// ── zh-Hant: the same three states, resolved by the real resolver ──────────
+setLocale('zh-hant')
+mountPage()
+refreshed = renderPage()
+const zhStartedAt = Date.now()
+const zhClick = buttonNode(refreshed.tree, '重新整理').props.onClick()
+refreshed = renderPage()
+check(
+  'refresh[zh-hant]: the in-progress label is 更新中…',
+  refreshed.text.includes('更新中…'),
+  refreshed.text.slice(0, 160)
+)
+check(
+  'refresh[zh-hant]: the in-progress button is disabled',
+  buttonNode(refreshed.tree, '重新整理').props.disabled === true
+)
+await advance(600)
+await zhClick
+refreshed = renderPage()
+check(
+  'refresh[zh-hant]: completion reads 已更新 <time>',
+  refreshed.text.includes(`已更新 ${clockStamp(zhStartedAt + 600)}`),
+  refreshed.text.slice(0, 240)
+)
+setLocale('en')
+mountPage()
+state.failBoxes = new Set(['list'])
+refreshed = renderPage()
+const zhFail = buttonNode(refreshed.tree, 'Refresh').props.onClick()
+await advance(600)
+await zhFail
+setLocale('zh-hant')
+check(
+  'refresh[zh-hant]: the failure message is translated',
+  renderPage().text.includes('更新失敗——顯示最後一次快照'),
+  renderPage().text.slice(0, 240)
+)
+check(
+  'refresh[zh-hant]: no raw refreshState. key is rendered',
+  !renderPage().text.includes('refreshState.'),
+  renderPage().text.slice(0, 240)
+)
+setLocale('en')
+
+// ── no regression in this payload: the four strings fixed earlier ──────────
+mountPage()
+refreshed = renderPage()
+for (const expected of ['Unknown', 'not subscribed', 'unverified (session_owner_unverified)', 'unconfirmed (ensured_not_awake)']) {
+  check(`refresh: the earlier i18n fix still renders ${JSON.stringify(expected)}`, refreshed.text.includes(expected))
+}
+check(
+  'refresh: the header still reports the server snapshot',
+  refreshed.text.includes('snapshot ') && refreshed.text.includes('Server snapshot')
+)
+
+// ── membership sentence appears once (it used to appear twice) ─────────────
+mountPage()
+check(
+  'membership: the membership sentence is rendered exactly once',
+  countOf(renderPage().text, 'membership: unbound · explicit bindings 0') === 1,
+  `count=${countOf(renderPage().text, 'membership: unbound · explicit bindings 0')}`
+)
+check(
+  'membership: the membership state is still visible',
+  renderPage().text.includes('membership: unbound · explicit bindings 0')
+)
+mountPage({ membership: { state: 'membership_changed', rebind_required: true, explicit_bindings: 1 } })
+refreshed = renderPage()
+check(
+  'membership: a rebind-required state still shows its warning',
+  countOf(refreshed.text, 'Membership moved or no longer resolves') === 1,
+  `count=${countOf(refreshed.text, 'Membership moved or no longer resolves')}`
+)
+check(
+  'membership: a rebind-required state keeps its machine-readable state',
+  refreshed.text.includes('membership: membership_changed · explicit bindings 1')
+)
+check(
+  'membership: the rebind warning is a status region',
+  nodes(refreshed.tree).some(n => n.props.role === 'status' && String(n.props.children).includes('Membership moved'))
+)
+
+setLocale('zh-hant')
+mountPage()
+check(
+  'membership[zh-hant]: the membership sentence is rendered exactly once',
+  countOf(renderPage().text, '成員綁定：unbound · 明示綁定 0 筆') === 1,
+  `count=${countOf(renderPage().text, '成員綁定：unbound · 明示綁定 0 筆')}`
+)
+mountPage({ membership: { state: 'membership_changed', rebind_required: true, explicit_bindings: 1 } })
+check(
+  'membership[zh-hant]: the rebind warning and the state line both stay readable',
+  renderPage().text.includes('成員綁定：membership_changed · 明示綁定 1 筆') &&
+    renderPage().text.includes('成員綁定已移動或無法解析')
+)
+setLocale('en')
+
+clock.uninstall()
 
 if (failures.length) {
   console.log(`\n${failures.length} FAILED`)

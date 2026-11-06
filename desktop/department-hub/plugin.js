@@ -31,6 +31,7 @@
 import {
   host,
   useQuery,
+  useQueryClient,
   usePluginI18n,
   ROUTES_AREA,
   SIDEBAR_NAV_AREA,
@@ -556,13 +557,16 @@ function DetailView({ deptId, t, ctx }) {
         ]
       }),
       jsx(ManagerStatus, { status: dept.manager_status, t }),
-      dept.membership && dept.membership.state !== 'verified'
+      // Only the rebind warning lives in the banner: it says something the meta
+      // row below cannot ("re-run department_bind"). When membership is merely
+      // non-verified the banner used to repeat the meta row's sentence word for
+      // word; the meta row is now the single place that sentence appears, and
+      // the state / explicit-binding count is never lost.
+      dept.membership && dept.membership.state !== 'verified' && dept.membership.rebind_required
         ? jsx('div', {
             role: 'status',
             className: 'rounded border border-(--ui-stroke-secondary) px-2 py-1 text-[0.6875rem] text-(--ui-text-secondary)',
-            children: dept.membership.rebind_required
-              ? t('rebindBanner')
-              : t('membershipLine', dept.membership.state, String(dept.membership.explicit_bindings || 0))
+            children: t('rebindBanner')
           })
         : null,
       jsxs('div', {
@@ -785,8 +789,36 @@ function CreatePanel({ t, ctx, onClose }) {
 
 // ── page ────────────────────────────────────────────────────────────────────
 
+// Refresh feedback constants. A click has to look like it did something even
+// when the backend answers in a few milliseconds — otherwise the button reads
+// as dead, which is exactly what "I pressed Refresh and nothing happened"
+// meant. 600 ms is the minimum visible in-progress time; the confirmation
+// stays readable for 3 s.
+const MIN_REFRESH_MS = 600
+const CONFIRM_MS = 3000
+
+/** HH:MM:SS in the operator's local time. The Desktop app runs on their
+ *  machine, so local time is what they can compare to their own clock. */
+function clockLabel(date) {
+  const pad = value => String(value).padStart(2, '0')
+  return `${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`
+}
+
+/** TanStack Query v5 does NOT reject `refetchQueries()` when a fetch fails: it
+ *  resolves and reports the outcome in query state. Measured against
+ *  @tanstack/query-core 5.104.1 — `refetchQueries()` resolved to `undefined`
+ *  while the matched query's `state.status` was 'error'. A try/catch alone can
+ *  therefore never detect a refresh failure; the failure has to be read from
+ *  the cache. */
+function refreshFailed(queryClient) {
+  const cache = typeof queryClient.getQueryCache === 'function' ? queryClient.getQueryCache() : null
+  if (!cache || typeof cache.findAll !== 'function') return false
+  return cache.findAll({ queryKey: ['department-hub'] }).some(entry => Boolean(entry.state) && entry.state.status === 'error')
+}
+
 function DepartmentHubPage({ ctx }) {
   const t = usePluginI18n(ID)
+  const queryClient = useQueryClient()
   const query = useQuery({
     queryKey: ['department-hub', 'departments'],
     queryFn: () => ctx.rest('/departments'),
@@ -796,10 +828,64 @@ function DepartmentHubPage({ ctx }) {
   })
   const [selected, setSelected] = React.useState(null)
   const [creating, setCreating] = React.useState(false)
+  // Manual-refresh state only. The 10 s refetchInterval never touches it, so a
+  // background poll can never flash "Refreshing…" or claim "Updated".
+  const [refresh, setRefresh] = React.useState({ status: 'idle', at: null })
+  // A ref, not the state value, is the click guard: two events in the same tick
+  // would both read the pre-update state and send two batches.
+  const busy = React.useRef(false)
+  const hideTimer = React.useRef(null)
+
+  const refreshing = refresh.status === 'refreshing'
+
+  const startRefresh = async () => {
+    if (busy.current) return
+    busy.current = true
+    if (hideTimer.current) {
+      clearTimeout(hideTimer.current)
+      hideTimer.current = null
+    }
+    setRefresh({ status: 'refreshing', at: null })
+    const startedAt = Date.now()
+    let failed = false
+    try {
+      // One prefix match covers the department list AND the open department
+      // detail (['department-hub','departments'] and
+      // ['department-hub','department',<id>]) and resolves only once every
+      // match has settled, so "done" means both finished.
+      await queryClient.refetchQueries({ queryKey: ['department-hub'] })
+    } catch (_err) {
+      // Not how v5 reports a failed fetch (it resolves), but never leave the
+      // button stuck if that ever changes.
+      failed = true
+    }
+    if (!failed) failed = refreshFailed(queryClient)
+    const elapsed = Date.now() - startedAt
+    if (elapsed < MIN_REFRESH_MS) {
+      await new Promise(resolve => setTimeout(resolve, MIN_REFRESH_MS - elapsed))
+    }
+    busy.current = false
+    if (failed) {
+      // Sticky: a failure that disappears after 3 s is a failure the operator
+      // never sees. The next manual refresh clears it.
+      setRefresh({ status: 'failed', at: null })
+      return
+    }
+    setRefresh({ status: 'done', at: new Date(Date.now()) })
+    hideTimer.current = setTimeout(() => setRefresh({ status: 'idle', at: null }), CONFIRM_MS)
+  }
 
   const departments = query.data ? query.data.departments || [] : []
   const degraded = query.data ? query.data.degraded || [] : []
   const activeId = selected || (departments.length ? departments[0].id : null)
+  const refreshNotice =
+    refresh.status === 'refreshing'
+      ? t('refreshState.running')
+      : refresh.status === 'done'
+        ? t('refreshState.updated', clockLabel(refresh.at))
+        : refresh.status === 'failed'
+          ? t('refreshState.failed')
+          : ''
 
   const header = jsxs('div', {
     className: 'flex flex-wrap items-center gap-2 border-b border-(--ui-stroke-secondary) px-3 py-2',
@@ -816,14 +902,26 @@ function DepartmentHubPage({ ctx }) {
             ? t('loading')
             : ''
       }),
+      // Result of the LAST manual refresh. Always present as a polite live
+      // region so the message is announced; empty (and invisible) when idle.
+      // The text itself carries the state — never colour alone.
+      jsx('span', {
+        role: 'status',
+        'aria-live': 'polite',
+        'data-refresh-state': refresh.status,
+        className: 'text-[0.6875rem] font-medium text-(--ui-text-secondary)',
+        children: refreshNotice
+      }),
       jsxs('div', {
         className: 'ml-auto flex items-center gap-2',
         children: [
           jsx(Button, {
             variant: 'secondary',
             'aria-label': t('refresh'),
-            onClick: () => query.refetch(),
-            children: t('refresh')
+            'aria-busy': refreshing ? 'true' : undefined,
+            disabled: refreshing,
+            onClick: () => startRefresh(),
+            children: refreshing ? t('refreshState.running') : t('refresh')
           }),
           jsx(Button, {
             'aria-label': t('newDepartment'),
@@ -925,6 +1023,13 @@ const EN = {
   retry: 'Retry',
   newDepartment: 'New department',
   refreshedAt: when => `snapshot ${when}`,
+  // Nested on purpose — see the `subscription` group below. A flat
+  // 'refreshState.running' key would render literally in the real Desktop.
+  refreshState: {
+    running: 'Refreshing…',
+    updated: when => `Updated ${when}`,
+    failed: 'Refresh failed — showing the last snapshot'
+  },
   snapshotLine: when => `Server snapshot: ${when}. Status is an observed snapshot; it is not a live push.`,
   footerNote:
     'Read-only view. A Hermes profile is a routing/identity binding, not a security sandbox. No credentials or transcripts are shown.',
@@ -1085,6 +1190,12 @@ const ZH_HANT = {
   retry: '重試',
   newDepartment: '新增部門',
   refreshedAt: when => `快照 ${when}`,
+  // 巢狀是必要的：Desktop 解析器只走巢狀物件，扁平點號鍵會被當成原始鍵名顯示。
+  refreshState: {
+    running: '更新中…',
+    updated: when => `已更新 ${when}`,
+    failed: '更新失敗——顯示最後一次快照'
+  },
   snapshotLine: when => `伺服器快照：${when}。狀態是觀測快照，不是即時推播。`,
   footerNote:
     '唯讀檢視。Hermes profile 是路由／身分綁定，不是安全沙箱。不顯示憑證或對話內容。',
