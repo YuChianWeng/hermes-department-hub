@@ -1,0 +1,12 @@
+# command: HERMES_HOME=/home/ubuntu/.hermes/profiles/medium-worker hermes plugins doctor . --ci
+# recorded_at_asia_taipei: 2026-11-06T15:14:14+08:00
+---- output ----
+Plugin Doctor: /home/ubuntu/projects/hermes-department-orchestrator
+  manifest: department-hub 0.5.0 (standalone)
+  OK: runtime discovery, manifest parsing, import, and registration passed
+  registrations: 7 tool(s), 2 hook(s)
+
+real	0m13.739s
+user	0m6.183s
+sys	0m6.046s
+exit_code: 0

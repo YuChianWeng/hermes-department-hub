@@ -1,0 +1,109 @@
+# command: HERMES_HOME=/home/ubuntu/.hermes/profiles/medium-worker hermes plugins validate /home/ubuntu/.hermes/kanban/workspaces/t_55b1926c/staging-plugin --json
+# subject: clean staging copy of the integrated plugin (git archive HEAD, .research removed; identical bytes to the 55 committed product files)
+# reason: the validator's security scan walks every file under the target dir; given '.' it also walks .research/ (28 361 files / 823 MB of unrelated lab archives) and does not finish inside any practical budget (see plugin-validate-direct.log)
+# recorded_at_asia_taipei: 2026-11-06T15:14:45+08:00
+---- output ----
+{
+  "ok": true,
+  "checks": [
+    {
+      "name": "manifest",
+      "ok": true,
+      "detail": "plugin.yaml parses"
+    },
+    {
+      "name": "manifest fields",
+      "ok": true,
+      "detail": "name, version, description present"
+    },
+    {
+      "name": "requires_hermes",
+      "ok": true,
+      "detail": "spec '>=0.22.6' parses"
+    },
+    {
+      "name": "config schema",
+      "ok": true,
+      "detail": "shape valid"
+    },
+    {
+      "name": "requires_env",
+      "ok": true,
+      "detail": "all entries UPPER_SNAKE"
+    },
+    {
+      "name": "oauth",
+      "ok": true,
+      "detail": "not declared"
+    },
+    {
+      "name": "loadable",
+      "ok": true,
+      "detail": "entry: __init__.py"
+    },
+    {
+      "name": "python dependencies",
+      "ok": true,
+      "detail": "none declared"
+    },
+    {
+      "name": "capability probe",
+      "ok": true,
+      "detail": "register() ran in isolation"
+    },
+    {
+      "name": "declared tools",
+      "ok": true,
+      "detail": "matches registrations"
+    },
+    {
+      "name": "declared hooks",
+      "ok": true,
+      "detail": "matches registrations"
+    },
+    {
+      "name": "declared middleware",
+      "ok": true,
+      "detail": "matches registrations"
+    },
+    {
+      "name": "built-in tool collisions",
+      "ok": true,
+      "detail": "no collisions"
+    },
+    {
+      "name": "security scan",
+      "ok": true,
+      "detail": "safe"
+    },
+    {
+      "name": "no core override",
+      "ok": true,
+      "detail": "no runtime rebinds of Hermes core"
+    },
+    {
+      "name": "desktop surface",
+      "ok": true,
+      "detail": "stays inside the plugin SDK surface"
+    }
+  ],
+  "warnings": [],
+  "isolation": {
+    "verdict": "host",
+    "host_ready": true,
+    "reasons": [],
+    "notes": [
+      "dashboard backend API is served through the plugin host (buffered responses)"
+    ],
+    "ctx_methods": [
+      "register_department",
+      "register_hook",
+      "register_tool"
+    ]
+  }
+}
+
+real	0m8.738s
+user	0m7.756s
+sys	0m0.283s
+exit_code: 0
