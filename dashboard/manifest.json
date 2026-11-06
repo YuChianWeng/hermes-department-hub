@@ -1,0 +1,11 @@
+{
+  "name": "department-hub",
+  "label": "Department Hub",
+  "description": "Read-only department management backend for the Department Hub desktop page (GET /api/plugins/department-hub/*). No web-dashboard bundle ships, so the tab is hidden.",
+  "version": "0.3.0",
+  "api": "plugin_api.py",
+  "tab": {
+    "path": "/department-hub",
+    "hidden": true
+  }
+}

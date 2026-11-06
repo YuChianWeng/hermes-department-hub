@@ -1,0 +1,147 @@
+# command: /home/ubuntu/.nvm/versions/node/v22.22.2/bin/node tests/js/run.mjs
+# recorded_at_utc: 2026-11-06T06:55:10+00:00
+# recorded_at_asia_taipei: 2026-11-06T14:55:10+08:00
+# cwd: /home/ubuntu/.hermes/profiles/medium-worker/cache/scratch/m2v5-candidate-run
+# note: SUPPLEMENTARY v5 candidate: Desktop SDK surface mock (imports rewritten to tests/js/mocks; NOT a real Desktop render)
+---- output ----
+ok   plugin id is department-hub
+ok   plugin ships opt-in
+ok   registers a full page route
+ok   registers a sidebar nav row
+ok   registers a palette command
+ok   ships en + zh-hant bundles
+ok   locale bundles have identical keys
+ok   zh-hant really is Traditional Chinese
+ok   every literal t() key exists in en
+ok   every literal t() key exists in zh-hant
+ok   page title renders
+ok   marks the surface read-only
+ok   names Kanban as the source
+ok   shows the department
+ok   shows the manager binding
+ok   renders Kanban status as text
+ok   renders blocked count as text
+ok   renders the final-report state
+ok   renders held review count as text
+ok   states it is a snapshot, not a live push
+ok   labels profile-vs-sandbox honestly
+ok   department list is a labelled listbox
+ok   department option exposes aria-selected
+ok   department option is keyboard focusable
+ok   arrow keys are handled on the option
+ok   detail shows the card title
+ok   detail shows review PASS with run id
+ok   detail shows the artifact sha prefix
+ok   detail shows a stale acceptance as stale
+ok   detail does not call the held revision accepted
+ok   detail shows the blocking reason verbatim
+ok   detail shows the durable event log
+ok   detail shows the server snapshot line
+ok   detail shows a held review as held
+ok   detail shows the held code
+ok   held review is never rendered as a pass
+ok   detail shows a membership rebind warning
+ok   detail shows unknown delivery instead of a success
+ok   detail shows the delivery identity conflict with its rule
+ok   detail shows the actual stored identity in canonical form
+ok   manager subscription is shown as subscribed
+ok   manager owner is explicitly unverified
+ok   manager wake is explicitly unconfirmed
+ok   manager status is three separate labels
+ok   accept-held inactive_department is rendered with its code
+ok   accept-held inactive_department appears as held:
+ok   accept-held manager_mismatch is rendered with its code
+ok   accept-held manager_mismatch appears as held:
+ok   accept-held repair_loop_exhausted is rendered with its code
+ok   accept-held repair_loop_exhausted appears as held:
+ok   accept-held review_rejected is rendered with its code
+ok   accept-held review_rejected appears as held:
+ok   accept-held reviewer_not_independent is rendered with its code
+ok   accept-held reviewer_not_independent appears as held:
+ok   accept-held reviewer_not_requested is rendered with its code
+ok   accept-held reviewer_not_requested appears as held:
+ok   accept-held implementer_not_member is rendered with its code
+ok   accept-held implementer_not_member appears as held:
+ok   accept-held rejection_unbound is rendered with its code
+ok   accept-held rejection_unbound appears as held:
+ok   accept-held verdict_conflict is rendered with its code
+ok   accept-held verdict_conflict appears as held:
+ok   accept-held review_unproven is rendered with its code
+ok   accept-held review_unproven appears as held:
+ok   accept-held revision_mismatch is rendered with its code
+ok   accept-held revision_mismatch appears as held:
+ok   accept-held no_pass_verdict is rendered with its code
+ok   accept-held no_pass_verdict appears as held:
+ok   accept-held stale_verdict is rendered with its code
+ok   accept-held stale_verdict appears as held:
+ok   accept-held verdict_not_final is rendered with its code
+ok   accept-held verdict_not_final appears as held:
+ok   accept-held artifact_declaration_conflict is rendered with its code
+ok   accept-held artifact_declaration_conflict appears as held:
+ok   accept-held artifact_unbound is rendered with its code
+ok   accept-held artifact_unbound appears as held:
+ok   accept-held artifact_mismatch is rendered with its code
+ok   accept-held artifact_mismatch appears as held:
+ok   accept-held review_generation_stale is rendered with its code
+ok   accept-held review_generation_stale appears as held:
+ok   accept-held event_quarantined is rendered with its code
+ok   accept-held event_quarantined appears as held:
+ok   accept-held acceptance_not_active is rendered with its code
+ok   accept-held acceptance_not_active appears as held:
+ok   no accept-held card renders as review PASS
+ok   no accept-held card renders as ready to deliver
+ok   delivery-held acceptance_missing is rendered with its code
+ok   delivery-held acceptance_stale is rendered with its code
+ok   delivery-held delivery_identity_conflict is rendered with its code
+ok   delivery-held department_changed is rendered with its code
+ok   delivery-held effect_transaction_nested is rendered with its code
+ok   delivery-held ownership_changed is rendered with its code
+ok   delivery-held ownership_unknown is rendered with its code
+ok   delivery-held ownership_unverified is rendered with its code
+ok   delivery-held board_unknown is rendered with its code
+ok   delivery-held escalation_identity_conflict is rendered with its code
+ok   delivery-held no_delivery is rendered with its code
+ok   delivery-held report_too_large is rendered with its code
+ok   a delivery hold is never rendered as ready
+ok   a delivery hold is never rendered as delivered
+ok   ready state is labelled as manager-accepted evidence
+ok   ready state names the review run
+ok   ready state says the SHA is worker-declared
+ok   ready state carries the no-byte-attestation caveat
+ok   ready state is not rendered as delivered
+ok   ready text never claims reviewer verification
+ok   a confirmed row renders as delivered
+ok   the stored identity is shown in the canonical four-field form
+ok   already-delivered wording is explicit and says no duplicate was created
+ok   the stored report summary is rendered
+ok   the report schema is rendered
+ok   the report generation is rendered
+ok   an already-delivered task is not offered as ready
+ok   second generation is held with the identity code
+ok   second generation explains the conflict and that the report is preserved
+ok   second generation keeps the stored identity visible
+ok   second generation shows the current identity separately
+ok   second generation is never offered as ready
+ok   delivered reports section is visible
+ok   delivered section names the plugin SQLite source, not a board comment
+ok   delivered section shows the delivery time
+ok   delivered section shows the canonical stored identity
+ok   delivered summary is still readable when the board read fails
+ok   summary is rendered as plain text, never as HTML
+ok   no HTML element is created from the sentinel
+ok   oversized report shows report_too_large
+ok   oversized report content is not rendered
+ok   unknown delivery keeps its code
+ok   unknown delivery is marked not-resent
+ok   dead-letter keeps its code
+ok   dead-letter is rendered as a delivery hold
+ok   in-flight is not rendered as delivered
+ok   read failure is an explicit error state
+ok   read failure never renders an empty-list message
+ok   empty configuration is explained
+ok   new-department control is labelled
+
+ALL PASS
+---- end ----
+exit_code: 0
+finished_at_utc: 2026-11-06T06:55:10+00:00

@@ -1,0 +1,64 @@
+== M2-R 複跑：環境與內容 manifest ==
+recorded_at_utc: 2026-11-06T06:51:40+00:00
+recorded_at_asia_taipei: 2026-11-06T14:51:40+08:00
+cwd: /home/ubuntu/projects/hermes-department-orchestrator
+host: Linux-5.15.0-1081-oracle-aarch64-with-glibc2.31 / aarch64
+user: id -un -> rc=0: ubuntu
+
+== 工具版本 ==
+/home/ubuntu/.hermes/hermes-agent/venv/bin/python --version -> rc=0: Python 3.11.15
+/home/ubuntu/.hermes/hermes-agent/venv/bin/python -m pytest --version -> rc=0: pytest 9.0.2
+/home/ubuntu/.local/bin/hermes --version -> rc=0: Hermes Agent v0.23.0 (2026.9.24) · stable · local 2bd378ed1b8d
+Install directory: /home/ubuntu/.hermes/hermes-agent
+Install method: git
+Python: 3.14.9
+OpenAI SDK: 2.54.0
+Up to date
+node --version -> rc=0: v10.19.0
+/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node --version -> rc=0: v22.22.2
+/home/ubuntu/.hermes/tools/node-26.12.1-linux-arm64/bin/node --version -> rc=0: v26.12.1
+
+== 專案檔案 SHA256（排除 .research / .git / __pycache__ / .pytest_cache / tests-js-.tmp）==
+838b105ded3d289427104fc4b0da81538e58e4e7c64f63c76bbcf1d2fd26c936  README.md
+57e794a58b9cc9fc7235f63054d93f8900da800991d05da68319249a38302107  __init__.py
+a8f3d797be0583affe208ae4aff9729e581a5e895efb718a2ac963ac79e63a00  conftest.py
+6017422602a00cc9ca7605949027156911dc38225d085b1f6679d83050b1280c  dashboard/manifest.json
+a9a64460436b21ad2cbb4a099f23775036fcd892b5fdf3408e3f516fd545dcd5  dashboard/plugin_api.py
+aed65779508d5a03c109603d9d5b15eb88dab5bf8775fcea981b0ee3fe5f1e62  department_lib/__init__.py
+027fd0b6eb0b39aee74c5ae5ba8b91ca1fbdb0e6b18f3fb5affed960ec7beee5  department_lib/acceptance.py
+5f4333ce54f12b46905903ce6e39374fb627e994d148cad910dfaecbde3d2b65  department_lib/board.py
+f3308ed674a9aa02f5fba27795eeca61f703ce7e9a75467bca960bf7609e2094  department_lib/config.py
+749b975f9c5c7676ba4b846dafd07be8523270f1b7845d9ce0fd4f9f4b1250b5  department_lib/dashboard.py
+8160f10139ed019cd696e0ff927f96ab21c030aa3184c399d279de5b4794b509  department_lib/delivery.py
+17eb06e1ed544a2100e62a81c48dbb61a99ac8ba0ee9848b38971e9ab216635f  department_lib/kanban_cli.py
+910179cd68ffe7c191d893eaddfbfab7a5f7d26ee7719c1d7f7595811a29642a  department_lib/kanban_db_source.py
+8e80380f86d7e089abf63614b269aca41787157fc6ef72c7589f4e33543b7f53  department_lib/kanban_effects.py
+763f7b4c3e4904f9a7beaedb063d6f36f3e031ef4f2d52a7041f94edf37393a7  department_lib/models.py
+d3ba494891093e259f452bd359638f3da36f971cf2ba8be4e4ee6230872f8401  department_lib/orchestrator.py
+c293f0a3d6505d1772320dbd30d004856c05fa6fbbe865c6edae6c35b4ab3b1b  department_lib/routing.py
+54b8cad96b175956b0207752f3488fbab94474a3cf51e54d38f9368570f0d247  department_lib/store.py
+32679047b70632ee55f9633161c89b47a864b3f401d7a8a419ed1d15dd30634d  desktop/department-hub/plugin.js
+c4f42a2077aef45a2acc391a408a4edbbdc33f109a63b7c0bb1b53a039d815f3  docs/m2-desktop.md
+eb13a8624e4d47061f2225ee1a05d1fd1132c45039d4af2d71761a6d16d11aa8  plugin.yaml
+d2b899075baf12bdc0dc82d6576874f74780e2cd89cc7d586bc36376f88a07d0  tests/__init__.py
+77d9e02e561355be4f001b939a110fc52f716c9821ecf72ecaaf14486e9648e3  tests/js/mocks/jsx-runtime.mjs
+44d885c63ceaa84b5adb2190faae9d21619001fca8220c7d02528757c06b7cb7  tests/js/mocks/react.mjs
+c0e459ebdcc4b865f0c7878050994e256c0e3ee33012eabe12c44d6d5ca25ace  tests/js/mocks/sdk.mjs
+2e2da5bc3a4da3f7280e0ec5911801b3db0b3f692760709c8c2484a8219f047d  tests/js/run.mjs
+fde2364305574ad1716592f964cbccf2d84786eeace9496eeff23cc68af4e2c5  tests/support.py
+c936164e8330b708ce0d289513e7772361d5620ba7c8cf0782ac1cfdbfb0324e  tests/test_acceptance.py
+eab95e72a5492262d943bf8428e4bd4f8b56a3079c85c3049fa119303ad2d0f9  tests/test_board.py
+5da4feeac2be5bd720ed1f759901e18c044fcd1253c1204aac099236664abfac  tests/test_config.py
+6402dc92541900fa26d10e2510bed2d1e10315c25487c0228cdad1d0509998e3  tests/test_dashboard.py
+bd3100438e2ca62d0b7dff70af8d11ddf3e16c7981ced0260ef6bee337e70c62  tests/test_dashboard_api.py
+16dd7fbce2087411630274e5c4362bed706b5a5e62827bdfdf19d235afb95190  tests/test_delivery.py
+c597a0b976424be1712a17928b84eed1ad58694da8b0b694eb1249d419408c29  tests/test_desktop_plugin.py
+26fe7ed9fcfc846f66ddfcec724f4ea737878f3755ba1ac4939e6ad49893d6ef  tests/test_kanban_db_source.py
+e73c0d50e114ab9b1837d6190333bfb98460a7f3f9b970271bbd7f42c732e351  tests/test_kanban_effects.py
+331edfb91416f30a29a64ccdacc9070e704d70ba18b288f8e13b8aa9290d9af4  tests/test_models.py
+93c6fbd9ada9e8fc3e72e051639fe4d4396c5808e76761489fb7a865b2e0352e  tests/test_orchestrator.py
+0146dac2ca2874769129ef5db77c4de6f31bc13231239c4b3372aacf7ef9fc74  tests/test_plugin_registration.py
+906187788867ef7ee3cf55b90980b34d85013ab921994d07b9ee301380389eb1  tests/test_routing.py
+0e95a79bdd5236e681bb949ef16a5513504c5a29cc00fbc95393203e79f60523  tests/test_store.py
+
+file_count: 41

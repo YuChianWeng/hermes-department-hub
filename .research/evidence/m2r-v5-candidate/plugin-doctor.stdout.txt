@@ -1,0 +1,5 @@
+Plugin Doctor: 
+/home/ubuntu/.hermes/profiles/medium-worker/cache/scratch/m2v5-validate-staging
+  manifest: department-hub 0.5.0 (standalone)
+  OK: runtime discovery, manifest parsing, import, and registration passed
+  registrations: 7 tool(s), 2 hook(s)

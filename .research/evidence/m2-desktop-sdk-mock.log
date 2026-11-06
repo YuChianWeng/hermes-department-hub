@@ -1,0 +1,47 @@
+# M2-R rerun: Desktop SDK surface mock test
+# recorded_at_utc: 2026-11-06T06:50:02+00:00
+# recorded_at_asia_taipei: 2026-11-06T14:50:02+08:00
+# cwd: /home/ubuntu/projects/hermes-department-orchestrator
+# command: /home/ubuntu/.nvm/versions/node/v22.22.2/bin/node tests/js/run.mjs
+# mock mode: YES — @hermes/plugin-sdk, react, react/jsx-runtime are replaced by tests/js/mocks/*; this is NOT a real Desktop render.
+---- output ----
+ok   plugin id is department-hub
+ok   plugin ships opt-in
+ok   registers a full page route
+ok   registers a sidebar nav row
+ok   registers a palette command
+ok   ships en + zh-hant bundles
+ok   locale bundles have identical keys
+ok   zh-hant really is Traditional Chinese
+ok   every literal t() key exists in en
+ok   every literal t() key exists in zh-hant
+ok   page title renders
+ok   marks the surface read-only
+ok   names Kanban as the source
+ok   shows the department
+ok   shows the manager binding
+ok   renders Kanban status as text
+ok   renders blocked count as text
+ok   renders the final-report state
+ok   states it is a snapshot, not a live push
+ok   labels profile-vs-sandbox honestly
+ok   department list is a labelled listbox
+ok   department option exposes aria-selected
+ok   department option is keyboard focusable
+ok   arrow keys are handled on the option
+ok   detail shows the card title
+ok   detail shows review PASS with run id
+ok   detail shows the artifact sha prefix
+ok   detail shows the manager acceptance
+ok   detail shows the blocking reason verbatim
+ok   detail shows the durable event log
+ok   detail shows the server snapshot line
+ok   read failure is an explicit error state
+ok   read failure never renders an empty-list message
+ok   empty configuration is explained
+ok   new-department control is labelled
+
+ALL PASS
+---- end ----
+exit_code: 0
+finished_at_utc: 2026-11-06T06:50:02+00:00

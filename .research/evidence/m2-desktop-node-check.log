@@ -1,0 +1,10 @@
+# command: /home/ubuntu/.nvm/versions/node/v22.22.2/bin/node --check /home/ubuntu/.hermes/profiles/medium-worker/cache/scratch/m2-nodecheck/plugin.mjs
+# recorded_at_utc: 2026-11-06T06:50:25+00:00
+# recorded_at_asia_taipei: 2026-11-06T14:50:25+08:00
+# cwd: /home/ubuntu/projects/hermes-department-orchestrator
+# note: Desktop plugin ESM syntax check; default PATH node is v10 (<18), so the v22 candidate used by tests/test_desktop_plugin.py is invoked explicitly
+---- output ----
+(no stdout/stderr)
+---- end ----
+exit_code: 0
+finished_at_utc: 2026-11-06T06:50:25+00:00

@@ -1,0 +1,242 @@
+FFFFFFFFFFFF                                                             [100%]
+=================================== FAILURES ===================================
+____ Finding1RecoveryStaleGate.test_recovery_does_not_revive_a_stale_intent ____
+
+self = <test_p1_regressions.Finding1RecoveryStaleGate testMethod=test_recovery_does_not_revive_a_stale_intent>
+
+    def test_recovery_does_not_revive_a_stale_intent(self):
+        h = self.h
+        self.assertEqual(h.pass_and_accept().disposition, "applied")
+        self._crash_after_intent()
+        h.publish("fresh-unreviewed")          # new artifact, no review/acceptance
+        gate = h.deliver()
+        self.assertEqual(gate.status, "held", gate.to_dict())
+        rec = h.orch.recover(h.dept.dept_id)
+>       self.assertIn(rec.status, {"held", "superseded"}, rec.to_dict())
+E       AssertionError: 'confirmed' not found in {'held', 'superseded'} : {'status': 'confirmed', 'reason': None, 'detail': {'delivery_id': 'dlv-2cec53e921b0', 'reconciled': True}}
+
+tests/test_p1_regressions.py:161: AssertionError
+_ Finding1RecoveryStaleGate.test_recovery_marks_an_already_sent_effect_as_historical_when_stale _
+
+self = <test_p1_regressions.Finding1RecoveryStaleGate testMethod=test_recovery_marks_an_already_sent_effect_as_historical_when_stale>
+
+    def test_recovery_marks_an_already_sent_effect_as_historical_when_stale(self):
+        h = self.h
+        self.assertEqual(h.pass_and_accept().disposition, "applied")
+        # Let the effect land, then die before the receipt is recorded.
+        original = orchestrator_module.crashpoint
+    
+        def stop(point):
+            if point == "after_effect_before_receipt":
+                raise RuntimeError("synthetic stop after effect")
+    
+        orchestrator_module.crashpoint = stop
+        try:
+            with self.assertRaises(RuntimeError):
+                h.deliver()
+        finally:
+            orchestrator_module.crashpoint = original
+        self.assertEqual(len(h.journal()), 1)
+        h.publish("fresh-unreviewed")
+        rec = h.orch.recover(h.dept.dept_id)
+>       self.assertIn(rec.status, {"held", "superseded"}, rec.to_dict())
+E       AssertionError: 'confirmed' not found in {'held', 'superseded'} : {'status': 'confirmed', 'reason': None, 'detail': {'delivery_id': 'dlv-2cec53e921b0', 'reconciled': True}}
+
+tests/test_p1_regressions.py:186: AssertionError
+___ Finding2UnknownEffect.test_post_write_timeout_is_unknown_and_not_retried ___
+
+self = <test_p1_regressions.Finding2UnknownEffect testMethod=test_post_write_timeout_is_unknown_and_not_retried>
+
+    def test_post_write_timeout_is_unknown_and_not_retried(self):
+        h = self.h
+        self.assertEqual(h.pass_and_accept().disposition, "applied")
+        h.port = TimeoutAfterWritePort(h.tmp / "effects.jsonl", hide_readback=True)
+        h.orch.effect_port = h.port
+        out = h.deliver()
+        self.assertEqual(out.status, "unknown", out.to_dict())
+        self.assertEqual(len(h.journal()), 1)
+        for _ in range(2):
+>           self.assertEqual(h.orch.recover(h.dept.dept_id).status, "unknown")
+E           AssertionError: 'dead_letter' != 'unknown'
+E           - dead_letter
+E           + unknown
+
+tests/test_p1_regressions.py:229: AssertionError
+__________ Finding2UnknownEffect.test_unknown_effect_is_never_resent ___________
+
+self = <test_p1_regressions.Finding2UnknownEffect testMethod=test_unknown_effect_is_never_resent>
+
+    def test_unknown_effect_is_never_resent(self):
+        h = self.h
+        self.assertEqual(h.pass_and_accept().disposition, "applied")
+        h.port.hide_readback = True
+        out = h.deliver()
+        self.assertEqual(out.status, "unknown", out.to_dict())
+        self.assertEqual(len(h.journal()), 1)
+        for _ in range(3):
+            rec = h.orch.recover(h.dept.dept_id)
+>           self.assertEqual(rec.status, "unknown", rec.to_dict())
+E           AssertionError: 'dead_letter' != 'unknown'
+E           - dead_letter
+E           + unknown
+E            : {'status': 'dead_letter', 'reason': 'unreadable_effect', 'detail': {'delivery_id': 'dlv-2cec53e921b0'}}
+
+tests/test_p1_regressions.py:213: AssertionError
+_ Finding3ExactArtifactBinding.test_acceptance_must_name_the_exact_verdict_sha_and_rev _
+
+self = <test_p1_regressions.Finding3ExactArtifactBinding testMethod=test_acceptance_must_name_the_exact_verdict_sha_and_rev>
+
+    def test_acceptance_must_name_the_exact_verdict_sha_and_rev(self):
+        h = self.h
+        h.publish("original")
+        h.request_review()
+        h.verdict("PASS", artifact_sha=sha("original"))
+        wrong = h.accept(artifact_sha=sha("different"))
+>       self.assertEqual(wrong.disposition, "rejected", wrong.to_dict())
+E       AssertionError: 'applied' != 'rejected'
+E       - applied
+E       + rejected
+E        : {'status': 'applied', 'reason': None, 'detail': {'acceptance_id': 'acc-d3fc7cb7cee3'}}
+
+tests/test_p1_regressions.py:248: AssertionError
+_ Finding3ExactArtifactBinding.test_cross_item_verdict_with_identical_bytes_is_rejected _
+
+self = <test_p1_regressions.Finding3ExactArtifactBinding testMethod=test_cross_item_verdict_with_identical_bytes_is_rejected>
+
+    def test_cross_item_verdict_with_identical_bytes_is_rejected(self):
+        h = self.h
+        item2 = h.orch.register_work_item("dept-eng", "t_work2", "work",
+                                          "manager", parents=["t_setup"])
+        h.board.add_task("t_work2", parents=["t_setup"])
+        h.publish("same-bytes", item_id=h.item.item_id)
+        h.publish("same-bytes", item_id=item2.item_id)
+        h.request_review(item_id=h.item.item_id)
+        h.request_review(item_id=item2.item_id)
+        h.verdict("PASS", artifact_sha=sha("same-bytes"), item_id=h.item.item_id)
+        h.verdict("PASS", artifact_sha=sha("same-bytes"), item_id=item2.item_id)
+        foreign = h.store.latest_pass(item2.item_id)
+>       res = h.accept(verdict_id=foreign["verdict_id"],
+                                  ^^^^^^^^^^^^^^^^^^^^^
+                       artifact_sha=sha("same-bytes"), rev=1)
+E       TypeError: 'NoneType' object is not subscriptable
+
+tests/test_p1_regressions.py:278: TypeError
+_ Finding3ExactArtifactBinding.test_mutating_the_recorded_artifact_fails_closed _
+
+self = <test_p1_regressions.Finding3ExactArtifactBinding testMethod=test_mutating_the_recorded_artifact_fails_closed>
+
+    def test_mutating_the_recorded_artifact_fails_closed(self):
+        h = self.h
+        self.assertEqual(h.pass_and_accept("original").disposition, "applied")
+        artifact = h.store.latest_artifact(h.item.item_id)
+        Path(artifact["path"]).write_text("MUTATED AFTER APPROVAL")
+        out = h.deliver()
+>       self.assertEqual(out.status, "held", out.to_dict())
+E       AssertionError: 'confirmed' != 'held'
+E       - confirmed
+E       + held
+E        : {'status': 'confirmed', 'reason': None, 'detail': {'delivery_id': 'dlv-2cec53e921b0'}}
+
+tests/test_p1_regressions.py:289: AssertionError
+______ Finding3ExactArtifactBinding.test_verdict_must_name_the_exact_sha _______
+
+self = <test_p1_regressions.Finding3ExactArtifactBinding testMethod=test_verdict_must_name_the_exact_sha>
+
+    def test_verdict_must_name_the_exact_sha(self):
+        h = self.h
+        h.publish("original")
+        h.request_review()
+        res = h.verdict("PASS", artifact_sha=None)
+>       self.assertEqual(res.disposition, "rejected", res.to_dict())
+E       AssertionError: 'applied' != 'rejected'
+E       - applied
+E       + rejected
+E        : {'status': 'applied', 'reason': None, 'detail': {'verdict_id': 'vrd-f4cd3aceef79', 'verdict': 'PASS'}}
+
+tests/test_p1_regressions.py:263: AssertionError
+__ Finding4UnknownOwner.test_unmapped_session_is_never_admitted_or_completed ___
+
+self = <test_p1_regressions.Finding4UnknownOwner testMethod=test_unmapped_session_is_never_admitted_or_completed>
+
+    def test_unmapped_session_is_never_admitted_or_completed(self):
+        h = self.h
+        res = h.orch.ingest_board_event(h.dept.dept_id, {
+            "external_event_id": "unmapped-event", "task_id": "t_work",
+            "kind": "completed",
+            "subscription": {"notifier_profile": "manager",
+                             "chat_id": "unmapped-session"}})
+>       self.assertEqual(res.disposition, "dead_letter", res.to_dict())
+E       AssertionError: 'admitted' != 'dead_letter'
+E       - admitted
+E       + dead_letter
+E        : {'status': 'admitted', 'reason': None, 'detail': {'external_event_id': 'unmapped-event'}}
+
+tests/test_p1_regressions.py:309: AssertionError
+________ Finding5DetachedReport.test_report_linked_to_setup_cannot_send ________
+
+self = <test_p1_regressions.Finding5DetachedReport testMethod=test_report_linked_to_setup_cannot_send>
+
+    def test_report_linked_to_setup_cannot_send(self):
+        h = self.h
+        self.assertEqual(h.pass_and_accept().disposition, "applied")
+        h.board.link("t_setup", "t_report")
+        out = h.deliver()
+>       self.assertEqual(out.status, "held", out.to_dict())
+E       AssertionError: 'confirmed' != 'held'
+E       - confirmed
+E       + held
+E        : {'status': 'confirmed', 'reason': None, 'detail': {'delivery_id': 'dlv-2cec53e921b0'}}
+
+tests/test_p1_regressions.py:331: AssertionError
+_____ Finding5DetachedReport.test_report_with_an_unknown_child_cannot_send _____
+
+self = <test_p1_regressions.Finding5DetachedReport testMethod=test_report_with_an_unknown_child_cannot_send>
+
+    def test_report_with_an_unknown_child_cannot_send(self):
+        h = self.h
+        self.assertEqual(h.pass_and_accept().disposition, "applied")
+        h.board.add_task("t_unknown_child")
+        h.board.link("t_report", "t_unknown_child")
+        out = h.deliver()
+>       self.assertEqual(out.status, "held", out.to_dict())
+E       AssertionError: 'confirmed' != 'held'
+E       - confirmed
+E       + held
+E        : {'status': 'confirmed', 'reason': None, 'detail': {'delivery_id': 'dlv-2cec53e921b0'}}
+
+tests/test_p1_regressions.py:341: AssertionError
+____________ Finding6Atomicity.test_verdict_and_status_are_one_unit ____________
+
+self = <test_p1_regressions.Finding6Atomicity testMethod=test_verdict_and_status_are_one_unit>
+
+    def test_verdict_and_status_are_one_unit(self):
+        h = self.h
+        h.publish("draft-1")
+        h.request_review()
+        original = h.store.set_item_status
+    
+        def fail(*args, **kwargs):
+            raise RuntimeError("synthetic failure between verdict and status")
+    
+        h.store.set_item_status = fail
+        res = h.verdict("PASS", artifact_sha=sha("draft-1"))
+        h.store.set_item_status = original
+        self.assertNotEqual(res.disposition, "applied", res.to_dict())
+>       self.assertIsNone(h.store.latest_verdict(h.item.item_id))
+E       AssertionError: {'verdict_id': 'vrd-f4cd3aceef79', 'run_id': 'run-cb423c011861', 'request_id': 'req-b9f6a0c5b024', 'item_id': 'itm-653c3169525c', 'verdict': 'PASS', 'artifact_sha': 'af72250d489ae165bf74a26d181af5117879339ffbb1725e2fb09c82c5cf3441', 'reviewer_profile': 'reviewer', 'decided_at': 1793867175.9719303} is not None
+
+tests/test_p1_regressions.py:368: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_p1_regressions.py::Finding1RecoveryStaleGate::test_recovery_does_not_revive_a_stale_intent
+FAILED tests/test_p1_regressions.py::Finding1RecoveryStaleGate::test_recovery_marks_an_already_sent_effect_as_historical_when_stale
+FAILED tests/test_p1_regressions.py::Finding2UnknownEffect::test_post_write_timeout_is_unknown_and_not_retried
+FAILED tests/test_p1_regressions.py::Finding2UnknownEffect::test_unknown_effect_is_never_resent
+FAILED tests/test_p1_regressions.py::Finding3ExactArtifactBinding::test_acceptance_must_name_the_exact_verdict_sha_and_rev
+FAILED tests/test_p1_regressions.py::Finding3ExactArtifactBinding::test_cross_item_verdict_with_identical_bytes_is_rejected
+FAILED tests/test_p1_regressions.py::Finding3ExactArtifactBinding::test_mutating_the_recorded_artifact_fails_closed
+FAILED tests/test_p1_regressions.py::Finding3ExactArtifactBinding::test_verdict_must_name_the_exact_sha
+FAILED tests/test_p1_regressions.py::Finding4UnknownOwner::test_unmapped_session_is_never_admitted_or_completed
+FAILED tests/test_p1_regressions.py::Finding5DetachedReport::test_report_linked_to_setup_cannot_send
+FAILED tests/test_p1_regressions.py::Finding5DetachedReport::test_report_with_an_unknown_child_cannot_send
+FAILED tests/test_p1_regressions.py::Finding6Atomicity::test_verdict_and_status_are_one_unit
+12 failed in 1.75s

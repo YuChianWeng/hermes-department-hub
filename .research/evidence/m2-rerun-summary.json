@@ -1,0 +1,166 @@
+{
+  "primary": {
+    "project_dir": "/home/ubuntu/projects/hermes-department-orchestrator",
+    "git": {
+      "log": "research/evidence/m2-rerun-git.log",
+      "git_status_exit": 128,
+      "git_rev_parse_exit": 128,
+      "note": "not a git repository; no .git in this dir or any parent"
+    },
+    "env_manifest": "research/evidence/m2-rerun-env-and-manifest.log",
+    "manifest_after": "research/evidence/m2-rerun-manifest-after.log",
+    "source_unchanged": true,
+    "runs": [
+      {
+        "log": ".research/evidence/m2-tests.log",
+        "bytes": 784,
+        "sha256": "51c71b03857097d352d6b6dbc4fddb2ae0f344d645dc557f35167ec3c11f4602",
+        "exit_code": 0,
+        "passed_lines": [
+          "202 passed in 11.24s"
+        ],
+        "ok_checks": 0,
+        "fail_checks": 0,
+        "all_pass_marker": false
+      },
+      {
+        "log": ".research/evidence/m2-desktop-node-check.log",
+        "bytes": 568,
+        "sha256": "b5df1a3700e1293b1875264e952d00b8bae3dbdc8dd51e16dfca1149e8d86845",
+        "exit_code": 0,
+        "passed_lines": [],
+        "ok_checks": 0,
+        "fail_checks": 0,
+        "all_pass_marker": false
+      },
+      {
+        "log": ".research/evidence/m2-desktop-sdk-mock.log",
+        "bytes": 1847,
+        "sha256": "3e65e89867ce8f61331cc7c822024c493cbf7c0c9b8a59b6d5a487488e85a5f9",
+        "exit_code": 0,
+        "passed_lines": [],
+        "ok_checks": 35,
+        "fail_checks": 0,
+        "all_pass_marker": true
+      },
+      {
+        "log": ".research/evidence/m2-desktop-sdk-pytest.log",
+        "bytes": 1395,
+        "sha256": "eb977b6b56e4b3f5214bbd2bd2f1c90f16cc04ac2a5abc4105ee2699cf1a8aba",
+        "exit_code": 0,
+        "passed_lines": [],
+        "ok_checks": 0,
+        "fail_checks": 0,
+        "all_pass_marker": false
+      },
+      {
+        "log": ".research/evidence/m2-plugin-validate.log",
+        "bytes": 2539,
+        "sha256": "d4694ca809a1cd2b2bc5b8a25d9c301faa27a0d1cc0989a98e72707db8a1158c",
+        "exit_code": 0,
+        "passed_lines": [],
+        "ok_checks": 0,
+        "fail_checks": 0,
+        "all_pass_marker": false
+      },
+      {
+        "log": ".research/evidence/m2-plugin-doctor.log",
+        "bytes": 803,
+        "sha256": "a0bea435098f677e967811bc7251869e04d19dc6f0e5bab18c4b713c233b34c6",
+        "exit_code": 0,
+        "passed_lines": [],
+        "ok_checks": 0,
+        "fail_checks": 0,
+        "all_pass_marker": false
+      }
+    ],
+    "plugin_validate": {
+      "ok": true,
+      "checks": 16,
+      "warnings": 0,
+      "failed": [],
+      "isolation_verdict": "host"
+    }
+  },
+  "supplement_v5_candidate": {
+    "target": "/home/ubuntu/.hermes/kanban/workspaces/t_68287415/candidate (copy run in scratch)",
+    "manifest": {
+      "file": "/home/ubuntu/.hermes/kanban/workspaces/t_750e8a14/bundle-v5/candidate-manifest.sha256",
+      "sha256": "5280ab3e578529a01f9c15a55891845ba204f5eba903d3fab2d64968acf56247",
+      "entries": 56,
+      "ok": 56,
+      "failed": 0
+    },
+    "runs": [
+      {
+        "log": ".research/evidence/m2r-v5-candidate/full-pytest.log",
+        "bytes": 1094,
+        "sha256": "b9afad6770775a732234011c5cadedae936b3bdaea55d4a0671d495c30920bde",
+        "exit_code": 0,
+        "passed_lines": [
+          "409 passed in 58.46s"
+        ],
+        "ok_checks": 0,
+        "fail_checks": 0,
+        "all_pass_marker": false
+      },
+      {
+        "log": ".research/evidence/m2r-v5-candidate/node-check.log",
+        "bytes": 542,
+        "sha256": "f013745127e8ff7764ca7e66ffd135cf8c04e871108fcd9c0b0dd48eee2c2084",
+        "exit_code": 0,
+        "passed_lines": [],
+        "ok_checks": 0,
+        "fail_checks": 0,
+        "all_pass_marker": false
+      },
+      {
+        "log": ".research/evidence/m2r-v5-candidate/js-mock.log",
+        "bytes": 7388,
+        "sha256": "167cd6f253d2add89175629f784203799a25fcc5c4f244e4b180692c45357ca4",
+        "exit_code": 0,
+        "passed_lines": [],
+        "ok_checks": 136,
+        "fail_checks": 0,
+        "all_pass_marker": true
+      },
+      {
+        "log": ".research/evidence/m2r-v5-candidate/plugin-validate.log",
+        "bytes": 2505,
+        "sha256": "493da829c9efa93cf20f864e254648ecf177a93f070a9d370ae8a5868fe12477",
+        "exit_code": 0,
+        "passed_lines": [],
+        "ok_checks": 0,
+        "fail_checks": 0,
+        "all_pass_marker": false
+      },
+      {
+        "log": ".research/evidence/m2r-v5-candidate/plugin-doctor.log",
+        "bytes": 789,
+        "sha256": "eb3f89c5f9b034cfdc800f8c094321949e2a73f973d5c868c467826fc2554436",
+        "exit_code": 0,
+        "passed_lines": [],
+        "ok_checks": 0,
+        "fail_checks": 0,
+        "all_pass_marker": false
+      },
+      {
+        "log": ".research/evidence/m2r-v5-candidate/manifest-check.log",
+        "bytes": 1929,
+        "sha256": "c39700ffbb74fad685ad4321fdf294cc0bbb14ceef1de58f58b02ab1f17692cb",
+        "exit_code": 0,
+        "passed_lines": [],
+        "ok_checks": 0,
+        "fail_checks": 0,
+        "all_pass_marker": false
+      }
+    ],
+    "plugin_validate": {
+      "ok": true,
+      "checks": 16,
+      "warnings": 0,
+      "failed": [],
+      "isolation_verdict": "host"
+    }
+  }
+}

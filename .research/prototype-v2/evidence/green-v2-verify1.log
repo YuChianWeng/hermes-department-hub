@@ -1,0 +1,20 @@
+.F.........                                                           [100%]
+=================================== FAILURES ===================================
+________ AtomicMutationCrashTests.test_crash_after_commit_is_idempotent ________
+
+self = <test_v2_verification.AtomicMutationCrashTests testMethod=test_crash_after_commit_is_idempotent>
+
+    def test_crash_after_commit_is_idempotent(self):
+        r = run_cli(["verdict-crash", "--dir", str(self.dir),
+                     "--crash-at", "after_processed"])
+        self.assertEqual(r.returncode, CRASH_RC, r.stderr)
+        st = self.status()
+>       self.assertEqual(st["item_status"], "approved")
+E       AssertionError: 'in_review' != 'approved'
+E       - in_review
+E       + approved
+
+tests/test_v2_verification.py:95: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_v2_verification.py::AtomicMutationCrashTests::test_crash_after_commit_is_idempotent
+1 failed, 10 passed, 3 subtests passed in 3.21s

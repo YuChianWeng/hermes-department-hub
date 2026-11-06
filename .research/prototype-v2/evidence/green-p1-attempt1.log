@@ -1,0 +1,58 @@
+..FF.F......                                                             [100%]
+=================================== FAILURES ===================================
+___ Finding2UnknownEffect.test_post_write_timeout_is_unknown_and_not_retried ___
+
+self = <test_p1_regressions.Finding2UnknownEffect testMethod=test_post_write_timeout_is_unknown_and_not_retried>
+
+    def test_post_write_timeout_is_unknown_and_not_retried(self):
+        h = self.h
+        self.assertEqual(h.pass_and_accept().disposition, "applied")
+        h.port = TimeoutAfterWritePort(h.tmp / "effects.jsonl", hide_readback=True)
+        h.orch.effect_port = h.port
+        out = h.deliver()
+        self.assertEqual(out.status, "unknown", out.to_dict())
+>       self.assertEqual(len(h.journal()), 1)
+E       AssertionError: 0 != 1
+
+tests/test_p1_regressions.py:227: AssertionError
+__________ Finding2UnknownEffect.test_unknown_effect_is_never_resent ___________
+
+self = <test_p1_regressions.Finding2UnknownEffect testMethod=test_unknown_effect_is_never_resent>
+
+    def test_unknown_effect_is_never_resent(self):
+        h = self.h
+        self.assertEqual(h.pass_and_accept().disposition, "applied")
+        h.port.hide_readback = True
+        out = h.deliver()
+        self.assertEqual(out.status, "unknown", out.to_dict())
+>       self.assertEqual(len(h.journal()), 1)
+E       AssertionError: 0 != 1
+
+tests/test_p1_regressions.py:210: AssertionError
+_ Finding3ExactArtifactBinding.test_cross_item_verdict_with_identical_bytes_is_rejected _
+
+self = <test_p1_regressions.Finding3ExactArtifactBinding testMethod=test_cross_item_verdict_with_identical_bytes_is_rejected>
+
+    def test_cross_item_verdict_with_identical_bytes_is_rejected(self):
+        h = self.h
+        item2 = h.orch.register_work_item("dept-eng", "t_work2", "work",
+                                          "manager", parents=["t_setup"])
+        h.board.add_task("t_work2", parents=["t_setup"])
+        h.publish("same-bytes", item_id=h.item.item_id)
+        h.publish("same-bytes", item_id=item2.item_id)
+        h.request_review(item_id=h.item.item_id)
+        h.request_review(item_id=item2.item_id)
+        h.verdict("PASS", artifact_sha=sha("same-bytes"), item_id=h.item.item_id)
+        h.verdict("PASS", artifact_sha=sha("same-bytes"), item_id=item2.item_id)
+        foreign = h.store.latest_pass(item2.item_id)
+>       res = h.accept(verdict_id=foreign["verdict_id"],
+                                  ^^^^^^^^^^^^^^^^^^^^^
+                       artifact_sha=sha("same-bytes"), rev=1)
+E       TypeError: 'NoneType' object is not subscriptable
+
+tests/test_p1_regressions.py:278: TypeError
+=========================== short test summary info ============================
+FAILED tests/test_p1_regressions.py::Finding2UnknownEffect::test_post_write_timeout_is_unknown_and_not_retried
+FAILED tests/test_p1_regressions.py::Finding2UnknownEffect::test_unknown_effect_is_never_resent
+FAILED tests/test_p1_regressions.py::Finding3ExactArtifactBinding::test_cross_item_verdict_with_identical_bytes_is_rejected
+3 failed, 9 passed in 1.33s

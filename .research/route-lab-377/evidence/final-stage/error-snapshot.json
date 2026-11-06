@@ -1,0 +1,404 @@
+{
+  "subscriptions": [
+    {
+      "task_id": "t_f13b8b4c",
+      "platform": "api_server",
+      "chat_id": "api-ce71a2ebe36fdb0d",
+      "thread_id": "",
+      "user_id": null,
+      "user_id_alt": null,
+      "chat_type": "dm",
+      "notifier_profile": "manager",
+      "delivery_mode": "wake",
+      "delivery_metadata": null,
+      "created_at": 1793860841,
+      "last_event_id": 5,
+      "last_ping_event_id": 0
+    },
+    {
+      "task_id": "t_8d4c4eea",
+      "platform": "api_server",
+      "chat_id": "api-0cbeb59d02cdeb44",
+      "thread_id": "",
+      "user_id": null,
+      "user_id_alt": null,
+      "chat_type": "dm",
+      "notifier_profile": "default",
+      "delivery_mode": "wake",
+      "delivery_metadata": null,
+      "created_at": 1793860843,
+      "last_event_id": 14,
+      "last_ping_event_id": 0
+    },
+    {
+      "task_id": "t_de5b37a8",
+      "platform": "api_server",
+      "chat_id": "api-ce71a2ebe36fdb0d",
+      "thread_id": "",
+      "user_id": null,
+      "user_id_alt": null,
+      "chat_type": "dm",
+      "notifier_profile": "manager",
+      "delivery_mode": "wake",
+      "delivery_metadata": null,
+      "created_at": 1793860845,
+      "last_event_id": 8,
+      "last_ping_event_id": 0
+    },
+    {
+      "task_id": "t_0bc551ad",
+      "platform": "api_server",
+      "chat_id": "api-ce71a2ebe36fdb0d",
+      "thread_id": "",
+      "user_id": null,
+      "user_id_alt": null,
+      "chat_type": "dm",
+      "notifier_profile": "manager",
+      "delivery_mode": "wake",
+      "delivery_metadata": null,
+      "created_at": 1793860960,
+      "last_event_id": 12,
+      "last_ping_event_id": 0
+    },
+    {
+      "task_id": "t_c5e38c84",
+      "platform": "api_server",
+      "chat_id": "api-7ed08b54bf27e574",
+      "thread_id": "",
+      "user_id": null,
+      "user_id_alt": null,
+      "chat_type": "dm",
+      "notifier_profile": "manager",
+      "delivery_mode": "wake",
+      "delivery_metadata": null,
+      "created_at": 1793860994,
+      "last_event_id": 16,
+      "last_ping_event_id": 0
+    },
+    {
+      "task_id": "t_da2c34ae",
+      "platform": "api_server",
+      "chat_id": "api-0cbeb59d02cdeb44",
+      "thread_id": "",
+      "user_id": null,
+      "user_id_alt": null,
+      "chat_type": "dm",
+      "notifier_profile": "default",
+      "delivery_mode": "wake",
+      "delivery_metadata": null,
+      "created_at": 1793861021,
+      "last_event_id": 19,
+      "last_ping_event_id": 0
+    },
+    {
+      "task_id": "t_672b0bf7",
+      "platform": "api_server",
+      "chat_id": "api-0cbeb59d02cdeb44",
+      "thread_id": "",
+      "user_id": null,
+      "user_id_alt": null,
+      "chat_type": "dm",
+      "notifier_profile": "default",
+      "delivery_mode": "wake",
+      "delivery_metadata": null,
+      "created_at": 1793861023,
+      "last_event_id": 21,
+      "last_ping_event_id": 0
+    },
+    {
+      "task_id": "t_a0c1eac8",
+      "platform": "api_server",
+      "chat_id": "api-0cbeb59d02cdeb44",
+      "thread_id": "",
+      "user_id": null,
+      "user_id_alt": null,
+      "chat_type": "dm",
+      "notifier_profile": "default",
+      "delivery_mode": "wake",
+      "delivery_metadata": null,
+      "created_at": 1793861033,
+      "last_event_id": 25,
+      "last_ping_event_id": 0
+    }
+  ],
+  "events": [
+    {
+      "id": 1,
+      "task_id": "t_f13b8b4c",
+      "run_id": null,
+      "kind": "created",
+      "payload": "{\"assignee\": \"manager\", \"status\": \"ready\", \"parents\": [], \"creator_task_id\": null, \"tenant\": null, \"workspace_kind\": \"scratch\", \"workspace_path\": null, \"branch_name\": null, \"project_id\": null, \"skills\": null, \"goal_mode\": null, \"model_override\": null, \"provider_override\": null}",
+      "created_at": 1793860837
+    },
+    {
+      "id": 2,
+      "task_id": "t_8d4c4eea",
+      "run_id": null,
+      "kind": "created",
+      "payload": "{\"assignee\": \"manager\", \"status\": \"ready\", \"parents\": [], \"creator_task_id\": null, \"tenant\": null, \"workspace_kind\": \"scratch\", \"workspace_path\": null, \"branch_name\": null, \"project_id\": null, \"skills\": null, \"goal_mode\": null, \"model_override\": null, \"provider_override\": null}",
+      "created_at": 1793860839
+    },
+    {
+      "id": 3,
+      "task_id": "t_de5b37a8",
+      "run_id": null,
+      "kind": "created",
+      "payload": "{\"assignee\": \"manager\", \"status\": \"todo\", \"parents\": [\"t_f13b8b4c\"], \"creator_task_id\": null, \"tenant\": null, \"workspace_kind\": \"scratch\", \"workspace_path\": null, \"branch_name\": null, \"project_id\": null, \"skills\": null, \"goal_mode\": null, \"model_override\": null, \"provider_override\": null}",
+      "created_at": 1793860845
+    },
+    {
+      "id": 4,
+      "task_id": "t_de5b37a8",
+      "run_id": null,
+      "kind": "dependency_wait",
+      "payload": "{\"reason\": \"parent_not_done\", \"parent\": \"t_f13b8b4c\"}",
+      "created_at": 1793860845
+    },
+    {
+      "id": 5,
+      "task_id": "t_f13b8b4c",
+      "run_id": 1,
+      "kind": "completed",
+      "payload": "{\"result_len\": 14, \"summary\": \"SYNTHETIC_ONLY\"}",
+      "created_at": 1793860941
+    },
+    {
+      "id": 6,
+      "task_id": "t_de5b37a8",
+      "run_id": null,
+      "kind": "promoted",
+      "payload": null,
+      "created_at": 1793860941
+    },
+    {
+      "id": 7,
+      "task_id": "t_f13b8b4c",
+      "run_id": null,
+      "kind": "commented",
+      "payload": "{\"author\": \"manager\", \"len\": 34}",
+      "created_at": 1793860947
+    },
+    {
+      "id": 8,
+      "task_id": "t_de5b37a8",
+      "run_id": 2,
+      "kind": "completed",
+      "payload": "{\"result_len\": 14, \"summary\": \"SYNTHETIC_ONLY\"}",
+      "created_at": 1793860950
+    },
+    {
+      "id": 9,
+      "task_id": "t_de5b37a8",
+      "run_id": null,
+      "kind": "commented",
+      "payload": "{\"author\": \"manager\", \"len\": 34}",
+      "created_at": 1793860952
+    },
+    {
+      "id": 10,
+      "task_id": "t_0bc551ad",
+      "run_id": null,
+      "kind": "created",
+      "payload": "{\"assignee\": \"manager\", \"status\": \"ready\", \"parents\": [], \"creator_task_id\": null, \"tenant\": null, \"workspace_kind\": \"scratch\", \"workspace_path\": null, \"branch_name\": null, \"project_id\": null, \"skills\": null, \"goal_mode\": null, \"model_override\": null, \"provider_override\": null}",
+      "created_at": 1793860956
+    },
+    {
+      "id": 11,
+      "task_id": "t_0bc551ad",
+      "run_id": null,
+      "kind": "linked",
+      "payload": "{\"parent\": \"t_f13b8b4c\", \"child\": \"t_0bc551ad\"}",
+      "created_at": 1793860960
+    },
+    {
+      "id": 12,
+      "task_id": "t_0bc551ad",
+      "run_id": 3,
+      "kind": "completed",
+      "payload": "{\"result_len\": 14, \"summary\": \"SYNTHETIC_ONLY\"}",
+      "created_at": 1793860964
+    },
+    {
+      "id": 13,
+      "task_id": "t_0bc551ad",
+      "run_id": null,
+      "kind": "commented",
+      "payload": "{\"author\": \"manager\", \"len\": 34}",
+      "created_at": 1793860968
+    },
+    {
+      "id": 14,
+      "task_id": "t_8d4c4eea",
+      "run_id": 4,
+      "kind": "completed",
+      "payload": "{\"result_len\": 14, \"summary\": \"SYNTHETIC_ONLY\"}",
+      "created_at": 1793860979
+    },
+    {
+      "id": 15,
+      "task_id": "t_8d4c4eea",
+      "run_id": null,
+      "kind": "commented",
+      "payload": "{\"author\": \"default\", \"len\": 34}",
+      "created_at": 1793860984
+    },
+    {
+      "id": 16,
+      "task_id": "t_c5e38c84",
+      "run_id": null,
+      "kind": "created",
+      "payload": "{\"assignee\": \"manager\", \"status\": \"ready\", \"parents\": [], \"creator_task_id\": null, \"tenant\": null, \"workspace_kind\": \"scratch\", \"workspace_path\": null, \"branch_name\": null, \"project_id\": null, \"skills\": null, \"goal_mode\": null, \"model_override\": null, \"provider_override\": null}",
+      "created_at": 1793860989
+    },
+    {
+      "id": 17,
+      "task_id": "t_c5e38c84",
+      "run_id": 5,
+      "kind": "completed",
+      "payload": "{\"result_len\": 14, \"summary\": \"SYNTHETIC_ONLY\"}",
+      "created_at": 1793860999
+    },
+    {
+      "id": 18,
+      "task_id": "t_da2c34ae",
+      "run_id": null,
+      "kind": "created",
+      "payload": "{\"assignee\": \"manager\", \"status\": \"ready\", \"parents\": [], \"creator_task_id\": null, \"tenant\": null, \"workspace_kind\": \"scratch\", \"workspace_path\": null, \"branch_name\": null, \"project_id\": null, \"skills\": null, \"goal_mode\": null, \"model_override\": null, \"provider_override\": null}",
+      "created_at": 1793861016
+    },
+    {
+      "id": 19,
+      "task_id": "t_da2c34ae",
+      "run_id": 6,
+      "kind": "completed",
+      "payload": "{\"result_len\": 14, \"summary\": \"SYNTHETIC_ONLY\"}",
+      "created_at": 1793861018
+    },
+    {
+      "id": 20,
+      "task_id": "t_672b0bf7",
+      "run_id": null,
+      "kind": "created",
+      "payload": "{\"assignee\": \"manager\", \"status\": \"ready\", \"parents\": [\"t_da2c34ae\"], \"creator_task_id\": null, \"tenant\": null, \"workspace_kind\": \"scratch\", \"workspace_path\": null, \"branch_name\": null, \"project_id\": null, \"skills\": null, \"goal_mode\": null, \"model_override\": null, \"provider_override\": null}",
+      "created_at": 1793861023
+    },
+    {
+      "id": 21,
+      "task_id": "t_672b0bf7",
+      "run_id": 7,
+      "kind": "completed",
+      "payload": "{\"result_len\": 14, \"summary\": \"SYNTHETIC_ONLY\"}",
+      "created_at": 1793861025
+    },
+    {
+      "id": 22,
+      "task_id": "t_672b0bf7",
+      "run_id": null,
+      "kind": "commented",
+      "payload": "{\"author\": \"default\", \"len\": 34}",
+      "created_at": 1793861029
+    },
+    {
+      "id": 23,
+      "task_id": "t_a0c1eac8",
+      "run_id": null,
+      "kind": "created",
+      "payload": "{\"assignee\": \"manager\", \"status\": \"ready\", \"parents\": [], \"creator_task_id\": null, \"tenant\": null, \"workspace_kind\": \"scratch\", \"workspace_path\": null, \"branch_name\": null, \"project_id\": null, \"skills\": null, \"goal_mode\": null, \"model_override\": null, \"provider_override\": null}",
+      "created_at": 1793861031
+    },
+    {
+      "id": 24,
+      "task_id": "t_a0c1eac8",
+      "run_id": null,
+      "kind": "linked",
+      "payload": "{\"parent\": \"t_da2c34ae\", \"child\": \"t_a0c1eac8\"}",
+      "created_at": 1793861033
+    },
+    {
+      "id": 25,
+      "task_id": "t_a0c1eac8",
+      "run_id": 8,
+      "kind": "completed",
+      "payload": "{\"result_len\": 14, \"summary\": \"SYNTHETIC_ONLY\"}",
+      "created_at": 1793861035
+    },
+    {
+      "id": 26,
+      "task_id": "t_a0c1eac8",
+      "run_id": null,
+      "kind": "commented",
+      "payload": "{\"author\": \"default\", \"len\": 34}",
+      "created_at": 1793861040
+    }
+  ],
+  "comments": [
+    {
+      "id": 1,
+      "task_id": "t_f13b8b4c",
+      "author": "manager",
+      "body": "SYNTHETIC_ROUTE_RECEIPT t_f13b8b4c",
+      "created_at": 1793860947
+    },
+    {
+      "id": 2,
+      "task_id": "t_de5b37a8",
+      "author": "manager",
+      "body": "SYNTHETIC_ROUTE_RECEIPT t_de5b37a8",
+      "created_at": 1793860952
+    },
+    {
+      "id": 3,
+      "task_id": "t_0bc551ad",
+      "author": "manager",
+      "body": "SYNTHETIC_ROUTE_RECEIPT t_0bc551ad",
+      "created_at": 1793860968
+    },
+    {
+      "id": 4,
+      "task_id": "t_8d4c4eea",
+      "author": "default",
+      "body": "SYNTHETIC_ROUTE_RECEIPT t_8d4c4eea",
+      "created_at": 1793860984
+    },
+    {
+      "id": 5,
+      "task_id": "t_672b0bf7",
+      "author": "default",
+      "body": "SYNTHETIC_ROUTE_RECEIPT t_672b0bf7",
+      "created_at": 1793861029
+    },
+    {
+      "id": 6,
+      "task_id": "t_a0c1eac8",
+      "author": "default",
+      "body": "SYNTHETIC_ROUTE_RECEIPT t_a0c1eac8",
+      "created_at": 1793861040
+    }
+  ],
+  "sessions": {
+    "default": [
+      {
+        "id": "api-0cbeb59d02cdeb44",
+        "profile_name": "default",
+        "source": "api_server"
+      },
+      {
+        "id": "api-7ed08b54bf27e574",
+        "profile_name": "default",
+        "source": "api_server"
+      }
+    ],
+    "manager": [
+      {
+        "id": "api-ce71a2ebe36fdb0d",
+        "profile_name": "manager",
+        "source": "api_server"
+      },
+      {
+        "id": "api-0cbeb59d02cdeb44",
+        "profile_name": "manager",
+        "source": "api_server"
+      }
+    ]
+  }
+}

@@ -1,0 +1,499 @@
+{
+  "assertions": [
+    {
+      "assertion": "fail-before-start rejects HERMES_KANBAN_DB",
+      "detail": "HERMES_KANBAN_DB: resolves outside lab (/home/ubuntu/.hermes/kanban.db)",
+      "pass": true
+    },
+    {
+      "assertion": "fail-before-start rejects XDG_RUNTIME_DIR",
+      "detail": "XDG_RUNTIME_DIR: resolves outside lab (/run/user/1000)",
+      "pass": true
+    },
+    {
+      "assertion": "fail-before-start rejects HERMES_KANBAN_TASK",
+      "detail": "HERMES_KANBAN_TASK: worker/proxy/socket pin present",
+      "pass": true
+    },
+    {
+      "assertion": "production profiles masked",
+      "detail": null,
+      "pass": true
+    },
+    {
+      "assertion": "production board masked",
+      "detail": null,
+      "pass": true
+    },
+    {
+      "assertion": "production runtime socket masked",
+      "detail": null,
+      "pass": true
+    },
+    {
+      "assertion": "obsidian vault masked",
+      "detail": null,
+      "pass": true
+    },
+    {
+      "assertion": "installed source read-only",
+      "detail": null,
+      "pass": true
+    },
+    {
+      "assertion": "python runtime read-only",
+      "detail": null,
+      "pass": true
+    },
+    {
+      "assertion": "default session created",
+      "detail": {
+        "body": {
+          "choices": [
+            {
+              "finish_reason": "stop",
+              "index": 0,
+              "message": {
+                "content": "SYNTHETIC_ACK",
+                "role": "assistant"
+              }
+            }
+          ],
+          "created": 1793868128,
+          "id": "chatcmpl-79b8e2a16263433aa92e040495be4",
+          "model": "proto-synthetic",
+          "object": "chat.completion",
+          "usage": {
+            "completion_tokens": 1,
+            "prompt_tokens": 1,
+            "total_tokens": 2
+          }
+        },
+        "profile": "default",
+        "session": "api-0b36333bf4394fee",
+        "status": 200,
+        "synthetic_model": true,
+        "text": "bootstrap-default"
+      },
+      "pass": true
+    },
+    {
+      "assertion": "manager profile session created",
+      "detail": {
+        "body": {
+          "choices": [
+            {
+              "finish_reason": "stop",
+              "index": 0,
+              "message": {
+                "content": "SYNTHETIC_ACK",
+                "role": "assistant"
+              }
+            }
+          ],
+          "created": 1793868130,
+          "id": "chatcmpl-3e8a69697529453a9701ee639975f",
+          "model": "proto-synthetic",
+          "object": "chat.completion",
+          "usage": {
+            "completion_tokens": 1,
+            "prompt_tokens": 1,
+            "total_tokens": 2
+          }
+        },
+        "profile": "manager",
+        "session": "api-9d018bfc598b4849",
+        "status": 200,
+        "synthetic_model": true,
+        "text": "bootstrap-manager"
+      },
+      "pass": true
+    },
+    {
+      "assertion": "reviewer profile session created",
+      "detail": {
+        "body": {
+          "choices": [
+            {
+              "finish_reason": "stop",
+              "index": 0,
+              "message": {
+                "content": "SYNTHETIC_ACK",
+                "role": "assistant"
+              }
+            }
+          ],
+          "created": 1793868132,
+          "id": "chatcmpl-2536d05eccf640249c245daa15399",
+          "model": "proto-synthetic",
+          "object": "chat.completion",
+          "usage": {
+            "completion_tokens": 1,
+            "prompt_tokens": 1,
+            "total_tokens": 2
+          }
+        },
+        "profile": "reviewer",
+        "session": "api-5e66804d3c85a299",
+        "status": 200,
+        "synthetic_model": true,
+        "text": "bootstrap-reviewer"
+      },
+      "pass": true
+    },
+    {
+      "assertion": "three distinct profile sessions",
+      "detail": {
+        "default": "api-0b36333bf4394fee",
+        "manager": "api-9d018bfc598b4849",
+        "reviewer": "api-5e66804d3c85a299"
+      },
+      "pass": true
+    },
+    {
+      "assertion": "manager store is a real manager profile",
+      "detail": [
+        "manager"
+      ],
+      "pass": true
+    },
+    {
+      "assertion": "wrong profile key rejected",
+      "detail": 401,
+      "pass": true
+    },
+    {
+      "assertion": "report is detached (no parents/children)",
+      "detail": null,
+      "pass": true
+    },
+    {
+      "assertion": "manager wake executed a real tool effect on work child",
+      "detail": {
+        "author": "manager",
+        "body": "SYNTHETIC_ROUTE_RECEIPT t_2176f95d",
+        "created_at": 1793868171
+      },
+      "pass": true
+    },
+    {
+      "assertion": "reviewer profile wake emitted REQUEST_CHANGES for exact artifact",
+      "detail": {
+        "artifact_sha": "2e2b159af4e8a6d4e41d8f160808054c3f12295594dbf1b3e77b8969adfc497e",
+        "prototype": "review-verdict",
+        "review_task": "t_49f8dbfc",
+        "synthetic_model": true,
+        "verdict": "REQUEST_CHANGES"
+      },
+      "pass": true
+    },
+    {
+      "assertion": "prototype accepted REQUEST_CHANGES",
+      "detail": {
+        "detail": {
+          "verdict": "REQUEST_CHANGES",
+          "verdict_id": "vrd-2e8b7983e789"
+        },
+        "reason": null,
+        "status": "applied"
+      },
+      "pass": true
+    },
+    {
+      "assertion": "report has no prototype final yet",
+      "detail": [],
+      "pass": true
+    },
+    {
+      "assertion": "fresh independent PASS references the CURRENT artifact",
+      "detail": {
+        "artifact_sha": "ef65e54215d3ecc2154ca3630448bd59360d9d2c51a820a41ee3f78207b3de6b",
+        "prototype": "review-verdict",
+        "review_task": "t_bd5c060f",
+        "synthetic_model": true,
+        "verdict": "PASS"
+      },
+      "pass": true
+    },
+    {
+      "assertion": "prototype accepted fresh PASS",
+      "detail": {
+        "detail": {
+          "verdict": "PASS",
+          "verdict_id": "vrd-3dc450e3d298"
+        },
+        "reason": null,
+        "status": "applied"
+      },
+      "pass": true
+    },
+    {
+      "assertion": "manager wake emitted acceptance for exact artifact",
+      "detail": {
+        "artifact_sha": "ef65e54215d3ecc2154ca3630448bd59360d9d2c51a820a41ee3f78207b3de6b",
+        "decision": "ACCEPT",
+        "prototype": "manager-acceptance",
+        "synthetic_model": true
+      },
+      "pass": true
+    },
+    {
+      "assertion": "prototype accepted manager acceptance",
+      "detail": {
+        "detail": {
+          "acceptance_id": "acc-6491fc9f9b0a"
+        },
+        "reason": null,
+        "status": "applied"
+      },
+      "pass": true
+    },
+    {
+      "assertion": "single final delivered",
+      "detail": {
+        "detail": {
+          "delivery_id": "dlv-3f63e632194d"
+        },
+        "reason": null,
+        "status": "confirmed"
+      },
+      "pass": true
+    },
+    {
+      "assertion": "detached report has exactly one final comment",
+      "detail": [
+        {
+          "author": "manager",
+          "body": "DEPT-HUB PROTOTYPE FINAL (synthetic only)\n{\"acceptance_id\": \"acc-6491fc9f9b0a\", \"artifact_sha256\": \"ef65e54215d3ecc2154ca3630448bd59360d9d2c51a820a41ee3f78207b3de6b\", \"delivery_id\": \"dlv-3f63e632194d\", \"dept_id\": \"dept-live\", \"items\": [{\"acceptance_id\": \"acc-6491fc9f9b0a\", \"acceptance_status\": \"active\", \"artifact_actual_sha256\": \"ef65e54215d3ecc2154ca3630448bd59360d9d2c51a820a41ee3f78207b3de6b\", \"artifact_sha256\": \"ef65e54215d3ecc2154ca3630448bd59360d9d2c51a820a41ee3f78207b3de6b\", \"board_task_id\": \"t_2176f95d\", \"evidence_sha256\": \"ef65e54215d3ecc2154ca3630448bd59360d9d2c51a820a41ee3f78207b3de6b\", \"item_id\": \"itm-ce057038ac1b\", \"review_rev\": 2, \"reviewer_profile\": \"reviewer\", \"verdict_id\": \"vrd-3dc450e3d298\"}], \"marker\": \"[[deptproto-final:3f63e632194d6e07]]\", \"note\": \"synthetic isolated research prototype; not a production acceptance\", \"prototype\": \"deptproto-v2\", \"review_rev\": 2, \"status\": \"accepted\", \"verdict_id\": \"vrd-3dc450e3d298\"}\n[[deptproto-final:3f63e632194d6e07]]",
+          "created_at": 1793868214
+        }
+      ],
+      "pass": true
+    },
+    {
+      "assertion": "duplicate delivery attempt has no second effect",
+      "detail": {
+        "detail": {
+          "delivery_id": "dlv-3f63e632194d"
+        },
+        "reason": null,
+        "status": "already_delivered"
+      },
+      "pass": true
+    },
+    {
+      "assertion": "default receipt after single final report",
+      "detail": {
+        "author": "default",
+        "body": "SYNTHETIC_ROUTE_RECEIPT t_91fbea21",
+        "created_at": 1793868228
+      },
+      "pass": true
+    },
+    {
+      "assertion": "default has no subscription row on any work-DAG card",
+      "detail": {
+        "t_2176f95d": [
+          {
+            "chat_id": "api-9d018bfc598b4849",
+            "chat_type": "dm",
+            "created_at": 1793868145,
+            "delivery_metadata": {},
+            "delivery_mode": "wake",
+            "last_event_id": 12,
+            "last_ping_event_id": 0,
+            "notifier_profile": "manager",
+            "platform": "api_server",
+            "task_id": "t_2176f95d",
+            "thread_id": "",
+            "user_id": null,
+            "user_id_alt": null
+          }
+        ],
+        "t_49f8dbfc": [
+          {
+            "chat_id": "api-9d018bfc598b4849",
+            "chat_type": "dm",
+            "created_at": 1793868150,
+            "delivery_metadata": {},
+            "delivery_mode": "wake",
+            "last_event_id": 14,
+            "last_ping_event_id": 0,
+            "notifier_profile": "manager",
+            "platform": "api_server",
+            "task_id": "t_49f8dbfc",
+            "thread_id": "",
+            "user_id": null,
+            "user_id_alt": null
+          },
+          {
+            "chat_id": "api-5e66804d3c85a299",
+            "chat_type": "dm",
+            "created_at": 1793868153,
+            "delivery_metadata": {},
+            "delivery_mode": "wake",
+            "last_event_id": 14,
+            "last_ping_event_id": 0,
+            "notifier_profile": "reviewer",
+            "platform": "api_server",
+            "task_id": "t_49f8dbfc",
+            "thread_id": "",
+            "user_id": null,
+            "user_id_alt": null
+          }
+        ],
+        "t_8b8bd957": [
+          {
+            "chat_id": "api-9d018bfc598b4849",
+            "chat_type": "dm",
+            "created_at": 1793868194,
+            "delivery_metadata": {},
+            "delivery_mode": "wake",
+            "last_event_id": 22,
+            "last_ping_event_id": 0,
+            "notifier_profile": "manager",
+            "platform": "api_server",
+            "task_id": "t_8b8bd957",
+            "thread_id": "",
+            "user_id": null,
+            "user_id_alt": null
+          }
+        ],
+        "t_bd5c060f": [
+          {
+            "chat_id": "api-9d018bfc598b4849",
+            "chat_type": "dm",
+            "created_at": 1793868183,
+            "delivery_metadata": {},
+            "delivery_mode": "wake",
+            "last_event_id": 18,
+            "last_ping_event_id": 0,
+            "notifier_profile": "manager",
+            "platform": "api_server",
+            "task_id": "t_bd5c060f",
+            "thread_id": "",
+            "user_id": null,
+            "user_id_alt": null
+          },
+          {
+            "chat_id": "api-5e66804d3c85a299",
+            "chat_type": "dm",
+            "created_at": 1793868186,
+            "delivery_metadata": {},
+            "delivery_mode": "wake",
+            "last_event_id": 18,
+            "last_ping_event_id": 0,
+            "notifier_profile": "reviewer",
+            "platform": "api_server",
+            "task_id": "t_bd5c060f",
+            "thread_id": "",
+            "user_id": null,
+            "user_id_alt": null
+          }
+        ]
+      },
+      "pass": true
+    },
+    {
+      "assertion": "missing-subscription task produced no wake/tool",
+      "detail": null,
+      "pass": true
+    },
+    {
+      "assertion": "missing subscription is an identifiable dead letter",
+      "detail": {
+        "detail": {
+          "task_id": "t_48ca4c04"
+        },
+        "reason": "missing_subscription",
+        "status": "dead_letter"
+      },
+      "pass": true
+    },
+    {
+      "assertion": "wrong-owner subscription produced no wake/tool",
+      "detail": {
+        "comments": [],
+        "subscriptions": [
+          {
+            "chat_id": "api-0b36333bf4394fee",
+            "chat_type": "dm",
+            "created_at": 1793868253,
+            "delivery_metadata": {},
+            "delivery_mode": "wake",
+            "last_event_id": 30,
+            "last_ping_event_id": 0,
+            "notifier_profile": "manager",
+            "platform": "api_server",
+            "task_id": "t_523d9894",
+            "thread_id": "",
+            "user_id": null,
+            "user_id_alt": null
+          }
+        ]
+      },
+      "pass": true
+    },
+    {
+      "assertion": "wrong owner (manager owner, default session) is a dead letter",
+      "detail": {
+        "detail": {
+          "chat_id_profile": "default",
+          "expected": "manager"
+        },
+        "reason": "wrong_owner",
+        "status": "dead_letter"
+      },
+      "pass": true
+    },
+    {
+      "assertion": "unmapped session owner is a dead letter, not admitted",
+      "detail": {
+        "detail": {
+          "chat_id": "sid-unmapped",
+          "task_id": "t_523d9894",
+          "why": "unmapped session"
+        },
+        "reason": "unknown_owner",
+        "status": "dead_letter"
+      },
+      "pass": true
+    },
+    {
+      "assertion": "unmapped owner produced no admission, observation or receipt",
+      "detail": {
+        "receipts": 0,
+        "row": null
+      },
+      "pass": true
+    },
+    {
+      "assertion": "wrong report edge is held fail-closed",
+      "detail": {
+        "detail": {
+          "children": [],
+          "parents": [
+            "t_a3f3e031"
+          ],
+          "report": "t_667ef1d4",
+          "why": "report card must be fully detached"
+        },
+        "reason": "wrong_report_edge",
+        "status": "held"
+      },
+      "pass": true
+    },
+    {
+      "assertion": "wrongly linked report received no final comment",
+      "detail": [],
+      "pass": true
+    },
+    {
+      "assertion": "live delivery crashed at effect/receipt boundary",
+      "detail": 0,
+      "pass": false
+    }
+  ],
+  "error": "AssertionError('live delivery crashed at effect/receipt boundary')",
+  "traceback": "Traceback (most recent call last):\n  File \"/home/ubuntu/projects/hermes-department-orchestrator/.research/prototype-v2/scripts/live_stage.py\", line 669, in <module>\n    run()\n  File \"/home/ubuntu/projects/hermes-department-orchestrator/.research/prototype-v2/scripts/live_stage.py\", line 619, in run\n    check(\"live delivery crashed at effect/receipt boundary\", p.returncode == 137,\n  File \"/home/ubuntu/projects/hermes-department-orchestrator/.research/prototype-v2/scripts/live_stage.py\", line 69, in check\n    raise AssertionError(name)\nAssertionError: live delivery crashed at effect/receipt boundary\n"
+}

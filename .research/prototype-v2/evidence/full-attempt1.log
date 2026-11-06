@@ -1,0 +1,153 @@
+.......FF.F..FF....FF.F.......................                           [100%]
+=================================== FAILURES ===================================
+_ NormalPathTests.test_request_changes_then_fresh_pass_then_accept_then_single_final _
+
+self = <test_domain.NormalPathTests testMethod=test_request_changes_then_fresh_pass_then_accept_then_single_final>
+
+    def test_request_changes_then_fresh_pass_then_accept_then_single_final(self):
+        h = self.h
+        h.publish("draft-1")
+        h.request_review()
+        r = h.verdict("REQUEST_CHANGES")
+>       self.assertEqual(r.disposition, "applied")
+E       AssertionError: 'rejected' != 'applied'
+E       - rejected
+E       + applied
+
+tests/test_domain.py:126: AssertionError
+______ NegativeGateTests.test_acceptance_for_non_pass_verdict_is_rejected ______
+
+self = <test_domain.NegativeGateTests testMethod=test_acceptance_for_non_pass_verdict_is_rejected>
+
+    def test_acceptance_for_non_pass_verdict_is_rejected(self):
+        h = self.h
+        h.publish("draft-1")
+        h.request_review()
+        h.verdict("REQUEST_CHANGES")
+        # Acceptance referencing the changes-request verdict must not pass.
+        v = h.store.latest_verdict(h.item.item_id)
+>       res = h.accept(verdict_id=v["verdict_id"], artifact_sha=v["artifact_sha"])
+                                  ^^^^^^^^^^^^^^^
+E       TypeError: 'NoneType' object is not subscriptable
+
+tests/test_domain.py:260: TypeError
+____ NegativeGateTests.test_duplicate_event_is_rejected_and_state_unchanged ____
+
+self = <test_domain.NegativeGateTests testMethod=test_duplicate_event_is_rejected_and_state_unchanged>
+
+    def test_duplicate_event_is_rejected_and_state_unchanged(self):
+        h = self.h
+        h.publish("draft-1")
+        h.request_review()
+        e = h.event("review.verdict", {
+            "verdict": "PASS", "reviewer_profile": "reviewer",
+            "review_task_id": "t_review", "artifact_sha": sha("draft-1"),
+        })
+        first = h.orch.ingest_event(e)
+        second = h.orch.ingest_event(e)
+        self.assertEqual(first.disposition, "applied")
+        self.assertEqual(second.disposition, "rejected")
+        self.assertEqual(second.reason, "duplicate_event")
+        h.accept()
+        h.deliver()
+>       self.assertEqual(len(h.journal()), 1)
+E       AssertionError: 0 != 1
+
+tests/test_domain.py:239: AssertionError
+____ NegativeGateTests.test_stale_pass_on_older_artifact_never_sends_final _____
+
+self = <test_domain.NegativeGateTests testMethod=test_stale_pass_on_older_artifact_never_sends_final>
+
+    def test_stale_pass_on_older_artifact_never_sends_final(self):
+        h = self.h
+        h.publish("draft-1")
+        h.request_review()
+        h.verdict("PASS")
+        h.publish("draft-2")  # newer artifact after PASS -> stale
+        h.accept(verdict_id=None, artifact_sha=None)  # acceptance always binds current PASS below
+        out = h.deliver()
+        self.assertEqual(out.status, "held")
+>       self.assertIn(out.reason, {"stale_pass", "wrong_artifact", "no_acceptance"})
+E       AssertionError: 'not_approved' not found in {'stale_pass', 'wrong_artifact', 'no_acceptance'}
+
+tests/test_domain.py:200: AssertionError
+___________ NegativeGateTests.test_unaccepted_pass_never_sends_final ___________
+
+self = <test_domain.NegativeGateTests testMethod=test_unaccepted_pass_never_sends_final>
+
+    def test_unaccepted_pass_never_sends_final(self):
+        h = self.h
+        h.publish("draft-1")
+        h.request_review()
+        h.verdict("PASS")
+        out = h.deliver()
+        self.assertEqual(out.status, "held")
+>       self.assertEqual(out.reason, "no_acceptance")
+E       AssertionError: 'not_approved' != 'no_acceptance'
+E       - not_approved
+E       + no_acceptance
+
+tests/test_domain.py:187: AssertionError
+_ EffectUncertaintyTests.test_permanent_unreadable_effect_becomes_dead_letter __
+
+self = <test_domain.EffectUncertaintyTests testMethod=test_permanent_unreadable_effect_becomes_dead_letter>
+
+    def test_permanent_unreadable_effect_becomes_dead_letter(self):
+        h = self.h
+        h.publish("draft-1")
+        h.request_review()
+        h.verdict("PASS")
+        h.accept()
+        h.port.hide_readback = True
+        h.deliver()
+        for _ in range(5):
+            h.orch.recover(h.dept.dept_id)
+>       d = h.store.deliveries_for(h.dept.dept_id)[0]
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       IndexError: list index out of range
+
+tests/test_domain.py:342: IndexError
+____ EffectUncertaintyTests.test_unknown_effect_is_not_reported_as_success _____
+
+self = <test_domain.EffectUncertaintyTests testMethod=test_unknown_effect_is_not_reported_as_success>
+
+    def test_unknown_effect_is_not_reported_as_success(self):
+        h = self.h
+        h.publish("draft-1")
+        h.request_review()
+        h.verdict("PASS")
+        h.accept()
+        h.port.hide_readback = True  # effect applies, read-back unavailable
+        out = h.deliver()
+>       self.assertEqual(out.status, "unknown")
+E       AssertionError: 'held' != 'unknown'
+E       - held
+E       + unknown
+
+tests/test_domain.py:321: AssertionError
+_________ EventTests.test_board_event_admission_receipt_and_processing _________
+
+self = <test_events.EventTests testMethod=test_board_event_admission_receipt_and_processing>
+
+    def test_board_event_admission_receipt_and_processing(self):
+        r = self.orch.ingest_board_event("d", {
+            "external_event_id": "board-evt-2", "task_id": "t_work",
+            "kind": "completed", "subscription": {"notifier_profile": "manager",
+                                                  "chat_id": "sess-manager"},
+        })
+>       self.assertEqual(r.disposition, "admitted")
+E       AssertionError: 'dead_letter' != 'admitted'
+E       - dead_letter
+E       + admitted
+
+tests/test_events.py:106: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_domain.py::NormalPathTests::test_request_changes_then_fresh_pass_then_accept_then_single_final
+FAILED tests/test_domain.py::NegativeGateTests::test_acceptance_for_non_pass_verdict_is_rejected
+FAILED tests/test_domain.py::NegativeGateTests::test_duplicate_event_is_rejected_and_state_unchanged
+FAILED tests/test_domain.py::NegativeGateTests::test_stale_pass_on_older_artifact_never_sends_final
+FAILED tests/test_domain.py::NegativeGateTests::test_unaccepted_pass_never_sends_final
+FAILED tests/test_domain.py::EffectUncertaintyTests::test_permanent_unreadable_effect_becomes_dead_letter
+FAILED tests/test_domain.py::EffectUncertaintyTests::test_unknown_effect_is_not_reported_as_success
+FAILED tests/test_events.py::EventTests::test_board_event_admission_receipt_and_processing
+8 failed, 38 passed in 6.33s

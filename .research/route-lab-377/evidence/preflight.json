@@ -1,0 +1,42 @@
+{
+  "environment": {
+    "HOME": "/home/ubuntu/projects/hermes-department-orchestrator/.research/route-lab-377/os-home",
+    "HERMES_HOME": "/home/ubuntu/projects/hermes-department-orchestrator/.research/route-lab-377/os-home/.hermes",
+    "HERMES_KANBAN_HOME": "/home/ubuntu/projects/hermes-department-orchestrator/.research/route-lab-377/board",
+    "HERMES_KANBAN_DB": "/home/ubuntu/projects/hermes-department-orchestrator/.research/route-lab-377/board/kanban.db",
+    "XDG_CONFIG_HOME": "/home/ubuntu/projects/hermes-department-orchestrator/.research/route-lab-377/xdg/config",
+    "XDG_CACHE_HOME": "/home/ubuntu/projects/hermes-department-orchestrator/.research/route-lab-377/xdg/cache",
+    "XDG_DATA_HOME": "/home/ubuntu/projects/hermes-department-orchestrator/.research/route-lab-377/xdg/data",
+    "XDG_STATE_HOME": "/home/ubuntu/projects/hermes-department-orchestrator/.research/route-lab-377/xdg/state",
+    "XDG_RUNTIME_DIR": "/home/ubuntu/projects/hermes-department-orchestrator/.research/route-lab-377/runtime",
+    "TMPDIR": "/home/ubuntu/projects/hermes-department-orchestrator/.research/route-lab-377/tmp",
+    "TMP": "/home/ubuntu/projects/hermes-department-orchestrator/.research/route-lab-377/tmp",
+    "TEMP": "/home/ubuntu/projects/hermes-department-orchestrator/.research/route-lab-377/tmp"
+  },
+  "network_namespace": "net:[4026532628]",
+  "mount_namespace": "mnt:[4026532626]",
+  "interfaces": [
+    {
+      "ifindex": 1,
+      "ifname": "lo",
+      "flags": [
+        "LOOPBACK",
+        "UP",
+        "LOWER_UP"
+      ],
+      "mtu": 65536,
+      "qdisc": "noqueue",
+      "operstate": "UNKNOWN",
+      "linkmode": "DEFAULT",
+      "group": "default",
+      "txqlen": 1000,
+      "link_type": "loopback",
+      "address": "00:00:00:00:00:00",
+      "broadcast": "00:00:00:00:00:00"
+    }
+  ],
+  "routes": [],
+  "production_home_masked": true,
+  "source_read_only": true,
+  "pid": 1
+}

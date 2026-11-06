@@ -1,0 +1,16 @@
+== M2-R 複跑：版本控制狀態 ==
+recorded_at: 2026-11-06T06:49:26+00:00
+cwd: /home/ubuntu/projects/hermes-department-orchestrator
+
+-- git status --porcelain=v1 --branch --untracked-files=no --
+fatal: not a git repository (or any of the parent directories): .git
+git_status_exit=128
+
+-- git rev-parse HEAD --
+fatal: not a git repository (or any of the parent directories): .git
+git_rev_parse_exit=128
+
+-- 尋找上層 git 工作樹 --
+(掃描完成)
+
+結論：此目錄不是 git 工作樹（無 .git），因此沒有 HEAD/未提交變更可記錄；本輪以檔案內容 SHA256 manifest 作為版本識別。

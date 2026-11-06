@@ -1,0 +1,5 @@
+{
+  "url": "http://127.0.0.1:18232/p/manager/api/sessions/api-7ed08b54bf27e574",
+  "status": 404,
+  "body": "{\"error\": {\"message\": \"Session not found: api-7ed08b54bf27e574\", \"type\": \"invalid_request_error\", \"param\": null, \"code\": \"session_not_found\"}}"
+}

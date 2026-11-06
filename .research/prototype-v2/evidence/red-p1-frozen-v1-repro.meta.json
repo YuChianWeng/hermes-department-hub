@@ -1,0 +1,9 @@
+{
+  "purpose": "Independent reproduction of the behavioural RED against the frozen v1 implementation.",
+  "command": "cp -r prototype-v1/deptproto <scratch>/deptproto; cp prototype-v2/tests/test_p1_regressions.py <scratch>/; cd <scratch>; venv/bin/python -m pytest test_p1_regressions.py -q -p no:cacheprovider",
+  "result": "12 failed (all AssertionError at behaviour assertions; no import/collection errors)",
+  "v1_orchestrator_sha256": "b53feb6a5e66ec0ae61d681cb69e0d86cf2f0ac9d85f8a40ed5ad66e17819247",
+  "test_file_sha256": "a5a7270306dae9ca1c32f7e893d8be4e0c5400056e2f4ff9bef58946c590784f",
+  "log_sha256": "000b3451c58deb96116e1efb646485d718a3e751b1b7bb5f0e7818349c2c83e4",
+  "synthetic_failures": "Finding 6 uses an injected set_item_status exception, not a real process kill; Finding 2 uses a hidden read-back journal, not a real board."
+}

@@ -1,0 +1,22 @@
+# command: /home/ubuntu/.hermes/hermes-agent/venv/bin/python -m pytest tests/test_desktop_plugin.py -v -p no:cacheprovider
+# recorded_at_utc: 2026-11-06T06:50:46+00:00
+# recorded_at_asia_taipei: 2026-11-06T14:50:46+08:00
+# cwd: /home/ubuntu/projects/hermes-department-orchestrator
+# note: Focused Desktop SDK surface pytest file (import allow-list, no hard colours, manifest, node --check, SDK mock component logic); node >=18 candidate found by the test
+---- output ----
+============================= test session starts ==============================
+platform linux -- Python 3.11.15, pytest-9.0.2, pluggy-1.6.0 -- /home/ubuntu/.hermes/hermes-agent/venv/bin/python
+rootdir: /home/ubuntu/projects/hermes-department-orchestrator
+collecting ... collected 6 items
+
+tests/test_desktop_plugin.py::test_plugin_id_matches_its_folder PASSED   [ 16%]
+tests/test_desktop_plugin.py::test_only_allowlisted_imports PASSED       [ 33%]
+tests/test_desktop_plugin.py::test_no_hardcoded_colours PASSED           [ 50%]
+tests/test_desktop_plugin.py::test_manifest_declares_the_backend PASSED  [ 66%]
+tests/test_desktop_plugin.py::test_node_syntax_check PASSED              [ 83%]
+tests/test_desktop_plugin.py::test_sdk_mock_component_logic PASSED       [100%]
+
+============================== 6 passed in 0.12s ===============================
+---- end ----
+exit_code: 0
+finished_at_utc: 2026-11-06T06:50:47+00:00

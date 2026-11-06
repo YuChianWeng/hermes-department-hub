@@ -1,0 +1,762 @@
+[
+  {
+    "path": "board/kanban.db",
+    "bytes": 118784,
+    "sha256": "a037d9e2d879943cb18b954411da06c8c91d2b2289e9278a52a5d13762073c8d"
+  },
+  {
+    "path": "board/kanban.db-shm",
+    "bytes": 32768,
+    "sha256": "fd4c9fda9cd3f9ae7c962b0ddf37232294d55580e1aa165aa06129b8549389eb"
+  },
+  {
+    "path": "board/kanban.db-wal",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "board/kanban.db.init.lock",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "evidence/assertions.json",
+    "bytes": 5781,
+    "sha256": "85dfe922ea50e13b77e5f2ad23907a54098975c2208f7bdcf84e17133d934525"
+  },
+  {
+    "path": "evidence/audit.json",
+    "bytes": 64531,
+    "sha256": "b770c94cae6277248c250338c462619a291d7d17e19da1f089a625e767cd6162"
+  },
+  {
+    "path": "evidence/cleanup.json",
+    "bytes": 276,
+    "sha256": "612535443e0426991dfe91f70ab79c835be3e36a4eebddef054d20ac35bf6260"
+  },
+  {
+    "path": "evidence/cli.jsonl",
+    "bytes": 3850,
+    "sha256": "04012e990a034efcec2d92a9a239855dc38844a3f0f980495db9964b222ed8e3"
+  },
+  {
+    "path": "evidence/continuation/assertions.json",
+    "bytes": 435,
+    "sha256": "6f35b750cedb671101d8d2e8bc6592d6f991d46d1acd51d49d0d2e19ad391bd8"
+  },
+  {
+    "path": "evidence/continuation/cleanup.json",
+    "bytes": 274,
+    "sha256": "740e1530eff562f2d09477f6be8470baf897c0d92871f2d611f596e042382003"
+  },
+  {
+    "path": "evidence/continuation/cli.jsonl",
+    "bytes": 3605,
+    "sha256": "9bbe71799fab3ebee20e2f5042ddaeb4c8e87b5483f8cd85cbcdc7c0b39e633c"
+  },
+  {
+    "path": "evidence/continuation/error-snapshot.json",
+    "bytes": 3469,
+    "sha256": "4ffba5518d76233dfd53035b4174233a6511feab31f4faaa71af87713282a11a"
+  },
+  {
+    "path": "evidence/continuation/error.json",
+    "bytes": 1477,
+    "sha256": "cb19a9211f79bdcefd29caa5554461d4d856a8017910ea040dad961f1345758c"
+  },
+  {
+    "path": "evidence/continuation/gateway-console.log",
+    "bytes": 1633,
+    "sha256": "95ecc982ead75f37ffc63b2c9a0984b11146fac4a7d98b5bec94cb8229da08c9"
+  },
+  {
+    "path": "evidence/continuation/http.jsonl",
+    "bytes": 1008,
+    "sha256": "08f9635abfb483e4c4da9fa519845acbc88f304feed1e87357b527bdd49f0ecf"
+  },
+  {
+    "path": "evidence/continuation/model-console.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "evidence/continuation/preflight.json",
+    "bytes": 1911,
+    "sha256": "853af0886ce2ce96c6fcee394ce11f0e3826e18f413e1a9f5ee8ffa8a9bb7dd3"
+  },
+  {
+    "path": "evidence/continuation/process-env.json",
+    "bytes": 3228,
+    "sha256": "d8dd61d683cf008ecbfe10ceea5b2f17d0558def65f2db943646988e91e238b5"
+  },
+  {
+    "path": "evidence/continuation/wrong-session-get.json",
+    "bytes": 270,
+    "sha256": "fcfe75314cecc3a56bd4e4fd148dc32540aac877ece2b3a331e742483b327f28"
+  },
+  {
+    "path": "evidence/error-snapshot.json",
+    "bytes": 488,
+    "sha256": "12d745331d290f9c50d5b0a3ae298bd9dd90e2fbaa4545212b78e88edb18082b"
+  },
+  {
+    "path": "evidence/error.json",
+    "bytes": 645,
+    "sha256": "22e626bd23376d138fee09aee56096652576236d78697769a4faab01f0bd0ac7"
+  },
+  {
+    "path": "evidence/final-stage/assertions.json",
+    "bytes": 1140,
+    "sha256": "784ba806aae8362afe9df44ee01f2163d779765438b6194bc8fb0b335ab8e574"
+  },
+  {
+    "path": "evidence/final-stage/case-ids.json",
+    "bytes": 374,
+    "sha256": "b00dc385174bafb723ab3e219bec7c430396d4685a6760ab54dbf1818d769f68"
+  },
+  {
+    "path": "evidence/final-stage/cleanup.json",
+    "bytes": 274,
+    "sha256": "740e1530eff562f2d09477f6be8470baf897c0d92871f2d611f596e042382003"
+  },
+  {
+    "path": "evidence/final-stage/cli.jsonl",
+    "bytes": 6782,
+    "sha256": "aa6f13a32a731132737df0ac46230cb120fb8bcde1b9f64dacf0371830821c13"
+  },
+  {
+    "path": "evidence/final-stage/error-snapshot.json",
+    "bytes": 12335,
+    "sha256": "14d5f0641da4949ca69789f019786ffbee47dce02d1470f4d89c3ca4e87efd2a"
+  },
+  {
+    "path": "evidence/final-stage/error.json",
+    "bytes": 2202,
+    "sha256": "751042c19060fa3ae6ae6d06bbeaa9f37d8c864aac789680bfee6194413ce967"
+  },
+  {
+    "path": "evidence/final-stage/final.json",
+    "bytes": 12335,
+    "sha256": "14d5f0641da4949ca69789f019786ffbee47dce02d1470f4d89c3ca4e87efd2a"
+  },
+  {
+    "path": "evidence/final-stage/gateway-console.log",
+    "bytes": 1633,
+    "sha256": "d601e532bc90e6b6037b346cce5c0c6f6279be13315f9e9b476811aff6f0c5f6"
+  },
+  {
+    "path": "evidence/final-stage/model-console.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "evidence/final-stage/preflight.json",
+    "bytes": 1911,
+    "sha256": "853af0886ce2ce96c6fcee394ce11f0e3826e18f413e1a9f5ee8ffa8a9bb7dd3"
+  },
+  {
+    "path": "evidence/final-stage/process-env.json",
+    "bytes": 3228,
+    "sha256": "d8dd61d683cf008ecbfe10ceea5b2f17d0558def65f2db943646988e91e238b5"
+  },
+  {
+    "path": "evidence/final-stage/safe-child-routing.json",
+    "bytes": 6452,
+    "sha256": "8f85f2740f61657efcb92d4809cd7eaeb14d2201d731649642ab80765d71fc67"
+  },
+  {
+    "path": "evidence/final-stage/wrong-owner-routing.json",
+    "bytes": 8117,
+    "sha256": "e887efd63cf631d2299a06fb5eb3bad09d8ef4fc1eaa314feea591669b9e9fef"
+  },
+  {
+    "path": "evidence/gateway-console.log",
+    "bytes": 2126,
+    "sha256": "7a24a1766f18fc3fe40a601748d64db361f9f754a85706ff0c1d3288f6187241"
+  },
+  {
+    "path": "evidence/http.jsonl",
+    "bytes": 3772,
+    "sha256": "afdf10aa36aef2c7a8d1280fcfcb3c12cbf73b369ca877538016a9f2d424f196"
+  },
+  {
+    "path": "evidence/model-console.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "evidence/model.jsonl",
+    "bytes": 53849,
+    "sha256": "a10dda9e0653bc18c978bd02a23fdf770628c20db9877f9fef63d92991a91e2e"
+  },
+  {
+    "path": "evidence/preflight.json",
+    "bytes": 1911,
+    "sha256": "853af0886ce2ce96c6fcee394ce11f0e3826e18f413e1a9f5ee8ffa8a9bb7dd3"
+  },
+  {
+    "path": "evidence/process-env.json",
+    "bytes": 3230,
+    "sha256": "17f2a4258bfcde7b1189ba2e88e1a6f2a97be97dbf40163715480efbf4ccfba0"
+  },
+  {
+    "path": "evidence/session-identities.json",
+    "bytes": 262,
+    "sha256": "c7fd2913326fbe974a9ae30c7c170c14e3afcc0cf9acbf870de5284c92aa5c38"
+  },
+  {
+    "path": "os-home/.hermes/.clean_shutdown",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "os-home/.hermes/.install_id.lock",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "os-home/.hermes/.no-bundled-skills",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "os-home/.hermes/SOUL.md",
+    "bytes": 58,
+    "sha256": "052284388923fc04586141183d23971885ef23369704d0d7363eb2909e30f578"
+  },
+  {
+    "path": "os-home/.hermes/auth.lock",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "os-home/.hermes/backups/config/config.yaml.good.20261105-143825",
+    "bytes": 721,
+    "sha256": "3870ee291c4ca2c97c8cd5571162491f823e854bd9a42f81fad138519831acaf"
+  },
+  {
+    "path": "os-home/.hermes/cache/local_endpoint_probes.json",
+    "bytes": 89,
+    "sha256": "92ca7a3fe658c871f72b324732f7c35d9f9dcf4a110b722aaf252c8f5d909301"
+  },
+  {
+    "path": "os-home/.hermes/cache/plugin_toolset_keys.json",
+    "bytes": 45,
+    "sha256": "b7ffce9496784e2fbc738882bd403156ab61d14607f14f03774989d03606fe59"
+  },
+  {
+    "path": "os-home/.hermes/cache/schema_columns.json",
+    "bytes": 6344,
+    "sha256": "f5b485766d3992504594c053c6060ac0d858950fdc4ab65657aae32c77225ba5"
+  },
+  {
+    "path": "os-home/.hermes/cache/scratch/.last_prune",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "os-home/.hermes/cache/tool_discovery_cache.json",
+    "bytes": 29533,
+    "sha256": "6f47e576303743ac2800fdba07ab268512b875a715cf85a01955cd5e6a659fa4"
+  },
+  {
+    "path": "os-home/.hermes/channel_directory.json",
+    "bytes": 67,
+    "sha256": "6d2b75e557572cb2c485b6ecf96536f3dd99596dbfc7468f7caa465325c1587e"
+  },
+  {
+    "path": "os-home/.hermes/config.yaml",
+    "bytes": 721,
+    "sha256": "3870ee291c4ca2c97c8cd5571162491f823e854bd9a42f81fad138519831acaf"
+  },
+  {
+    "path": "os-home/.hermes/cron/.jobs.lock",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "os-home/.hermes/cron/.tick.lock",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "os-home/.hermes/cron/executions.db",
+    "bytes": 24576,
+    "sha256": "b9600a06474f6ef0e9b208f9fde6016b37d92e9322c4bdfc879a7b859352a051"
+  },
+  {
+    "path": "os-home/.hermes/cron/ticker_heartbeat",
+    "bytes": 20,
+    "sha256": "2892d958d437e5d3331383e77fc583d47d19a1ec38cfc91b53ad68c2ba774388"
+  },
+  {
+    "path": "os-home/.hermes/cron/ticker_last_success",
+    "bytes": 17,
+    "sha256": "80f8fe254344dd02924eb4b7749da0089007b94d5db06393d3fa66f62e8b772a"
+  },
+  {
+    "path": "os-home/.hermes/gateway-starts.log",
+    "bytes": 54,
+    "sha256": "15012f9f74c87eb5d6a7f7adf9c7cf687771520f634d68ee71fc0b1c8537395a"
+  },
+  {
+    "path": "os-home/.hermes/gateway.lock",
+    "bytes": 297,
+    "sha256": "f36b3885b50216a21ccd7526e5f61c783ec88b9a93467753fa32a547b43b5e40"
+  },
+  {
+    "path": "os-home/.hermes/gateway_state.json",
+    "bytes": 1168,
+    "sha256": "fcb420bf0378f62b68760ae0b33b06e1bee591ad7ed661bd25b49630359b010f"
+  },
+  {
+    "path": "os-home/.hermes/install_id",
+    "bytes": 33,
+    "sha256": "0e37295b58db783e3a6e734eafabef9ee435c05d6f25256b2698d2c77fb5df73"
+  },
+  {
+    "path": "os-home/.hermes/installs/5f0a1ff4045d044e/.install.lock",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "os-home/.hermes/installs/5f0a1ff4045d044e/bootstrap/default.json",
+    "bytes": 539,
+    "sha256": "853a021333f825791298ca81bb59bad554bac2595021ba208932b6f84668858f"
+  },
+  {
+    "path": "os-home/.hermes/logs/agent.log",
+    "bytes": 72335,
+    "sha256": "7ea380085e36006cfb5d98bcf162253b1447936fe97ce51e7ff5d28c9d90f5bc"
+  },
+  {
+    "path": "os-home/.hermes/logs/errors.log",
+    "bytes": 3335,
+    "sha256": "7aa3b30b0352931d28d1b93e9ed4afaefc5a509345369711f5b9a557f4b1c9e1"
+  },
+  {
+    "path": "os-home/.hermes/logs/gateway-exit-diag.log",
+    "bytes": 2010,
+    "sha256": "f5ba2890a6ddd9443c6580a371f62c751b259a3f2c3093a1c40ff4d062596e45"
+  },
+  {
+    "path": "os-home/.hermes/logs/gateway-shutdown-diag.log",
+    "bytes": 3763,
+    "sha256": "222e83d06e052f42b236e6c763b0ab87b07e787af4581a46b4b45bdd8a559ada"
+  },
+  {
+    "path": "os-home/.hermes/logs/gateway.log",
+    "bytes": 14057,
+    "sha256": "13acad4f4a3f25c807486d9e332ef7276e7bd2e6ad29c499e39fdd4932988322"
+  },
+  {
+    "path": "os-home/.hermes/logs/gateway_faulthandler.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "os-home/.hermes/logs/update_receipts/.pm-write.lock",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "os-home/.hermes/logs/update_receipts/latest.json",
+    "bytes": 350,
+    "sha256": "a1d412d06e71b65e97eb785d041895489b226b26cebccce0ca0339aa8f3d64f6"
+  },
+  {
+    "path": "os-home/.hermes/logs/update_receipts/pm_20261105T063839Z-plugin-check-105-10d5336e23084b95b697bd6d7def8d44.json",
+    "bytes": 350,
+    "sha256": "a1d412d06e71b65e97eb785d041895489b226b26cebccce0ca0339aa8f3d64f6"
+  },
+  {
+    "path": "os-home/.hermes/plugin-update-checks/last-run",
+    "bytes": 10,
+    "sha256": "28614a2c763bc358f8b482fa8f78d3bb44038f259ce708e7486023df89deb7cc"
+  },
+  {
+    "path": "os-home/.hermes/plugin-update-checks/results.json",
+    "bytes": 3,
+    "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+  },
+  {
+    "path": "os-home/.hermes/profiles/manager/.env",
+    "bytes": 37,
+    "sha256": "4630fabfeba8a09de1df5135822d6f5c13a3d188d97382ab9e6c4f08890221e4"
+  },
+  {
+    "path": "os-home/.hermes/profiles/manager/.no-bundled-skills",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "os-home/.hermes/profiles/manager/SOUL.md",
+    "bytes": 58,
+    "sha256": "052284388923fc04586141183d23971885ef23369704d0d7363eb2909e30f578"
+  },
+  {
+    "path": "os-home/.hermes/profiles/manager/backups/config/config.yaml.good.20261105-143835",
+    "bytes": 721,
+    "sha256": "3870ee291c4ca2c97c8cd5571162491f823e854bd9a42f81fad138519831acaf"
+  },
+  {
+    "path": "os-home/.hermes/profiles/manager/cache/schema_columns.json",
+    "bytes": 6344,
+    "sha256": "f5b485766d3992504594c053c6060ac0d858950fdc4ab65657aae32c77225ba5"
+  },
+  {
+    "path": "os-home/.hermes/profiles/manager/config.yaml",
+    "bytes": 721,
+    "sha256": "3870ee291c4ca2c97c8cd5571162491f823e854bd9a42f81fad138519831acaf"
+  },
+  {
+    "path": "os-home/.hermes/profiles/manager/cron/.jobs.lock",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "os-home/.hermes/profiles/manager/cron/.tick.lock",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "os-home/.hermes/profiles/manager/cron/executions.db",
+    "bytes": 24576,
+    "sha256": "b9600a06474f6ef0e9b208f9fde6016b37d92e9322c4bdfc879a7b859352a051"
+  },
+  {
+    "path": "os-home/.hermes/profiles/manager/cron/ticker_heartbeat",
+    "bytes": 21,
+    "sha256": "65f053584cc3e1378af9809be591e5d37ecca81913985d26db2362d9cfabb768"
+  },
+  {
+    "path": "os-home/.hermes/profiles/manager/cron/ticker_last_success",
+    "bytes": 18,
+    "sha256": "809008a4bb9e21cebca775d36694ff2db30378db950e7d0ab0bfd7523c261f41"
+  },
+  {
+    "path": "os-home/.hermes/profiles/manager/gateway.lock",
+    "bytes": 314,
+    "sha256": "d4118a0d2fff851da3aa6d90833a31011f1b74d256c095dec25c6ce613a73059"
+  },
+  {
+    "path": "os-home/.hermes/profiles/manager/logs/agent.log",
+    "bytes": 23264,
+    "sha256": "c9b955be961c52abf346ba512bd888b1f57ac1d58826c99a1436b9ab7bfc1a15"
+  },
+  {
+    "path": "os-home/.hermes/profiles/manager/logs/errors.log",
+    "bytes": 1276,
+    "sha256": "935d7b7df5501d63f437b84932f507a89d0662cb6a0fd80eda3a2c9457f07f3b"
+  },
+  {
+    "path": "os-home/.hermes/profiles/manager/logs/gateway.log",
+    "bytes": 2285,
+    "sha256": "118eb6297da497d970cc279d918091b0b0fa259345f10aa5f660c5c6e1b3ec52"
+  },
+  {
+    "path": "os-home/.hermes/profiles/manager/logs/update_receipts/.pm-write.lock",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "os-home/.hermes/profiles/manager/logs/update_receipts/latest.json",
+    "bytes": 350,
+    "sha256": "0c310fa8a7e009467e4cc7a4258b1fdd73fcffd69d4c297c819d96b9f8d51f1a"
+  },
+  {
+    "path": "os-home/.hermes/profiles/manager/logs/update_receipts/pm_20261105T063839Z-plugin-check-105-ec72b1fdfe204e64a90d3a72d9ed3462.json",
+    "bytes": 350,
+    "sha256": "0c310fa8a7e009467e4cc7a4258b1fdd73fcffd69d4c297c819d96b9f8d51f1a"
+  },
+  {
+    "path": "os-home/.hermes/profiles/manager/plugin-update-checks/last-run",
+    "bytes": 10,
+    "sha256": "4bf1eba4b4d05b5d723ccc9df1a30136d5b2fc4f2a29330387adb2496b818184"
+  },
+  {
+    "path": "os-home/.hermes/profiles/manager/plugin-update-checks/results.json",
+    "bytes": 3,
+    "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+  },
+  {
+    "path": "os-home/.hermes/profiles/manager/runtime/active_sessions.json",
+    "bytes": 15,
+    "sha256": "e3eb12da99e044ecc7d50cea407bf17f33c546e5309aa7ee661234baed2b7750"
+  },
+  {
+    "path": "os-home/.hermes/profiles/manager/runtime/active_sessions.lock",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "os-home/.hermes/profiles/manager/runtime/bot_live_delivery/.lock",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "os-home/.hermes/profiles/manager/state.db",
+    "bytes": 598016,
+    "sha256": "e227db8edc72d6127ed9f2fc30cea355f60c8d9a3fc07c36a893b5909a45b082"
+  },
+  {
+    "path": "os-home/.hermes/profiles/manager/state.db-shm",
+    "bytes": 32768,
+    "sha256": "fd4c9fda9cd3f9ae7c962b0ddf37232294d55580e1aa165aa06129b8549389eb"
+  },
+  {
+    "path": "os-home/.hermes/profiles/manager/state.db-wal",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "os-home/.hermes/profiles/manager/state.db.fts_rebuild.lock",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "os-home/.hermes/profiles/manager/state.db.quarantine.lock",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "os-home/.hermes/response_store.db",
+    "bytes": 57344,
+    "sha256": "4d6597656b881a55d191657ff4079d8f3f27fc8051a481f4f99e08218739fe4d"
+  },
+  {
+    "path": "os-home/.hermes/runs_idempotency.db",
+    "bytes": 16384,
+    "sha256": "dcee56f6788081a5080922774d29251bdf6800bfa7ebd6894a665710a9273c1b"
+  },
+  {
+    "path": "os-home/.hermes/runtime/active_sessions.json",
+    "bytes": 15,
+    "sha256": "e3eb12da99e044ecc7d50cea407bf17f33c546e5309aa7ee661234baed2b7750"
+  },
+  {
+    "path": "os-home/.hermes/runtime/active_sessions.lock",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "os-home/.hermes/runtime/bot_live_delivery/.lock",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "os-home/.hermes/skills/.bundled_manifest",
+    "bytes": 46,
+    "sha256": "fd7b31bceafcf113900c2cb7b69e0c9330abd89b496ff17827c1cc939b4d5eaa"
+  },
+  {
+    "path": "os-home/.hermes/skills/autonomous-ai-agents/DESCRIPTION.md",
+    "bytes": 211,
+    "sha256": "7f2427c7112d71235d92f68ba68392a4fed3d28a7636f522deb2748cb44fe7fc"
+  },
+  {
+    "path": "os-home/.hermes/skills/autonomous-ai-agents/hermes-agent/SKILL.md",
+    "bytes": 15952,
+    "sha256": "c14f545a0a0dd00cb009408faedad563878d78039a7c7a80369aac847cdfb7f8"
+  },
+  {
+    "path": "os-home/.hermes/skills/autonomous-ai-agents/hermes-agent/references/background-systems.md",
+    "bytes": 5210,
+    "sha256": "6fcab147215c2e52716fe1ae650ed8972e3ad13f7a50477fb5ca6082adca143b"
+  },
+  {
+    "path": "os-home/.hermes/skills/autonomous-ai-agents/hermes-agent/references/cli-reference.md",
+    "bytes": 6915,
+    "sha256": "d1ceaa55fd1cb0ed11c1b15dde254ea755850924b477fbdac0a2a3fe5a537f27"
+  },
+  {
+    "path": "os-home/.hermes/skills/autonomous-ai-agents/hermes-agent/references/configuration.md",
+    "bytes": 5087,
+    "sha256": "60e98213eda62521ec21fdc10dc916fb30858025de34e52437482ef68a2fcfe1"
+  },
+  {
+    "path": "os-home/.hermes/skills/autonomous-ai-agents/hermes-agent/references/contributor-guide.md",
+    "bytes": 5931,
+    "sha256": "c92ea1a35fff35a665bfd19618198960d3afac10dab793f9372e16fb45895059"
+  },
+  {
+    "path": "os-home/.hermes/skills/autonomous-ai-agents/hermes-agent/references/delegate-task-concurrency-diagnosis.md",
+    "bytes": 4660,
+    "sha256": "41019dd37c0c048b002d3639fe01455513b5c9aba142a21ff9c3bd4c7718a77b"
+  },
+  {
+    "path": "os-home/.hermes/skills/autonomous-ai-agents/hermes-agent/references/desktop-plugins.md",
+    "bytes": 15157,
+    "sha256": "5f043c22ee1fc72cac041c3ef060b5bb6b6cc6dc36de0040319ad2107d493fe7"
+  },
+  {
+    "path": "os-home/.hermes/skills/autonomous-ai-agents/hermes-agent/references/native-mcp.md",
+    "bytes": 12581,
+    "sha256": "ded08718d2eb141262a31b323f8e66eeb40f35e074e1f0e70abb76860891ec92"
+  },
+  {
+    "path": "os-home/.hermes/skills/autonomous-ai-agents/hermes-agent/references/petdex.md",
+    "bytes": 3244,
+    "sha256": "2254eabf40c360efb54e4df482f3b84820b54a15e6954c4a7e9e7fee4eb90f77"
+  },
+  {
+    "path": "os-home/.hermes/skills/autonomous-ai-agents/hermes-agent/references/portal-auth-for-third-party-apps.md",
+    "bytes": 6579,
+    "sha256": "4890617a80d8c70fc388a49201d5a718049a64c0ddd5fac3f35754641f063b99"
+  },
+  {
+    "path": "os-home/.hermes/skills/autonomous-ai-agents/hermes-agent/references/project-context-files.md",
+    "bytes": 3285,
+    "sha256": "20b51406102e6498f62ed837978e5c67ebd91a917b985de7bbddfaaf23c1f593"
+  },
+  {
+    "path": "os-home/.hermes/skills/autonomous-ai-agents/hermes-agent/references/projects-and-folders.md",
+    "bytes": 9079,
+    "sha256": "3ef1588e84a454b4cb3c08dc11519eca3c46208dd4d443124cafbb5d4ec0d55a"
+  },
+  {
+    "path": "os-home/.hermes/skills/autonomous-ai-agents/hermes-agent/references/providers-and-models.md",
+    "bytes": 3410,
+    "sha256": "7eb85c6f7c70685b2684964fd8978e3a3a29b71e2aa5806380736a9a95bce317"
+  },
+  {
+    "path": "os-home/.hermes/skills/autonomous-ai-agents/hermes-agent/references/security-privacy.md",
+    "bytes": 3393,
+    "sha256": "f27913f7775915d8065b2dea782197907ff90cf37f07b865135c7f61aee98e83"
+  },
+  {
+    "path": "os-home/.hermes/skills/autonomous-ai-agents/hermes-agent/references/slash-commands.md",
+    "bytes": 5379,
+    "sha256": "690dc6c2543dfa028bbf2918c229f27f4962e9d897fce25ebb1de67d56f3b822"
+  },
+  {
+    "path": "os-home/.hermes/skills/autonomous-ai-agents/hermes-agent/references/themes.md",
+    "bytes": 6887,
+    "sha256": "f5a8269a7312173f0caa6736156a3f76d32e56b4e15511e84dc2e902f48e8157"
+  },
+  {
+    "path": "os-home/.hermes/skills/autonomous-ai-agents/hermes-agent/references/troubleshooting.md",
+    "bytes": 3807,
+    "sha256": "41be52557d43230ff64d78a57c41c592fbd178cab6072ee3a436940d4a078306"
+  },
+  {
+    "path": "os-home/.hermes/skills/autonomous-ai-agents/hermes-agent/references/tui-widgets.md",
+    "bytes": 6484,
+    "sha256": "20e21aabb757a9d3c7d895db8f05a3782fe8b28feef3768ac5550c8860b4a3db"
+  },
+  {
+    "path": "os-home/.hermes/skills/autonomous-ai-agents/hermes-agent/references/webhooks.md",
+    "bytes": 8466,
+    "sha256": "f668c57d1900e249cb4b54e5d624e9aacb399ecf1452f9b258a1bf857ffa8a42"
+  },
+  {
+    "path": "os-home/.hermes/skills/autonomous-ai-agents/hermes-agent/references/windows-quirks.md",
+    "bytes": 2671,
+    "sha256": "4af2c0907983376f1b21d2164de17f1229faeb0609c61762cfc026b806bc5501"
+  },
+  {
+    "path": "os-home/.hermes/skills/autonomous-ai-agents/hermes-agent/templates/clock.mjs",
+    "bytes": 1423,
+    "sha256": "44ec25d560e16c7815a633039a783ddbba2d8e8cf1659560c0cd1cddec83f89d"
+  },
+  {
+    "path": "os-home/.hermes/skills/autonomous-ai-agents/hermes-agent/templates/plugin.js",
+    "bytes": 3141,
+    "sha256": "a63c8f879756854b45373f5d6b1ae0a7fefcdd4a5af840be8a60d83b64724744"
+  },
+  {
+    "path": "os-home/.hermes/skills/autonomous-ai-agents/hermes-agent/templates/skin.yaml",
+    "bytes": 1389,
+    "sha256": "bc8fddd7e5373b074c1c7dd423bb59d6e04769977e8a18354e3a6b3983209994"
+  },
+  {
+    "path": "os-home/.hermes/state/gateway.heartbeat",
+    "bytes": 289,
+    "sha256": "be5783e1d943dbbb9553aef1cac45879d2bb7225b206e1bb59009624cdc8b4db"
+  },
+  {
+    "path": "os-home/.hermes/state/gateway.lifecycle.json",
+    "bytes": 195,
+    "sha256": "13f1e37367cea5b1fc19527943d4743ad72b02c234488db60cd9ca75a02be735"
+  },
+  {
+    "path": "os-home/.hermes/state.db",
+    "bytes": 598016,
+    "sha256": "b9bdc66cae5ebfcc0b43de104e0229c1248b0471d6ec866d3525df3d2b17df78"
+  },
+  {
+    "path": "os-home/.hermes/state.db-shm",
+    "bytes": 32768,
+    "sha256": "fd4c9fda9cd3f9ae7c962b0ddf37232294d55580e1aa165aa06129b8549389eb"
+  },
+  {
+    "path": "os-home/.hermes/state.db-wal",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "os-home/.hermes/state.db.fts_rebuild.lock",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "os-home/.hermes/state.db.quarantine.lock",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "scripts/audit.py",
+    "bytes": 6213,
+    "sha256": "10d424f782595e73fe44c865aea2f1b6186befe1f47d3a46f9feb0db57c1e0fa"
+  },
+  {
+    "path": "scripts/cli.py",
+    "bytes": 125,
+    "sha256": "ba6a55f440f14bbdd771635ea5850693da42ac8a82720eb0ebd6555c86f06690"
+  },
+  {
+    "path": "scripts/continuation.py",
+    "bytes": 5287,
+    "sha256": "1f9beef259999d68e2037742c366723a189a17b48561150710569da277d90457"
+  },
+  {
+    "path": "scripts/final_stage.py",
+    "bytes": 4923,
+    "sha256": "b66fa60f42f815ff4792ca667a25a2021047fd7bbf7d463eed2b604ed4b87168"
+  },
+  {
+    "path": "scripts/model.py",
+    "bytes": 2279,
+    "sha256": "6ded26e9f0596d1bde9d5c03f2194bed88b83c8e2c1fe0c0757cc2c80edcecf1"
+  },
+  {
+    "path": "scripts/runner.py",
+    "bytes": 12062,
+    "sha256": "159c4695cfcbe4e606891443352d4fca1aab5e00fa273cee92cf47f9bdfc611b"
+  },
+  {
+    "path": "scripts/sandbox-continuation.sh",
+    "bytes": 1634,
+    "sha256": "ec1631c4b31ac75de3473f67808892143b1477bcbb21d286581ff5ec70a3ab3d"
+  },
+  {
+    "path": "scripts/sandbox-final.sh",
+    "bytes": 1633,
+    "sha256": "3219b44d2c0c1e23ba9e70bfdc814d428a1cbbeaf15ed9e58e14334737e62ea2"
+  },
+  {
+    "path": "scripts/sandbox.sh",
+    "bytes": 1628,
+    "sha256": "51d18d86e96a7f71f1aa79a0e269b569583816679cc58c0591b074668b5e4904"
+  },
+  {
+    "path": "xdg/state/hermes/gateway-locks/host-gateway.json",
+    "bytes": 447,
+    "sha256": "0a86ff6ef26f7d9fd536a4fca71c21bf85b272f29d00029f2629b863be96bc6e"
+  },
+  {
+    "path": "xdg/state/hermes/gateway-locks/host-gateway.lock",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+]

@@ -1,0 +1,26 @@
+......................F.......................                           [100%]
+=================================== FAILURES ===================================
+_________ EventTests.test_board_event_admission_receipt_and_processing _________
+
+self = <test_events.EventTests testMethod=test_board_event_admission_receipt_and_processing>
+
+    def test_board_event_admission_receipt_and_processing(self):
+        r = self.orch.ingest_board_event("d", {
+            "external_event_id": "board-evt-2", "task_id": "t_work",
+            "kind": "completed", "subscription": {"notifier_profile": "manager",
+                                                  "chat_id": "sess-manager"},
+        })
+        self.assertEqual(r.disposition, "admitted")
+        # admission alone is not a completion receipt
+        self.assertFalse(self.store.board_event_processed("board-evt-2"))
+        self.orch.process_pending()
+        self.assertTrue(self.store.board_event_processed("board-evt-2"))
+        receipts = self.store.receipts_for("d")
+>       final_receipt = next(x for x in receipts
+                             if x["operation_key"] == "board-event:board-evt-2")
+E       StopIteration
+
+tests/test_events.py:114: StopIteration
+=========================== short test summary info ============================
+FAILED tests/test_events.py::EventTests::test_board_event_admission_receipt_and_processing
+1 failed, 45 passed in 6.28s

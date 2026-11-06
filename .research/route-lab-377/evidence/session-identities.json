@@ -1,0 +1,16 @@
+{
+  "default": [
+    {
+      "id": "api-0cbeb59d02cdeb44",
+      "profile_name": "default",
+      "source": "api_server"
+    }
+  ],
+  "manager": [
+    {
+      "id": "api-ce71a2ebe36fdb0d",
+      "profile_name": "manager",
+      "source": "api_server"
+    }
+  ]
+}

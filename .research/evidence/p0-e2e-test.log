@@ -1,0 +1,15 @@
+== create child card ==
+child=t_6a10edd4
+== subscribe manager chat (wake) ==
+== complete child ==
+== wait for notifier + woken manager turn ==
+PASS  child reached done  [('done',)]
+PASS  manager created a linked follow-up card  [[('t_aab5b8f5',)]]
+PASS  follow-up exists and names the child  [('t_aab5b8f5', 'ready', 'worker', 'P0 manager follow-up after t_6a10edd4')]
+PASS  manager commented on the child (review note)  [1]
+PASS  exactly one wake for this child (no duplicate delivery)  [count=1]
+PASS  woken turn carried the kanban toolset  [tools=32]
+PASS  kanban tools present by name  [14 tools, e.g. ['kanban_attach', 'kanban_attach_url', 'kanban_attachments', 'kanban_block']]
+PASS  subscription cursor claimed the completed event  [cursor=(18,), completed_ev=18]
+
+RESULT: PASS

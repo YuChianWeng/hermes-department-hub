@@ -1,0 +1,55 @@
+[
+  {
+    "assertion": "P1 created child manager tools execute and default absent",
+    "pass": true,
+    "detail": {
+      "task": "t_de5b37a8",
+      "owners": [
+        "manager"
+      ],
+      "authors": [
+        "manager"
+      ]
+    }
+  },
+  {
+    "assertion": "P2 dynamic link manager tools execute and default absent",
+    "pass": true,
+    "detail": {
+      "task": "t_0bc551ad",
+      "owners": [
+        "manager"
+      ],
+      "authors": [
+        "manager"
+      ]
+    }
+  },
+  {
+    "assertion": "detached report reaches default",
+    "pass": true,
+    "detail": {
+      "task": "t_8d4c4eea"
+    }
+  },
+  {
+    "assertion": "N3 wrong-owner subscription no executed tool",
+    "pass": true,
+    "detail": {
+      "task": "t_c5e38c84",
+      "owner": "manager",
+      "session": "api-7ed08b54bf27e574",
+      "explicit_admission_rejection_verified": false
+    }
+  },
+  {
+    "assertion": "counterexample default receives inherited created child",
+    "pass": true,
+    "detail": "t_672b0bf7"
+  },
+  {
+    "assertion": "counterexample default receives inherited linked child",
+    "pass": true,
+    "detail": "t_a0c1eac8"
+  }
+]

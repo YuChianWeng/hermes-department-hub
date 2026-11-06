@@ -1,0 +1,110 @@
+{
+  "subscriptions": [
+    {
+      "task_id": "t_f13b8b4c",
+      "platform": "api_server",
+      "chat_id": "api-ce71a2ebe36fdb0d",
+      "thread_id": "",
+      "user_id": null,
+      "user_id_alt": null,
+      "chat_type": "dm",
+      "notifier_profile": "manager",
+      "delivery_mode": "wake",
+      "delivery_metadata": null,
+      "created_at": 1793860841,
+      "last_event_id": 1,
+      "last_ping_event_id": 0
+    },
+    {
+      "task_id": "t_8d4c4eea",
+      "platform": "api_server",
+      "chat_id": "api-0cbeb59d02cdeb44",
+      "thread_id": "",
+      "user_id": null,
+      "user_id_alt": null,
+      "chat_type": "dm",
+      "notifier_profile": "default",
+      "delivery_mode": "wake",
+      "delivery_metadata": null,
+      "created_at": 1793860843,
+      "last_event_id": 2,
+      "last_ping_event_id": 0
+    },
+    {
+      "task_id": "t_de5b37a8",
+      "platform": "api_server",
+      "chat_id": "api-ce71a2ebe36fdb0d",
+      "thread_id": "",
+      "user_id": null,
+      "user_id_alt": null,
+      "chat_type": "dm",
+      "notifier_profile": "manager",
+      "delivery_mode": "wake",
+      "delivery_metadata": null,
+      "created_at": 1793860845,
+      "last_event_id": 4,
+      "last_ping_event_id": 0
+    }
+  ],
+  "events": [
+    {
+      "id": 1,
+      "task_id": "t_f13b8b4c",
+      "run_id": null,
+      "kind": "created",
+      "payload": "{\"assignee\": \"manager\", \"status\": \"ready\", \"parents\": [], \"creator_task_id\": null, \"tenant\": null, \"workspace_kind\": \"scratch\", \"workspace_path\": null, \"branch_name\": null, \"project_id\": null, \"skills\": null, \"goal_mode\": null, \"model_override\": null, \"provider_override\": null}",
+      "created_at": 1793860837
+    },
+    {
+      "id": 2,
+      "task_id": "t_8d4c4eea",
+      "run_id": null,
+      "kind": "created",
+      "payload": "{\"assignee\": \"manager\", \"status\": \"ready\", \"parents\": [], \"creator_task_id\": null, \"tenant\": null, \"workspace_kind\": \"scratch\", \"workspace_path\": null, \"branch_name\": null, \"project_id\": null, \"skills\": null, \"goal_mode\": null, \"model_override\": null, \"provider_override\": null}",
+      "created_at": 1793860839
+    },
+    {
+      "id": 3,
+      "task_id": "t_de5b37a8",
+      "run_id": null,
+      "kind": "created",
+      "payload": "{\"assignee\": \"manager\", \"status\": \"todo\", \"parents\": [\"t_f13b8b4c\"], \"creator_task_id\": null, \"tenant\": null, \"workspace_kind\": \"scratch\", \"workspace_path\": null, \"branch_name\": null, \"project_id\": null, \"skills\": null, \"goal_mode\": null, \"model_override\": null, \"provider_override\": null}",
+      "created_at": 1793860845
+    },
+    {
+      "id": 4,
+      "task_id": "t_de5b37a8",
+      "run_id": null,
+      "kind": "dependency_wait",
+      "payload": "{\"reason\": \"parent_not_done\", \"parent\": \"t_f13b8b4c\"}",
+      "created_at": 1793860845
+    }
+  ],
+  "comments": [],
+  "sessions": {
+    "default": [
+      {
+        "id": "api-0cbeb59d02cdeb44",
+        "profile_name": "default",
+        "source": "api_server"
+      },
+      {
+        "id": "api-7ed08b54bf27e574",
+        "profile_name": "default",
+        "source": "api_server"
+      }
+    ],
+    "manager": [
+      {
+        "id": "api-ce71a2ebe36fdb0d",
+        "profile_name": "manager",
+        "source": "api_server"
+      },
+      {
+        "id": "api-0cbeb59d02cdeb44",
+        "profile_name": "manager",
+        "source": "api_server"
+      }
+    ]
+  }
+}

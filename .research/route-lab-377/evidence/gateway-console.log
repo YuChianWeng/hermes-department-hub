@@ -1,0 +1,19 @@
+┌─────────────────────────────────────────────────────────┐
+│           ☤ Hermes Gateway Starting...                 │
+├─────────────────────────────────────────────────────────┤
+│  Messaging platforms + cron scheduler                    │
+│  Press Ctrl+C to stop                                   │
+└─────────────────────────────────────────────────────────┘
+
+2026-11-05 14:38:39,590 WARNING agent.relay_runtime: Hermes Relay plugin initialization failed: initialize() got an unexpected keyword argument 'additional_plugins_toml'
+Traceback (most recent call last):
+  File "/home/ubuntu/.hermes/hermes-agent/agent/relay_runtime.py", line 318, in _activate
+    if not self._initialize(relay):
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.hermes/hermes-agent/agent/relay_runtime.py", line 346, in _initialize
+    activation = _resolve_plugin_awaitable(relay.plugin.initialize({}, additional_plugins_toml=config_path))
+                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: initialize() got an unexpected keyword argument 'additional_plugins_toml'
+2026-11-05 14:38:42,322 WARNING gateway.platforms.api_server: API server rejected invalid API key: remote='127.0.0.1' peer_ip='127.0.0.1' method='POST' path='/p/manager/v1/chat/completions' user_agent='Python-urllib/3.11'
+2026-11-05 14:38:42,428 WARNING agent.conversation_loop: Stored system prompt for session api-0cbeb59d02cdeb44 is null; rebuilding from scratch this turn. Prefix cache will miss until the rebuild persists. Investigate the previous turn's update_system_prompt write path.
+2026-11-05 14:38:42,622 WARNING gateway.run: Shutdown context: signal=SIGTERM under_systemd=yes parent_pid=1 parent_name=python loadavg_1m=5.01

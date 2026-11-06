@@ -1,0 +1,16 @@
+# command: /home/ubuntu/.hermes/hermes-agent/venv/bin/python -m pytest tests -q -p no:cacheprovider
+# recorded_at_utc: 2026-11-06T06:53:58+00:00
+# recorded_at_asia_taipei: 2026-11-06T14:53:58+08:00
+# cwd: /home/ubuntu/.hermes/profiles/medium-worker/cache/scratch/m2v5-candidate-run
+# note: SUPPLEMENTARY target: copy of v5 candidate (/home/ubuntu/.hermes/kanban/workspaces/t_68287415/candidate, 56 files, manifest 5280ab...); NOT the card-named stale project dir. mock mode: NO (local unit/contract tests)
+---- output ----
+........................................................................ [ 17%]
+........................................................................ [ 35%]
+........................................................................ [ 52%]
+........................................................................ [ 70%]
+........................................................................ [ 88%]
+.................................................                        [100%]
+409 passed in 58.46s
+---- end ----
+exit_code: 0
+finished_at_utc: 2026-11-06T06:54:58+00:00

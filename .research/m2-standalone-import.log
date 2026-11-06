@@ -1,0 +1,5 @@
+cwd: /tmp
+department_lib already on path? False
+plugin: department-hub api: 1.0.0
+routes: [(['GET'], '/health'), (['GET'], '/departments'), (['GET'], '/departments/{dept_id}'), (['GET'], '/departments/{dept_id}/events'), (['POST'], '/departments/plan'), (['POST'], '/departments'), (['PATCH'], '/departments/{dept_id}'), (['DELETE'], '/departments/{dept_id}')]
+STANDALONE IMPORT: PASS

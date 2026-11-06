@@ -1,0 +1,35 @@
+name: department-hub
+version: "0.5.0"
+description: >-
+  Department-led orchestration for Hermes Kanban: route child events to a
+  department manager, hold a board-verified acceptance gate, and commit one
+  immutable plugin-owned final report (no final board comment). Library-first;
+  read-only unless explicitly invoked.
+author: ""
+license: MIT
+requires_hermes: ">=0.22.6"
+tags: [kanban, orchestration, departments, acceptance]
+provides_tools:
+  - department_status
+  - department_ingest
+  - department_bind
+  - department_submit
+  - department_accept
+  - department_deliver
+  - department_escalate
+provides_hooks:
+  - kanban_task_completed
+  - kanban_task_blocked
+# Hermes config_schema is key -> {type, description, required?} (see
+# hermes_cli/plugins_manifest.py). Department entries are validated in
+# department_lib/config.py, which is stricter than the manifest can express.
+config_schema:
+  state_path:
+    type: string
+    description: File path for the plugin's own SQLite state (never the Kanban DB).
+  departments:
+    type: array
+    description: >-
+      Department declarations; each item needs id, name, manager
+      {profile, platform, chat_id}, members, reviewers, and may set
+      max_repair_rounds / active.

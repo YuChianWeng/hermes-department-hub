@@ -1,0 +1,15 @@
+{
+  "purpose": "Proof that prototype-v1 and its evidence were not modified by the v2 repair.",
+  "checked_at": "2026-11-05T16:46:00+08:00",
+  "v1_root": "/home/ubuntu/projects/hermes-department-orchestrator/.research/prototype-v1",
+  "v1_manifest_sha256": "26f6046b714f0289b9aafa6e9c6df360b27d30180629f7127899943d51645b97",
+  "v1_manifest_lines": 193,
+  "v1_manifest_unique_paths": 193,
+  "v1_files_excluding_cache_and_manifest": 193,
+  "v1_missing": [],
+  "v1_unlisted": [],
+  "v1_hash_mismatches": 0,
+  "independent_review_report_sha256": "c3e76fa703675277691f95d9e6ce89c8b920868b80fb8b0d33359b642f63fce0",
+  "review_report_sha256_matches_original_handoff": true,
+  "note": "sha256sum -c MANIFEST.sha256 exits 0; __pycache__/.pyc are excluded exactly as in the original manifest."
+}

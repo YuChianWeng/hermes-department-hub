@@ -1,0 +1,15 @@
+{
+  "processes": [
+    {
+      "pid": 22,
+      "returncode": -15,
+      "reaped": true
+    },
+    {
+      "pid": 25,
+      "returncode": 1,
+      "reaped": true
+    }
+  ],
+  "listeners": "Netid  State  Recv-Q  Send-Q   Local Address:Port   Peer Address:Port  Process  \n"
+}

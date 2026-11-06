@@ -1,0 +1,21 @@
+root t_da097f78 child t_8f4da21b
+root complete: ok
+request-review: ok
+complete: ok
+show keys: ['children', 'comments', 'events', 'latest_summary', 'parents', 'runs', 'task']
+task fields: {'id': 't_8f4da21b', 'status': 'done', 'assignee': 'reviewer-a'}
+parents: ['t_da097f78'] children: []
+events: [('created', None, 1793891648), ('dependency_wait', None, 1793891648), ('promoted', None, 1793891651), ('review_requested', 5, 1793891655), ('completed', 6, 1793891657)]
+event payloads: [{'assignee': 'worker-a', 'status': 'todo', 'parents': ['t_da097f78'], 'creator_task_id': None, 'tenant': None, 'workspace_kind': 'scratch', 'workspace_path': None, 'branch_name': None, 'project_id': None, 'skills': None, 'goal_mode': None, 'model_override': None, 'provider_override': None}, {'reason': 'parent_not_done', 'parent': 't_da097f78'}, None, {'summary': 'rev1', 'implementer': 'worker-a', 'reviewer': 'reviewer-a'}, {'result_len': 0, 'summary': 'PASS'}]
+runs: [(5, 'worker-a', 'review_requested', {'artifact_sha256': '9999999999999999999999999999999999999999999999999999999999999999'}), (6, 'reviewer-a', 'completed', {'artifact_sha256': '9999999999999999999999999999999999999999999999999999999999999999'})]
+comments: 0
+notify-list rows: [{'task_id': 't_8f4da21b', 'platform': 'api_server', 'chat_id': 'api-contract', 'thread_id': '', 'user_id': None, 'user_id_alt': None, 'chat_type': 'dm', 'notifier_profile': 'custom', 'delivery_mode': 'wake', 'delivery_metadata': {}, 'created_at': 1793891664, 'last_event_id': 19, 'last_ping_event_id': 0}]
+Board.get: task t_8f4da21b done assignee reviewer-a events 5 runs 2
+evidence: revision 1 verdict VerdictEvidence(kind='PASS', run_id=6, reviewer_profile='reviewer-a', artifact_sha256='9999999999999999999999999999999999999999999999999999999999999999', note='') implementer worker-a requested reviewer-a
+gate: releasable  6
+router verify(before): ok False issues [('missing_subscription', 'no manager wake subscription for t_da097f78')]
+router ensure: ok True ensured ('t_da097f78',) issues []
+router verify(after): ok True issues []
+effect append: ok; find: found
+root comments: 1
+RESULT: PASS
