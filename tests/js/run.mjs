@@ -19,9 +19,8 @@ const { state, setLocale } = sdk
 // The REAL Desktop v0.23.0 resolver, sliced verbatim out of the app source by
 // mocks/extract-i18n-resolver.mjs. Never substitute a local lookup here.
 const { translateFrom } = await import('./mocks/i18n-resolver.mjs')
-const { build, findAppRoot, PINNED, RESOLVER_FILE, PLUGIN_FILE, readGenerated, sha256 } = await import(
-  './mocks/extract-i18n-resolver.mjs'
-)
+const { build, DEFAULT_APP_ROOT, PINNED, RESOLVER_FILE, PLUGIN_FILE, readGenerated, sha256, evaluateProvenance } =
+  await import('./mocks/extract-i18n-resolver.mjs')
 
 // sha256 of the two GENERATED mock files, so a hand edit is caught even on a
 // machine without the Desktop source installed. Regenerate with:
@@ -214,45 +213,51 @@ check(
 )
 
 // (b) provenance — the resolver under test is the shipped one, byte for byte.
-const appRoot = findAppRoot()
-let built = null
-let buildError = null
-try {
-  built = build()
-} catch (err) {
-  buildError = err
-}
-if (appRoot && built) {
-  for (const [rel, pinned] of Object.entries(PINNED)) {
-    check(`guard(b): pinned sha256 ${rel}`, built.hashes[rel] === pinned, built.hashes[rel])
+// Three explicit states, decided by the pure `evaluateProvenance()` helper:
+//   PASS  — source found and all 4 pins + 2 generated-file comparisons hold
+//   SKIP  — no Desktop source installed anywhere (exit 0, says where it looked)
+//   FAIL  — source found but drifted, or an explicitly set root is broken
+// A source that exists but does not match the pins must NEVER be downgraded to
+// a skip; that made the guard fail-open on exactly the condition it existed to
+// detect. `source not found` and `source present but unusable` are different
+// facts and are reported differently.
+const provenance = evaluateProvenance({
+  envRoot: process.env.HERMES_APP_ROOT,
+  defaultRoot: DEFAULT_APP_ROOT
+})
+const PROVENANCE_SUMMARY = {
+  pass: 'PASS',
+  skip: 'SKIPPED (source not found)',
+  fail: 'FAILED'
+}[provenance.status]
+
+if (provenance.status === 'pass') {
+  for (const [rel, pin] of Object.entries(provenance.pins)) {
+    check(
+      pin.mode === 'slice' ? `guard(b): pinned slice sha256 ${rel}` : `guard(b): pinned sha256 ${rel}`,
+      pin.ok,
+      `${pin.actual} (expected ${pin.expected})`
+    )
   }
   check(
     'guard(b): generated resolver == a fresh verbatim extraction (no hand edits)',
-    readGenerated(RESOLVER_FILE) === built.files[RESOLVER_FILE],
+    readGenerated(RESOLVER_FILE) === provenance.build.files[RESOLVER_FILE],
     're-run: node tests/js/mocks/extract-i18n-resolver.mjs'
   )
   check(
     'guard(b): generated plugin registry == a fresh verbatim extraction (no hand edits)',
-    readGenerated(PLUGIN_FILE) === built.files[PLUGIN_FILE],
+    readGenerated(PLUGIN_FILE) === provenance.build.files[PLUGIN_FILE],
     're-run: node tests/js/mocks/extract-i18n-resolver.mjs'
   )
-} else {
-  console.log(
-    `skip guard(b): Desktop source not installed at ${appRoot || '(not found)'} — ` +
-      `set HERMES_APP_ROOT to verify the source hash pins. ${
-        buildError ? buildError.message.split('\n')[0] : ''
-      }`
-  )
-}
-// (b1) the pin must actually bite: a ONE-BYTE change to a copied source has to
-// make build() refuse. Without this, a pin that silently never runs would look
-// identical to a pin that passes.
-if (appRoot) {
+
+  // (b1) the pin must actually bite: a ONE-BYTE change to a copied source has
+  // to make build() refuse. Without this, a pin that silently never runs would
+  // look identical to a pin that passes.
   const pinRoot = join(here, '.tmp', 'pin-probe')
   rmSync(pinRoot, { recursive: true, force: true })
   for (const rel of Object.keys(PINNED)) {
     mkdirSync(dirname(join(pinRoot, rel)), { recursive: true })
-    copyFileSync(join(appRoot, rel), join(pinRoot, rel))
+    copyFileSync(join(provenance.root, rel), join(pinRoot, rel))
   }
   const target = join(pinRoot, 'apps/desktop/src/i18n/runtime.ts')
   writeFileSync(target, `${readFileSync(target, 'utf8')} `)
@@ -264,9 +269,16 @@ if (appRoot) {
   }
   check(
     'guard(b): one changed byte in a source file makes the pin fail',
-    Boolean(pinError) && /sha256 mismatch/.test(pinError.message),
+    Boolean(pinError) && pinError.code === 'PIN_MISMATCH',
     pinError ? pinError.message.split('\n')[0] : 'build() accepted a modified source'
   )
+} else if (provenance.status === 'skip') {
+  console.log(`skip guard(b): ${provenance.detail}`)
+} else {
+  // One explicit failing check with the actionable reason: which file moved,
+  // expected vs actual hash, and what a maintainer must do — never "edit the
+  // pin until it is green".
+  check('guard(b): Desktop source provenance', false, provenance.detail)
 }
 check(
   'guard(b): committed resolver files match their own sha256 pins',
@@ -1004,6 +1016,9 @@ check('new-department control is labelled', Boolean(createToggle))
 if (failures.length) {
   console.log(`\n${failures.length} FAILED`)
   for (const failure of failures) console.log(` - ${failure}`)
+  console.log(`guard(b) provenance: ${PROVENANCE_SUMMARY}`)
   process.exit(1)
 }
 console.log('\nALL PASS')
+// One line a CI log can be grepped for: PASS | SKIPPED (source not found) | FAILED.
+console.log(`guard(b) provenance: ${PROVENANCE_SUMMARY}`)

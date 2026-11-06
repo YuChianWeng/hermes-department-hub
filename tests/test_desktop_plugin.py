@@ -72,3 +72,35 @@ def test_sdk_mock_component_logic():
     print(result.stdout)
     assert result.returncode == 0, result.stderr or result.stdout
     assert "ALL PASS" in result.stdout
+
+
+def _run_js(script: str, timeout: int = 300) -> subprocess.CompletedProcess:
+    node = node_bin()
+    return subprocess.run([node, str(ROOT / "tests" / "js" / script)],
+                          capture_output=True, text=True, timeout=timeout)
+
+
+def test_provenance_decisions_and_pin_scope_matrix():
+    """Pure decision branches + the real build() pin-scope mutation matrix.
+
+    The pure half has every input injected, so it must run on any machine. The
+    matrix half visibly skips without a Desktop checkout but still exits 0.
+    """
+    result = _run_js("provenance-pure.mjs")
+    print(result.stdout)
+    print(result.stderr)
+    assert result.returncode == 0, result.stderr or result.stdout
+    assert "ALL PASS" in result.stdout
+    assert "pure: drifted source → FAIL" in result.stdout
+
+
+def test_provenance_guard_is_fail_closed_end_to_end():
+    """Spawn the real run.mjs: drifted source must be RED, not a silent skip."""
+    result = _run_js("provenance-meta.mjs")
+    print(result.stdout)
+    print(result.stderr)
+    if "SKIP provenance-meta:" in result.stdout:
+        pytest.skip(result.stdout.strip().splitlines()[-1])
+    assert result.returncode == 0, result.stderr or result.stdout
+    assert "ALL PASS" in result.stdout
+    assert "meta(ii): drifted source exits non-zero" in result.stdout

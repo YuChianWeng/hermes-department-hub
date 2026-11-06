@@ -308,7 +308,7 @@ node tests/js/run.mjs                # ALL PASS (rc 0)
 
 證據：`.research/m2-node-check.log`、`.research/m2-js-mock.log`。
 SDK mock 驗證的是 registration surface、i18n key 覆蓋、listbox 鍵盤、狀態文字、錯誤狀態、snapshot 標示；**不是**真實渲染。
-i18n key 覆蓋不是用自製查表：`tests/js/mocks/sdk.mjs` 的 `usePluginI18n` 與 `ctx.i18n.t` 都走 `tests/js/mocks/i18n-resolver.mjs`，那是從 Desktop v0.23.0 `apps/desktop/src/i18n/runtime.ts`（`resolvePath` / `render` / `translateFrom`，加 `@hermes/shared/i18n` 的 `isRecord` 與 `DEFAULT_LOCALE`）**逐字抽出的真實 resolver**，來源 sha256 釘在測試裡。因此頁面字串必須是**巢狀物件**（`subscription: { missing: … }`）；扁平點號鍵（`'subscription.missing'`）會被 resolver 當成 miss 而回傳原始鍵名。
+i18n key 覆蓋不是用自製查表：`tests/js/mocks/sdk.mjs` 的 `usePluginI18n` 與 `ctx.i18n.t` 都走 `tests/js/mocks/i18n-resolver.mjs`，那是從 Desktop v0.23.0 `apps/desktop/src/i18n/runtime.ts`（`resolvePath` / `render` / `translateFrom`，加 `@hermes/shared/i18n` 的 `isRecord` 與 `DEFAULT_LOCALE`）**逐字抽出的真實 resolver**，來源 sha256 釘在測試裡：`runtime.ts`／`plugin-i18n.ts` 釘**整檔**（未被切出的 `createPluginI18n.t`、`usePluginI18n` 正是測試替身重新實作的路徑，任何變動都要重審）；`languages.ts`（僅 L15 `DEFAULT_LOCALE`）與 `apps/shared/src/i18n.ts`（僅 L17–19 `isRecord`）只釘**被切出的行範圍**（上游新增語言不會誤報，切片內任何變動仍會紅）。守衛語意是 fail-closed：來源存在但 hash／行範圍不符 → **紅**（exit 非 0，訊息要求重新抽取、重審語意，不得改 pin 讓它變綠）；來源不存在（`HERMES_APP_ROOT` 未設或空字串，且預設路徑也沒有 `apps/desktop/src/i18n/runtime.ts`）→ **可見 skip**（exit 0，訊息列出實際探測的路徑）；`HERMES_APP_ROOT` 明確指定但該路徑無效 → **紅**（誤設定，不 silent fallback 到預設路徑）。每次結尾固定印一行 `guard(b) provenance: PASS | SKIPPED (source not found) | FAILED`。因此頁面字串必須是**巢狀物件**（`subscription: { missing: … }`）；扁平點號鍵（`'subscription.missing'`）會被 resolver 當成 miss 而回傳原始鍵名。
 
 ### 6.3 Standalone backend import
 
