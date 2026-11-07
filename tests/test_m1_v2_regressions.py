@@ -18,6 +18,7 @@ from department_lib.models import BoardEvent, Department
 from department_lib.orchestrator import DepartmentService
 from department_lib.routing import Router
 from department_lib.store import Store
+from tests.plugin_loader import load_plugin
 
 A, B = 'a'*64, 'b'*64
 D = Department.from_mapping({'id':'dev','name':'Dev',
@@ -222,8 +223,7 @@ def test_suspended_unique_claim_survives_second_connection_and_reconcile(tmp_pat
 def test_reject_private_detail_at_public_handler_and_low_level_without_echo(setup, detail):
     st,cli,svc,port=setup
     path=Path(__file__).parents[1]/'__init__.py'
-    spec=importlib.util.spec_from_file_location('m1_entry_privacy',path)
-    module=importlib.util.module_from_spec(spec); spec.loader.exec_module(module)
+    module=load_plugin()
     result=module._handle_escalate(svc,{'task_id':'work','reason_code':'blocked','detail':detail},caller_profile='manager')
     assert result['success'] is False and result['error']=='escalation_detail_invalid'
     assert 'PRIVATE_SENTINEL' not in json.dumps(result)

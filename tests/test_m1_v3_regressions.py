@@ -13,6 +13,7 @@ from department_lib.orchestrator import DepartmentService
 from department_lib.store import Store
 from department_lib.board import Board
 from tests.test_m1_v2_regressions import setup, payload, claim, D, A, CLI, Port
+from tests.plugin_loader import load_plugin
 
 
 def test_cli_free_text_rejection_without_metadata_verdict(setup):
@@ -138,8 +139,7 @@ def test_escalation_public_handler_conflict_is_not_success(setup):
     st,cli,svc,port=setup
     cli.tasks['root']=payload('root','manager'); svc.bind_department('dev','root',['work'])
     path=Path(__file__).parents[1]/'__init__.py'
-    spec=importlib.util.spec_from_file_location('v3_entry',path)
-    module=importlib.util.module_from_spec(spec); spec.loader.exec_module(module)
+    module=load_plugin()
     args={'task_id':'work','reason_code':'blocked','detail':{'round':1}}
     assert module._handle_escalate(svc,args,caller_profile='manager')['success']
     args['detail']={'round':2}

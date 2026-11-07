@@ -2,22 +2,13 @@
 from __future__ import annotations
 
 import json
+from pathlib import Path
 
 import pytest
 
-import importlib.util
-from pathlib import Path
+from tests.plugin_loader import load_plugin as _load_plugin
 
 ROOT = Path(__file__).resolve().parents[1]
-
-
-def _load_plugin():
-    spec = importlib.util.spec_from_file_location(
-        "department_hub_plugin", ROOT / "__init__.py",
-        submodule_search_locations=[str(ROOT)])
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    return module
 
 
 class FakeCtx:

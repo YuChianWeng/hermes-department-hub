@@ -164,13 +164,19 @@ def _state_path(settings: dict) -> Path:
 
 def build_service(settings: dict | None = None):
     """Construct the service stack. Called only from tool handlers."""
-    from department_lib.board import Board
-    from department_lib.config import load_departments
-    from department_lib.delivery import Delivery
-    from department_lib.kanban_cli import CliKanban
-    from department_lib.kanban_effects import CommentEffectPort
-    from department_lib.orchestrator import DepartmentService
-    from department_lib.store import Store
+    # Relative imports on purpose: the Hermes loader imports a directory plugin as
+    # ``hermes_plugins.<slug>`` with ``submodule_search_locations=[plugin_dir]`` and
+    # supports the plugin's *relative* imports (it evicts ``module_name.sub`` on
+    # reload). An absolute ``department_lib`` would only work if something put the
+    # plugin root on ``sys.path`` — which would also make the first-loaded copy a
+    # globally shared module across profiles in one gateway process.
+    from .department_lib.board import Board
+    from .department_lib.config import load_departments
+    from .department_lib.delivery import Delivery
+    from .department_lib.kanban_cli import CliKanban
+    from .department_lib.kanban_effects import CommentEffectPort
+    from .department_lib.orchestrator import DepartmentService
+    from .department_lib.store import Store
 
     settings = _settings() if settings is None else settings
     store = Store(_state_path(settings))
@@ -186,7 +192,7 @@ def build_service(settings: dict | None = None):
 
 
 def _claim(params: dict, manager_profile: str):
-    from department_lib.acceptance import AcceptanceClaim
+    from .department_lib.acceptance import AcceptanceClaim
     return AcceptanceClaim(
         task_id=str(params["task_id"]),
         revision=int(params["revision"]),
@@ -227,7 +233,20 @@ def _handle_ingest(service, params, **_):
                        for d in report.decisions]}
 
 
-def _handle_bind(service, params, **_) -> dict:
+def _handle_bind(service, params, *, caller_profile="", **_) -> dict:
+    dept_id = str(params["department"])
+    # The card being bound is not bound yet, so identity comes from the *configured*
+    # department, not from `_manager_context` (which resolves via task→department).
+    # No board read, subscription or store write may happen before this gate returns.
+    dept = service.store.get_department(dept_id)
+    if dept is not None:
+        if not caller_profile:
+            return {"success": False,
+                    "error": "caller profile unavailable; manager binding cannot be verified"}
+        if caller_profile != dept.manager_profile:
+            return {"success": False,
+                    "error": (f"caller profile '{caller_profile}' is not the manager "
+                              f"of department '{dept.dept_id}'")}
     task_ids = params.get("task_ids")
     if task_ids is not None and (not isinstance(task_ids, list)
                                 or any(not isinstance(t, str) for t in task_ids)):
@@ -289,7 +308,7 @@ def _handle_escalate(service, params, *, caller_profile="", **_):
     if error:
         return error
     detail = params.get("detail")
-    from department_lib.delivery import validate_escalation
+    from .department_lib.delivery import validate_escalation
     try:
         validate_escalation(params["reason_code"], detail)
     except ValueError as exc:

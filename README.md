@@ -135,6 +135,13 @@ plugins:
 
 Notes:
 
+- **No `PYTHONPATH` is needed after installation.** The agent half imports its
+  bundled `department_lib` with relative imports inside the loader's
+  `hermes_plugins.department-hub` package, so it works from the installed
+  directory alone. Do **not** add the plugin directory (or the repository root)
+  to `PYTHONPATH`: in a gateway that serves several profiles, a top-level
+  `department_lib` would make the first profile's copy the one every profile
+  silently shares.
 - Indent with spaces, never tabs — a broken YAML block stops the gateway.
 - `platform` / `chat_id` are the values the manager wake subscription is matched
   against. Placeholders are fine for a first smoke test: `department_bind`
@@ -242,6 +249,10 @@ limitations).
 `M` = manager, `W` = member, `R` = configured independent reviewer.
 
 1. M calls `department_bind(department="dev", root_task_id="root", task_ids=["work"])`.
+   Only the department's configured manager may call it: a different profile is
+   refused with `caller profile 'X' is not the manager of department 'dev'`, and
+   an unknown caller profile fails closed (`caller profile unavailable`). The
+   refusal happens before any bind, subscription or event write.
    Root must be board-assigned to M. A result with ensured cards but
    `success:false / session_owner_unverified` means ownership was bound but public
    notify-list cannot attest the runtime session owner; it does not prove wake.
@@ -351,6 +362,9 @@ PYTHONPATH=/home/ubuntu/.hermes/hermes-agent:. \
   /home/ubuntu/.hermes/hermes-agent/venv/bin/python \
   .research/m2-e2e.py <scratch>/m2-e2e-run
 ```
+
+That `PYTHONPATH` belongs to the `.research/` harness only (it imports the
+plugin as a plain directory); an *installed* plugin needs none.
 
 It exercises `department_submit` before accept (producer-only identity), asserts
 that `department_deliver` writes **zero** board comments, and reads the final
