@@ -9,8 +9,8 @@
 安裝以 **§7** 為準（含 Windows 路徑、遠端 Desktop、rollback）。本文件其餘部分是 M2 的
 交接與限制說明，不是驗收通過證明。
 
-- 專案：`/home/ubuntu/projects/hermes-department-orchestrator/`
-- 計畫：`/home/ubuntu/.hermes/plans/2026-11-05_132450-hermes-department-orchestrator-hackathon.md`
+- 專案：`<repo>/`
+- 計畫：`~/.hermes/plans/2026-11-05_132450-hermes-department-orchestrator-hackathon.md`
 - 前置：M1 v5（plugin-owned immutable final report）已由 `t_090d5884` 獨立
   **REVIEW: PASS**（P1-1 durable-conflict fence 修復版，product 55 檔 sha256 驗證）。
   契約為 `department-hub/m1-contract/v5`；v4.1 以前的交付語義是歷史。
@@ -289,9 +289,9 @@ M2 既有性質維持：mutation 一律 409 零寫入、只讀 M1 store/board、
 ### 6.1 Python 測試
 
 ```bash
-cd /home/ubuntu/projects/hermes-department-orchestrator
+cd <repo>
 PYTHONDONTWRITEBYTECODE=1 PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 \
-  /home/ubuntu/.hermes/hermes-agent/venv/bin/python -m pytest tests/ -q -p no:cacheprovider
+  ~/.hermes/hermes-agent/venv/bin/python -m pytest tests/ -q -p no:cacheprovider
 ```
 
 本次結果（`t_68287415`，v5 候選）：**409 passed**（完整輸出見交付的 `logs-full-pytest.txt`；契約測試 `tests/test_m2_v2_contract.py` 53 passed）。
@@ -315,7 +315,7 @@ i18n key 覆蓋不是用自製查表：`tests/js/mocks/sdk.mjs` 的 `usePluginI1
 
 ```bash
 cd /tmp
-PYTHONPATH= /home/ubuntu/.hermes/hermes-agent/venv/bin/python - <<'PY'
+PYTHONPATH= ~/.hermes/hermes-agent/venv/bin/python - <<'PY'
 # by-path import，模擬 gateway dashboard loader
 PY
 ```
@@ -342,8 +342,8 @@ hermes plugins validate <clean staging copy excluding .research> --json
 > 現行指令與結果見 §6.5.1。
 
 ```bash
-PYTHONPATH=/home/ubuntu/.hermes/hermes-agent:. \
-  /home/ubuntu/.hermes/hermes-agent/venv/bin/python \
+PYTHONPATH=~/.hermes/hermes-agent:. \
+  ~/.hermes/hermes-agent/venv/bin/python \
   .research/m2-e2e.py <scratch>/m2-e2e-run
 ```
 
@@ -376,9 +376,9 @@ v4.1 時代的結果是 **RESULT: PASS（44 checks）**。v5 重跑結果見 §6
 ### 6.5.1 v5 重跑（2026-11-06）
 
 ```bash
-cd /home/ubuntu/projects/hermes-department-orchestrator
-PYTHONPATH=/home/ubuntu/.hermes/hermes-agent:. \
-  /home/ubuntu/.hermes/hermes-agent/venv/bin/python \
+cd <repo>
+PYTHONPATH=~/.hermes/hermes-agent:. \
+  ~/.hermes/hermes-agent/venv/bin/python \
   .research/m2-e2e.py /tmp/m2-e2e-v5
 ```
 
@@ -416,7 +416,7 @@ canonical 四欄 identity。
 ### 7.1 Agent half（跑 gateway 的機器）
 
 ```bash
-cd /home/ubuntu/projects/hermes-department-orchestrator
+cd <repo>
 install -d ~/.hermes/plugins/department-hub
 cp -a plugin.yaml __init__.py department_lib dashboard \
       ~/.hermes/plugins/department-hub/
@@ -446,7 +446,7 @@ Windows 預設會展開成
 `C:\Users\<你>\AppData\Local\hermes\desktop-plugins\department-hub\plugin.js`，
 **不是** `%USERPROFILE%\.hermes\...`。放錯根目錄不會報錯，app 只是永遠看不到這個 plugin
 （2026-11-06 實測：`plugin.js` 51,158 bytes、與 repo 一致，放進
-`C:\Users\weng1\.hermes\desktop-plugins\department-hub\` 時 Desktop 看不到）。
+`C:\Users\<you>\.hermes\desktop-plugins\department-hub\` 時 Desktop 看不到）。
 
 兩個容易誤解的點：
 
@@ -559,7 +559,7 @@ Desktop 機器另外刪 `~/.hermes/desktop-plugins/department-hub/`（Windows �
 
 - 這六項**沒有被 M2 行使，也沒有被 M2 滿足**；
 - 本文件不宣稱它們已修復；
-- 若後續要交付一鍵安裝器，必須先補上那六項回歸測試與獨立複審，才能給 Oneal；
+- 若後續要交付一鍵安裝器，必須先補上那六項回歸測試與獨立複審，才能給 maintainer；
 - M2 的建立/編輯功能是**明確阻擋**（409 `unsafe_mutation_blocked`），不是 installer。
 
 ---
@@ -581,7 +581,7 @@ Desktop 機器另外刪 `~/.hermes/desktop-plugins/department-hub/`（Windows �
    驗證 artifact 內容（同契約 §7）。
 7. **沒有 git commit/push/deploy**：本次只改本地工作樹。
 8. **M1 schema 已凍結（v5）**：候選程式對齊 `department-hub/m1-contract/v5`；這不是
-   M2-R PASS，也不是已安裝到 Desktop。真實 Desktop 驗證仍待 Oneal 手動執行。
+   M2-R PASS，也不是已安裝到 Desktop。真實 Desktop 驗證仍待 maintainer 手動執行。
 9. **manager_status 的新 schema 依賴**：`subscription` 直接唯讀 `kanban_notify_subs`（platform/chat/profile/mode）；表不存在或讀取失敗時回 `unknown`，不會假裝已訂閱。owner 永遠 `unverified`，wake 永遠 `unconfirmed`，這是契約限制，不是 bug。
 10. **delivery identity conflict 與歷史報告的可見性**：M2 以 confirmed delivery row 的
     canonical 四欄 identity 與目前 board evidence 比較後計算「第二世代不可交付」，並分開顯示
@@ -619,7 +619,7 @@ M2-R 應獨立：
 
 - 它的安裝來源是 v4.1 時代的 `t_c410652a/candidate`（bundle sha256
   `cdd15ad3…6ef6`），不是本 repo。
-- 它開頭寫**「不要安裝 `/home/ubuntu/projects/hermes-department-orchestrator/`」**，理由是該目錄
+- 它開頭寫**「不要安裝 `<repo>/`」**，理由是該目錄
   仍是 v1；這句話在 2026-11-06 整合後已 **false**，而且 07:41 的手動安裝（config 備份名
   `config.yaml.pre-department-hub.20261106-074114` 與該文件的 `$STAMP` 格式一致）顯示有人正是
   照它操作。

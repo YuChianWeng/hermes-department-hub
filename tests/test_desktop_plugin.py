@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+import os
 import re
 import shutil
 import subprocess
@@ -13,8 +14,8 @@ ROOT = Path(__file__).resolve().parents[1]
 PLUGIN = ROOT / "desktop" / "department-hub" / "plugin.js"
 
 NODE_CANDIDATES = [
-    "/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node",
-    "/home/ubuntu/.hermes/tools/node-26.12.1-linux-arm64/bin/node",
+    os.path.expanduser("~/.nvm/versions/node/v22.22.2/bin/node"),
+    os.path.expanduser("~/.hermes/tools/node-26.12.1-linux-arm64/bin/node"),
     shutil.which("node") or "",
 ]
 

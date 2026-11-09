@@ -1,7 +1,7 @@
-# command: /home/ubuntu/.local/bin/hermes plugins validate /home/ubuntu/.hermes/profiles/medium-worker/cache/scratch/m2v5-validate-staging --json
+# command: ~/.local/bin/hermes plugins validate ~/.hermes/profiles/medium-worker/cache/scratch/m2v5-validate-staging --json
 # recorded_at_utc: 2026-11-06T06:55:15+00:00
 # recorded_at_asia_taipei: 2026-11-06T14:55:15+08:00
-# cwd: /home/ubuntu/.hermes/profiles/medium-worker/cache/scratch/m2v5-candidate-run
+# cwd: ~/.hermes/profiles/medium-worker/cache/scratch/m2v5-candidate-run
 # note: SUPPLEMENTARY v5 candidate: hermes plugins validate on clean staging copy (no .tmp/.pycache)
 ---- output ----
 {

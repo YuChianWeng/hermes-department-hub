@@ -7,10 +7,10 @@
 
 2026-11-05 14:40:33,433 WARNING agent.relay_runtime: Hermes Relay plugin initialization failed: initialize() got an unexpected keyword argument 'additional_plugins_toml'
 Traceback (most recent call last):
-  File "/home/ubuntu/.hermes/hermes-agent/agent/relay_runtime.py", line 318, in _activate
+  File "~/.hermes/hermes-agent/agent/relay_runtime.py", line 318, in _activate
     if not self._initialize(relay):
            ^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/ubuntu/.hermes/hermes-agent/agent/relay_runtime.py", line 346, in _initialize
+  File "~/.hermes/hermes-agent/agent/relay_runtime.py", line 346, in _initialize
     activation = _resolve_plugin_awaitable(relay.plugin.initialize({}, additional_plugins_toml=config_path))
                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 TypeError: initialize() got an unexpected keyword argument 'additional_plugins_toml'

@@ -1,7 +1,7 @@
 
 ==================================== ERRORS ====================================
 ____________________ ERROR collecting tests/test_domain.py _____________________
-ImportError while importing test module '/home/ubuntu/projects/hermes-department-orchestrator/.research/prototype-v1/tests/test_domain.py'.
+ImportError while importing test module '<repo>/.research/prototype-v1/tests/test_domain.py'.
 Hint: make sure your test modules/packages have valid Python names.
 Traceback:
 ../../../../.local/share/uv/python/cpython-3.11.15-linux-aarch64-gnu/lib/python3.11/importlib/__init__.py:126: in import_module
@@ -11,7 +11,7 @@ tests/test_domain.py:26: in <module>
     from deptproto.board import FakeBoard
 E   ModuleNotFoundError: No module named 'deptproto'
 ____________________ ERROR collecting tests/test_events.py _____________________
-ImportError while importing test module '/home/ubuntu/projects/hermes-department-orchestrator/.research/prototype-v1/tests/test_events.py'.
+ImportError while importing test module '<repo>/.research/prototype-v1/tests/test_events.py'.
 Hint: make sure your test modules/packages have valid Python names.
 Traceback:
 ../../../../.local/share/uv/python/cpython-3.11.15-linux-aarch64-gnu/lib/python3.11/importlib/__init__.py:126: in import_module
@@ -21,7 +21,7 @@ tests/test_events.py:13: in <module>
     from deptproto.board import FakeBoard
 E   ModuleNotFoundError: No module named 'deptproto'
 ___________________ ERROR collecting tests/test_preflight.py ___________________
-ImportError while importing test module '/home/ubuntu/projects/hermes-department-orchestrator/.research/prototype-v1/tests/test_preflight.py'.
+ImportError while importing test module '<repo>/.research/prototype-v1/tests/test_preflight.py'.
 Hint: make sure your test modules/packages have valid Python names.
 Traceback:
 ../../../../.local/share/uv/python/cpython-3.11.15-linux-aarch64-gnu/lib/python3.11/importlib/__init__.py:126: in import_module

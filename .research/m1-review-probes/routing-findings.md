@@ -23,5 +23,5 @@ Additional observation: ingest binds a newly discovered child but never ensures 
 ## Verification
 
 - `PYTHONDONTWRITEBYTECODE=1 python3 review-routing/probe.py`: all synthetic assertions passed; output includes the actual mismatched-owner, cross-route, stale-owner, fallback, private-field, malformed-readback, failed-retry and duplicate-append observations.
-- Independent snapshot of source/tests under `review-routing/snapshot`: `/home/ubuntu/.hermes/hermes-agent/venv/bin/python -m pytest review-routing/snapshot/tests -q -p no:cacheprovider --basetemp=/home/ubuntu/.hermes/kanban/workspaces/t_4be3305e/review-routing/pytest-tmp`: **160 passed**. Existing tests do not cover these counterexamples.
+- Independent snapshot of source/tests under `review-routing/snapshot`: `~/.hermes/hermes-agent/venv/bin/python -m pytest review-routing/snapshot/tests -q -p no:cacheprovider --basetemp=~/.hermes/kanban/workspaces/t_4be3305e/review-routing/pytest-tmp`: **160 passed**. Existing tests do not cover these counterexamples.
 - No production files, profile settings, subscriptions or boards were changed. Historical P0 live experiments are referenced only as previously recorded evidence, not re-executed.

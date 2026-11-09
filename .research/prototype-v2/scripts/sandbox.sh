@@ -17,7 +17,7 @@ set -euo pipefail
 
 PROTO="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 LAB="$PROTO/live-lab"
-SRC=/home/ubuntu/.hermes/hermes-agent
+SRC=~/.hermes/hermes-agent
 MODE="${1:-unit}"
 
 if [[ "$MODE" == "--probe" ]]; then
@@ -46,16 +46,16 @@ mount --make-rprivate /
 mount -t tmpfs tmpfs /mnt
 mkdir -p /mnt/proto /mnt/source /mnt/python
 mount --bind "$PROTO" /mnt/proto
-mount --bind /home/ubuntu/.local/share/uv/python /mnt/python
+mount --bind ~/.local/share/uv/python /mnt/python
 mount -o remount,bind,ro /mnt/python
 mount --bind "$SRC" /mnt/source
 mount -o remount,bind,ro /mnt/source
 
 # The production home, profiles, boards, credentials and sockets disappear.
-mount -t tmpfs tmpfs /home/ubuntu
-mkdir -p "$PROTO" "$SRC" /home/ubuntu/.local/share/uv/python
+mount -t tmpfs tmpfs $HOME
+mkdir -p "$PROTO" "$SRC" ~/.local/share/uv/python
 mount --bind /mnt/proto "$PROTO"
-mount --bind /mnt/python /home/ubuntu/.local/share/uv/python
+mount --bind /mnt/python ~/.local/share/uv/python
 mount --bind /mnt/source "$SRC"
 mount -t tmpfs tmpfs /run
 mount -t tmpfs tmpfs /tmp

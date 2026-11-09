@@ -374,7 +374,7 @@ for (const [locale, bundle] of LOCALES()) {
   check(`guard(d)[${locale}]: no literal t() key names a flat dotted top-level key`, flatLiteral.length === 0, flatLiteral.join(','))
 }
 
-// (e) render layer — a fixture byte-matched to Oneal's 2026-11-06 screenshot:
+// (e) render layer — a fixture byte-matched to maintainer's 2026-11-06 screenshot:
 //     manager subscription 'missing', owner 'unverified' with its code, wake
 //     'unconfirmed', work state 'unknown', zero bound cards.
 const screenshotDept = {
@@ -1024,7 +1024,7 @@ check('new-department control is labelled', Boolean(createToggle))
 //
 // Evidence level: stand-in component logic + the REAL Desktop i18n resolver.
 // This is NOT a Desktop render test — "the button visibly reacts" still needs
-// Oneal's screenshot or hands-on acceptance.
+// maintainer's screenshot or hands-on acceptance.
 //
 // The two rules that were invisible before live here:
 //   * a click must refetch the list AND the open department detail (prefix

@@ -1,6 +1,6 @@
 == M2-R 複跑：版本控制狀態 ==
 recorded_at: 2026-11-06T06:49:26+00:00
-cwd: /home/ubuntu/projects/hermes-department-orchestrator
+cwd: <repo>
 
 -- git status --porcelain=v1 --branch --untracked-files=no --
 fatal: not a git repository (or any of the parent directories): .git

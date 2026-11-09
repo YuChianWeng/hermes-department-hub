@@ -1,7 +1,7 @@
-# command: /home/ubuntu/.local/bin/hermes plugins validate /home/ubuntu/.hermes/profiles/medium-worker/cache/scratch/m2-validate-staging --json
+# command: ~/.local/bin/hermes plugins validate ~/.hermes/profiles/medium-worker/cache/scratch/m2-validate-staging --json
 # recorded_at_utc: 2026-11-06T06:50:51+00:00
 # recorded_at_asia_taipei: 2026-11-06T14:50:51+08:00
-# cwd: /home/ubuntu/projects/hermes-department-orchestrator
+# cwd: <repo>
 # note: hermes plugins validate on a clean staging copy excluding .research (823MB) and caches; stdout JSON also kept verbatim in m2-plugin-validate.stdout.json
 ---- output ----
 {

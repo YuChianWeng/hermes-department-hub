@@ -1,11 +1,11 @@
 # Department Hub 原型 v1｜測試報告（可重跑）
 
-所有命令在 `/home/ubuntu/projects/hermes-department-orchestrator/.research/prototype-v1` 執行。Python：`/home/ubuntu/.hermes/hermes-agent/venv/bin/python`（3.11.15）。pytest 9.0.2。
+所有命令在 `<repo>/.research/prototype-v1` 執行。Python：`~/.hermes/hermes-agent/venv/bin/python`（3.11.15）。pytest 9.0.2。
 
 ## 1. 失敗測試先行（red）
 
 ```
-$ /home/ubuntu/.hermes/hermes-agent/venv/bin/python -m pytest tests -q -p no:cacheprovider
+$ ~/.hermes/hermes-agent/venv/bin/python -m pytest tests -q -p no:cacheprovider
 ERROR tests/test_domain.py
 ERROR tests/test_events.py
 ERROR tests/test_preflight.py
@@ -67,7 +67,7 @@ live_rc=0
 
 - namespaces：mount/net/pid/user 皆與 host 不同（`live-lab/evidence/preflight.json`）。
 - network：interfaces 只有 `lo`，`routes=[]`。
-- 正式資源遮蔽：`/home/ubuntu/.hermes/profiles`、正式 `kanban.db`、`/run/user/1000`、Obsidian vault 皆不存在；source 與 uv Python 寫入 probe 皆 EROFS。
+- 正式資源遮蔽：`~/.hermes/profiles`、正式 `kanban.db`、`/run/user/1000`、Obsidian vault 皆不存在；source 與 uv Python 寫入 probe 皆 EROFS。
 - 啟動前負向：production `HERMES_KANBAN_DB`、`/run/user/1000` XDG、`HERMES_KANBAN_TASK` 都在 spawn 前被拒（`assertions.json` 前 3 項）。
 - cleanup：gateway SIGTERM rc=1（非 graceful 0）、model rc=-15，全部 reaped；`ss -lntup` 僅表頭（`live-lab/evidence/cleanup.json`）。
 - 第一次 live stage 在前置修正前有 staging error（`live-lab/evidence/error-stage-2.json`，已保留不刪）；最終 run 為 rc=0、40/40。
@@ -75,7 +75,7 @@ live_rc=0
 ## 4. 重跑入口
 
 ```bash
-cd /home/ubuntu/projects/hermes-department-orchestrator/.research/prototype-v1
+cd <repo>/.research/prototype-v1
 ./scripts/run_unit.sh          # focused + full unit (34)
 ./scripts/sandbox.sh --probe   # namespace 能力檢查；不可用時 rc=78
 ./scripts/sandbox.sh           # 全新 lab run；重置 lab state、保留 console log

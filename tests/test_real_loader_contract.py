@@ -10,6 +10,7 @@ can never prove this; the probe must be a separate interpreter.
 from __future__ import annotations
 
 import json
+import os
 import shutil
 import subprocess
 import sys
@@ -19,7 +20,7 @@ import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
 PROBE = ROOT / "tests" / "loader_probe.py"
-AGENT_ROOT = Path("/home/ubuntu/.hermes/hermes-agent")
+AGENT_ROOT = Path(os.path.expanduser("~/.hermes/hermes-agent"))
 
 # What a real install of the tool half contains.  The dashboard/desktop halves are
 # irrelevant to the loader contract and are exercised by their own suites.

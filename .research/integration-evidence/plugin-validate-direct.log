@@ -1,4 +1,4 @@
-# command: HERMES_HOME=/home/ubuntu/.hermes/profiles/medium-worker hermes plugins validate . --json  (direct, whole project dir incl .research)
+# command: HERMES_HOME=~/.hermes/profiles/medium-worker hermes plugins validate . --json  (direct, whole project dir incl .research)
 # recorded_at_asia_taipei: 2026-11-06T15:14:14+08:00
 ---- output ----
 {
@@ -101,7 +101,7 @@
   }
 }
 Command exited with non-zero status 1
-	Command being timed: "timeout 1800 /home/ubuntu/.local/bin/hermes plugins validate . --json"
+	Command being timed: "timeout 1800 ~/.local/bin/hermes plugins validate . --json"
 	User time (seconds): 928.42
 	System time (seconds): 8.45
 	Percent of CPU this job got: 94%

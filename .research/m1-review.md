@@ -1,7 +1,7 @@
 # M1-R 獨立驗收報告 — REVIEW: REQUEST_CHANGES
 
 - 審查卡 `t_4be3305e` / run **455**；此結論不是 PASS，不放行依賴卡 `t_750e8a14`。
-- 審查對象：`/home/ubuntu/projects/hermes-department-orchestrator` 的 M1 核心，非 P0 的不同 v6 原型。此目錄沒有 Git repository；不可用 commit 當身分。凍結副本及逐檔 SHA-256 清單：`.research/m1-review-probes/snapshot/`、`snapshot.sha256`；清單本身 SHA-256 `ce009235de22d394d3d7f27c4215f5d1d55cded82bd12e1c1ddfc44368d06ae8`（46 files，含測試）。比對時 manifest、plugin 入口與凍結清單中的全部 M1 `department_lib/*.py` 均與被測副本一致。收尾時共享目錄新增 `department_lib/dashboard.py`、`department_lib/kanban_db_source.py`（不在此 M1 快照與驗收範圍），顯示 M2 並行期間樹已擴充；本結論不涵蓋新檔。`README.md` 當時另計 SHA-256 `838b105ded3d289427104fc4b0da81538e58e4e7c64f63c76bbcf1d2fd26c936`。此身分只指本輪檢查時的 bytes；M2 並行，不推論日後共享目錄未改。
+- 審查對象：`<repo>` 的 M1 核心，非 P0 的不同 v6 原型。此目錄沒有 Git repository；不可用 commit 當身分。凍結副本及逐檔 SHA-256 清單：`.research/m1-review-probes/snapshot/`、`snapshot.sha256`；清單本身 SHA-256 `ce009235de22d394d3d7f27c4215f5d1d55cded82bd12e1c1ddfc44368d06ae8`（46 files，含測試）。比對時 manifest、plugin 入口與凍結清單中的全部 M1 `department_lib/*.py` 均與被測副本一致。收尾時共享目錄新增 `department_lib/dashboard.py`、`department_lib/kanban_db_source.py`（不在此 M1 快照與驗收範圍），顯示 M2 並行期間樹已擴充；本結論不涵蓋新檔。`README.md` 當時另計 SHA-256 `838b105ded3d289427104fc4b0da81538e58e4e7c64f63c76bbcf1d2fd26c936`。此身分只指本輪檢查時的 bytes；M2 並行，不推論日後共享目錄未改。
 - 強調：下述反例是**synthetic board/port + 隔離 SQLite**，不是 live gateway 或實際私人資料外洩。`SYNTHETIC_SECRET` 等均為合成字串。未變更產品程式、正式 board/profile/gateway、服務或 FreshTape；本輪只新增本報告及隔離測試／測試快照。
 
 ## 阻擋 findings（P1）
@@ -48,11 +48,11 @@
 
 ## 驗證與範圍
 
-1. 我方在隔離快照執行既有 full suite：`PYTHONDONTWRITEBYTECODE=1 PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 /home/ubuntu/.hermes/hermes-agent/venv/bin/python -m pytest review-routing/snapshot/tests -q -p no:cacheprovider --basetemp=/home/ubuntu/.hermes/kanban/workspaces/t_4be3305e/review-routing/pytest-rerun` → **160 passed in 8.78s, exit 0**。測試全綠不代表上列反例通過。
+1. 我方在隔離快照執行既有 full suite：`PYTHONDONTWRITEBYTECODE=1 PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 ~/.hermes/hermes-agent/venv/bin/python -m pytest review-routing/snapshot/tests -q -p no:cacheprovider --basetemp=~/.hermes/kanban/workspaces/t_4be3305e/review-routing/pytest-rerun` → **160 passed in 8.78s, exit 0**。測試全綠不代表上列反例通過。
 2. 可重現、凍結且不改正式系統（3 個 script 的 assert 是在**確認缺陷存在**，exit 0 不表示產品 PASS）：
 
 ```bash
-D=/home/ubuntu/projects/hermes-department-orchestrator/.research/m1-review-probes
+D=<repo>/.research/m1-review-probes
 (cd "$D" && sha256sum -c snapshot.sha256)
 PYTHONDONTWRITEBYTECODE=1 PYTHONPATH="$D/snapshot" python3 "$D/gate.py"
 PYTHONDONTWRITEBYTECODE=1 PYTHONPATH="$D/snapshot" python3 "$D/events.py"

@@ -43,7 +43,7 @@ MANIFEST.sha256       sha256 of every artifact (excluding caches/manifest)
 ## Run
 
 ```bash
-cd /home/ubuntu/projects/hermes-department-orchestrator/.research/prototype-v1
+cd <repo>/.research/prototype-v1
 ./scripts/run_unit.sh          # 34 tests, rc 0
 ./scripts/sandbox.sh --probe   # unshare capability; rc 78 if unavailable
 ./scripts/sandbox.sh           # fresh isolated live stage, 40/40 assertions

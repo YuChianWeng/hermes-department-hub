@@ -2,7 +2,7 @@
 
 - 任務：`t_6914a4a2`（normal-worker）
 - 狀態：**實作完成；不是驗收 PASS。** M2-R 仍被 M1-R 的 `REQUEST_CHANGES` 卡住。
-- 產物：`/home/ubuntu/projects/hermes-department-orchestrator/`
+- 產物：`<repo>/`
 - 詳細文件：`docs/m2-desktop.md`
 
 ## 1. 前置現況（開工前已核對）

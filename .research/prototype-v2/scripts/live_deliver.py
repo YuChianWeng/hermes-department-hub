@@ -19,7 +19,7 @@ from deptproto.store import Store
 
 PROTO = Path(os.environ["PROTO_ROOT"])
 LAB = Path(os.environ["PROTO_LAB"])
-SRC = Path("/home/ubuntu/.hermes/hermes-agent")
+SRC = Path("~/.hermes/hermes-agent")
 PY = str(SRC / "venv/bin/python")
 CLI = str(PROTO / "scripts/hermes_cli.py")
 

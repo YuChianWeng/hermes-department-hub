@@ -1,7 +1,7 @@
-# command: /home/ubuntu/.nvm/versions/node/v22.22.2/bin/node --check /home/ubuntu/.hermes/profiles/medium-worker/cache/scratch/m2v5-nodecheck/plugin.mjs
+# command: ~/.nvm/versions/node/v22.22.2/bin/node --check ~/.hermes/profiles/medium-worker/cache/scratch/m2v5-nodecheck/plugin.mjs
 # recorded_at_utc: 2026-11-06T06:55:09+00:00
 # recorded_at_asia_taipei: 2026-11-06T14:55:09+08:00
-# cwd: /home/ubuntu/.hermes/profiles/medium-worker/cache/scratch/m2v5-candidate-run
+# cwd: ~/.hermes/profiles/medium-worker/cache/scratch/m2v5-candidate-run
 # note: SUPPLEMENTARY v5 candidate: Desktop plugin ESM syntax check; node v22 (PATH node is v10 <18)
 ---- output ----
 (no stdout/stderr)

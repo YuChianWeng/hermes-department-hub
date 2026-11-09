@@ -1,5 +1,5 @@
-scratch: /home/ubuntu/.hermes/profiles/normal-worker/cache/scratch/m2-e2e-run
-ok   in-process kanban path is inside the isolated scratch :: /home/ubuntu/.hermes/profiles/normal-worker/cache/scratch/m2-e2e-run/kanban-home/kanban.db
+scratch: ~/.hermes/profiles/normal-worker/cache/scratch/m2-e2e-run
+ok   in-process kanban path is inside the isolated scratch :: ~/.hermes/profiles/normal-worker/cache/scratch/m2-e2e-run/kanban-home/kanban.db
 ok   isolated kanban init
 ok   board assigned root to the manager :: t_8cdf67a8
 ok   board assigned the work item to a member :: t_15d01abe
@@ -45,5 +45,5 @@ ok   M2 durable event trail includes review and completion :: ['completed', 'cla
 ok   M2 source is Kanban
 ok   M2 board probe is available :: {"available": true, "code": "", "detail": "", "task_count": 2, "board": "current"}
 
-EVIDENCE {"artifact_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "child_task": "t_15d01abe", "dashboard_final_report": {"count": 1, "delivered_count": 1, "latest_task_id": "t_15d01abe", "state": "delivered"}, "dashboard_work_state": "done", "delivery": "delivered", "delivery_repeat": "already_delivered", "durable_event_kinds": ["completed", "claimed", "review_requested", "claimed", "changes_requested", "claimed", "review_requested", "claimed", "created"], "review_fail_run": 2, "revision": 2, "root_comments": 1, "root_task": "t_8cdf67a8", "scratch": "/home/ubuntu/.hermes/profiles/normal-worker/cache/scratch/m2-e2e-run", "verdict_run_id": 4}
+EVIDENCE {"artifact_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "child_task": "t_15d01abe", "dashboard_final_report": {"count": 1, "delivered_count": 1, "latest_task_id": "t_15d01abe", "state": "delivered"}, "dashboard_work_state": "done", "delivery": "delivered", "delivery_repeat": "already_delivered", "durable_event_kinds": ["completed", "claimed", "review_requested", "claimed", "changes_requested", "claimed", "review_requested", "claimed", "created"], "review_fail_run": 2, "revision": 2, "root_comments": 1, "root_task": "t_8cdf67a8", "scratch": "~/.hermes/profiles/normal-worker/cache/scratch/m2-e2e-run", "verdict_run_id": 4}
 RESULT: PASS

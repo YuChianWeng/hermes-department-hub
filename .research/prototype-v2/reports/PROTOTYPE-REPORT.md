@@ -3,7 +3,7 @@
 - 卡片：`t_98ede0aa`（父卡：獨立審查 `t_e83d632f` / run 385，判定 REQUEST_CHANGES）。
 - 狀態：**v2 修復完成，僅供獨立複審**；本卡完成**不是**獨立驗收、**不是** P0 PASS、**不是** M1 授權。
 - **不解除 `t_369a6f8c`、不放行 `t_a1c1b08b`。** 未修改正式 board/profile/credentials/gateway/Hermes core/FreshTape；未安裝、未 push、未部署、未對外訊息。
-- 受測 runtime：`/home/ubuntu/.hermes/hermes-agent`，HEAD `f0d94882e89ab8d4098b5bb2f166adfb9ee0a0ab`，venv Python 3.11.15。
+- 受測 runtime：`~/.hermes/hermes-agent`，HEAD `f0d94882e89ab8d4098b5bb2f166adfb9ee0a0ab`，venv Python 3.11.15。
 - 模型：**deterministic synthetic model（無推理、無 provider、無外網）**；live 使用**真 gateway、真 profile、真 Kanban CLI 工具**。所有 live 證據明確標示 `synthetic_model: true`。
 - 原 `prototype-v1/` 與既有證據**未被覆蓋**：manifest SHA-256 `26f6046b714f0289b9aafa6e9c6df360b27d30180629f7127899943d51645b97`，193/193 檔 `sha256sum -c` 通過（`evidence/v1-immutability.json`）。
 
@@ -84,7 +84,7 @@
 
 ## 4. 隔離與 fail-before-start
 
-- `unshare --user --map-root-user --mount --net --pid --fork --kill-child --mount-proc`；`/home/ubuntu`、`/run`、`/tmp` 換 tmpfs，只 bind 回 prototype 樹（rw）、installed source（ro）、uv Python runtime（ro）。
+- `unshare --user --map-root-user --mount --net --pid --fork --kill-child --mount-proc`；`$HOME`、`/run`、`/tmp` 換 tmpfs，只 bind 回 prototype 樹（rw）、installed source（ro）、uv Python runtime（ro）。
 - 網路：只有 `lo`、`routes=[]`；本輪 preflight 記錄 user/mount/net/pid namespace inode 與 uid 0（`preflight.json`）。
 - `assert_lab_env` 在任何清理**之前**檢查 12 個 HOME/HERMES/XDG/TMP 路徑全部 resolve 在 lab，拒絕 worker pins、proxy/socket 變數與 lazy install；負向輸入（production DB、`/run/user/1000`、`HERMES_KANBAN_TASK`）皆 fail-before-start。
 - 清理：兩個程序 reaped（model rc=-15、gateway rc=1，如實保留非 graceful rc）；`ss -lntup` 只剩表頭。

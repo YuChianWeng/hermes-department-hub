@@ -62,7 +62,7 @@ MANIFEST.sha256       sha256 of every artifact (excluding caches/manifest itself
 ## Run
 
 ```bash
-cd /home/ubuntu/projects/hermes-department-orchestrator/.research/prototype-v2
+cd <repo>/.research/prototype-v2
 ./scripts/run_unit.sh            # 57 passed, rc 0
 ./scripts/sandbox.sh --probe     # unshare capability; rc 78 if unavailable
 ./scripts/sandbox.sh unit        # full suite inside the namespace sandbox

@@ -1,4 +1,4 @@
-# candidate parity: sha256sum -c /home/ubuntu/.hermes/kanban/attachments/t_68287415/candidate-manifest.sha256 (run in project root)
+# candidate parity: sha256sum -c ~/.hermes/kanban/attachments/t_68287415/candidate-manifest.sha256 (run in project root)
 # recorded_at_asia_taipei: 2026-11-06T15:14:54+08:00
 README.md: OK
 __init__.py: OK

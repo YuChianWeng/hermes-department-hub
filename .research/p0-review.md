@@ -1,11 +1,11 @@
 # P0-R 獨立複驗｜routing & security boundary only：PASS（run 444）
 
-**判定：`verdict=PASS`、`scope=routing_and_security_boundary_only`、`desktop_real_ui=deferred_to_M2R`、`p0_pass=false`。這不是整體 P0 PASS，不是部署、安全隔離或完整 E2E 的批准。** 此次依 Oneal 決策 A 之新卡 body 重新判準；下方 run 370 保留為歷史紀錄，不再代表本次縮限範圍的結論。
+**判定：`verdict=PASS`、`scope=routing_and_security_boundary_only`、`desktop_real_ui=deferred_to_M2R`、`p0_pass=false`。這不是整體 P0 PASS，不是部署、安全隔離或完整 E2E 的批准。** 此次依 maintainer 決策 A 之新卡 body 重新判準；下方 run 370 保留為歷史紀錄，不再代表本次縮限範圍的結論。
 
 ## Findings 與限制（不是本次重割後的 blocker）
 
 1. **安全限制 — 繼承穿透與 metadata exposure 是實測事實，不是已修好。** 在受控 DAG，default 不訂閱工作圖、回報卡 detached 時，觀察到的兩條 child completed 路徑不喚醒 default；但若 default 訂閱 root，create/link 兩條路徑皆繼承 default 並真實喚醒、執行工具。default 的 report `kanban_show` 結果還可包含 child IDs。這只支持可信單寫入者與受控拓樸；不是任意 CLI/UI 操作的 ACL、保密邊界或不可繞過的保證。舊分析 `.research/p0-route-followup.md:66–89`、`.research/p0-route-independent-review.md:7–14,28–36` 已記錄；本輪亦重現，見下表。
-2. **語意限制 — 驗收前不可 final 是已審查的 synthetic v6 domain invariant，不是已實測的真 gateway/真模型端到端強制。** 引用 `t_54577d57` run 436、`/home/ubuntu/.hermes/kanban/attachments/t_54577d57/REPORT.md`：identity matrix、衝突、crash、fuzz 等對固定 v6 bytes 通過；採 trusted adapter/single writer 前提。具 exact-current identity 的偽造仍可能 fence；ordered hostile rejection 可消耗序號。已 delivered 後的合法 conflict 無法撤回外部 effect，亦無 delivery↔item reconciliation。真實 reject→rework→fresh PASS→manager acceptance→default final 尚未端到端驗證；本輪 detached report 是測試者直接 complete 的 routing 正控，不是已通過 review 的 final。
+2. **語意限制 — 驗收前不可 final 是已審查的 synthetic v6 domain invariant，不是已實測的真 gateway/真模型端到端強制。** 引用 `t_54577d57` run 436、`~/.hermes/kanban/attachments/t_54577d57/REPORT.md`：identity matrix、衝突、crash、fuzz 等對固定 v6 bytes 通過；採 trusted adapter/single writer 前提。具 exact-current identity 的偽造仍可能 fence；ordered hostile rejection 可消耗序號。已 delivered 後的合法 conflict 無法撤回外部 effect，亦無 delivery↔item reconciliation。真實 reject→rework→fresh PASS→manager acceptance→default final 尚未端到端驗證；本輪 detached report 是測試者直接 complete 的 routing 正控，不是已通過 review 的 final。
 3. **重複派工／恢復不得過度宣稱。** 原 run 377 的兩張 child 在有限觀察窗各有一次 wake；本輪亦各一。這不是跨重啟、claim 後 crash 或任意重播的 exactly-once/no duplicate dispatch 證明；尤其 wake admission 不是處理完成 receipt。v6 獨立審查的 4 個 SIGKILL（真 returncode -9）、2 個 SQLite ABORT、120 條 fuzz traces 與相應 synthetic/domain effects 支持**測過的**持久化及去重／恢復行為，非 gateway 層或任意外部系統的原子保證。run 370 的錯 session 持續錯誤後訂閱被刪仍是風險，不是本輪已修復。
 4. **Desktop 和公開介面只獲有限可行性。** `t_30ed8424` 的 SDK 原始碼／mock 與後端證據，加 `t_0c0290f6` 的獨立原始碼核對及隔離 ASGI/TestClient，支持公開 SDK sidebar/route、scoped REST 的有限可行性；不證真 Desktop、OAuth/native grant、正式資料整合或完整公開 event/ACK adapter。`t_0c0290f6` 與 `t_394237b5` 均 **REQUEST_CHANGES**：原 i18n mock 不忠實（v2 該項修復已獨立確認）、安裝/回復和隔離手冊仍有 P1；既有安裝器／手冊已 withdrawn，**不要執行**。原研究所稱 live 6/6 的 raw logs 並未隨附件提供，不能稱已獨立重現該 live 結果。
 5. **現行 no-network gate 的 v5/v6 gateway live 是 NOT FEASIBLE**：`t_549898c3` run 431，lo DOWN、localhost fixture connect errno 101。這不等同所有隔離 live 一律不可行，也不是本卡重割後的 blocker。本輪以下 run 444 採另一個私有 network namespace、lo UP 的 routing-only 代表性測試；不是在上述嚴格 no-network gate 重跑 v6 live，亦不代表產品 E2E。
@@ -14,7 +14,7 @@
 
 - 固定 installed Hermes source commit `f0d94882e89ab8d4098b5bb2f166adfb9ee0a0ab`；在本卡全新 disposable lab，重新建立合成 default/manager profiles、合成 sessions、board、synthetic API keys；沒有複製 run 377 session 或 board。新的 bootstrap 回傳 raw session ID 恰與 run 377 相同；原因未另驗證，勿據此推論 session 全域唯一。此次是在空 lab 中新建，**並非沿用舊 DB**。真 gateway、真 Kanban CLI/tools，模型是 deterministic synthetic，dispatcher disabled，沒有真模型管理判斷。
 - 以 run 377 `runner.py`/`sandbox.sh` 複本為基礎：移除已知失敗的 raw-session N2 前提；先完成 setup root 才完成 child；避開 BLOB JSON 匯出，另加入 reviewer 的 session/message SQL 檢查。保留原訂閱繼承反例；非原 script 不修改重跑。`bash fresh-route/scripts/sandbox.sh` **exit 0，14/14 assertions PASS**。
-- 隔離：`unshare` user/mount/net/pid，正式 `/home/ubuntu`、`/run`、`/tmp` 遮蔽；僅 fresh lab 與 read-only installed runtime/source bind 回；乾淨 env，禁 lazy install/offline。preflight 測試拒絕正式 board pin 與正式 XDG runtime 路徑；紀錄顯示唯一 interface 為私有 lo、`ip -j route=[]`；這是 loopback-only routing lab，不是 VM 或通用安全沙箱。gateway/model 都 wait/reaped；gateway shutdown rc=1、model=-15；私有 namespace 最終 listener 僅表頭，**不是宣稱 graceful exit 0**。
+- 隔離：`unshare` user/mount/net/pid，正式 `$HOME`、`/run`、`/tmp` 遮蔽；僅 fresh lab 與 read-only installed runtime/source bind 回；乾淨 env，禁 lazy install/offline。preflight 測試拒絕正式 board pin 與正式 XDG runtime 路徑；紀錄顯示唯一 interface 為私有 lo、`ip -j route=[]`；這是 loopback-only routing lab，不是 VM 或通用安全沙箱。gateway/model 都 wait/reaped；gateway shutdown rc=1、model=-15；私有 namespace 最終 listener 僅表頭，**不是宣稱 graceful exit 0**。
 
 | 受測合成物件 | 實測 | 範圍 |
 |---|---|---|
@@ -33,14 +33,14 @@
 - **已證（引用既有獨立驗收，非本輪重做）：** v6 狹義 acceptance/identity/domain crash-recovery，見 `t_54577d57` run 436。公開 SDK 有條件可行及兩輪拒收見 `t_30ed8424`、`t_0c0290f6`、`t_394237b5`。對 Hermes 的正式依賴限文件化 CLI/API/SDK 及 profile configuration；本輪唯讀 SQL 是**合成測試證據核對**，不是插件依賴、產品 API 或直接操作正式 DB。未證完整公開 durable ACK/replay、原子 no-inherit hook、任意建立者 enforcement 或所有多 board 操作。
 - **未證：** 真 Desktop loader/render/焦點/可用性、真 OAuth/native grant 與完整 Desktop/backend round trip（移交 M2-R）；真模型自主決策、正式環境 live、真 dispatcher review/rework/final 閉環；claim/admission 與外部 side effect 跨 crash 的通用 exactly-once、任意多 writer、電源／磁碟故障。live under strict no-network 為 NOT FEASIBLE，不冒稱本輪做過。
 - **證據附件：** 本次 `route-review-evidence.tar.gz` SHA-256 `22c99251249d1e53ee67b57a23b79ceeeb05d3ef09a7ecbfc811dfb2cd1ddbe0`；含本次實際執行腳本、全部原始 synthetic logs、isolated board/default/manager 三份 SQLite backup 與完整 console。25 archive members 經逐檔 byte hash roundtrip；不含真憑證。`runner.py` SHA-256 `6fa542cc776bf3ec1c387e2d37e1c1ab7a284cccbc16d56dafd91517484e6db4`，`sandbox.sh` `481ad6078cf81f0704e484848a61246d244590414391a396b5b6669c4b85edcd`。stdout 包含合成資料；logs/DB 不代表正式狀態。
-- **重跑限制：** archive 內 launcher 寫死本輪 scratch 的 LAB，該路徑已含資料，**不得直接在既有 lab 重跑**；需在全新空 workspace 複製 scripts，分別建立空 `evidence`、`os-home/.hermes`、`board`、`runtime`、`tmp` 及 `xdg/{config,cache,data,state}`，將 sandbox 的 LAB 指到該全新目錄並重新 pin hash，確認安裝 source/uv runtime 只讀與 `unshare` 可用，再 `bash <fresh>/scripts/sandbox.sh`；任何 isolation/preflight 失敗均先停止，不放寬或改指正式系統。原命令本輪工作目錄 `/home/ubuntu/.hermes/kanban/workspaces/t_369a6f8c`，完整輸出在附件。清理、profile 及 board 都限測試環境；未修改產品、正式 board/profile/gateway/通知或 FreshTape。
+- **重跑限制：** archive 內 launcher 寫死本輪 scratch 的 LAB，該路徑已含資料，**不得直接在既有 lab 重跑**；需在全新空 workspace 複製 scripts，分別建立空 `evidence`、`os-home/.hermes`、`board`、`runtime`、`tmp` 及 `xdg/{config,cache,data,state}`，將 sandbox 的 LAB 指到該全新目錄並重新 pin hash，確認安裝 source/uv runtime 只讀與 `unshare` 可用，再 `bash <fresh>/scripts/sandbox.sh`；任何 isolation/preflight 失敗均先停止，不放寬或改指正式系統。原命令本輪工作目錄 `~/.hermes/kanban/workspaces/t_369a6f8c`，完整輸出在附件。清理、profile 及 board 都限測試環境；未修改產品、正式 board/profile/gateway/通知或 FreshTape。
 
 ---
 
 # 歷史紀錄：P0-R run 370 原始全範圍 BLOCKED（已被本次範圍裁決取代）
 
-- 審查任務 `t_369a6f8c`，本次 run 370；上游 `t_b0f90986`；受測 source `/home/ubuntu/.hermes/hermes-agent`，`git rev-parse HEAD` = `f0d94882e89ab8d4098b5bb2f166adfb9ee0a0ab`。
-- 對照計畫 `/home/ubuntu/.hermes/plans/2026-11-05_132450-hermes-department-orchestrator-hackathon.md` §3、§6、§33–39，及 `.research/p0-report.md`。本報告覆蓋上游「核心路徑實證可行，可進入建置」的判斷：**P0 尚未通過；已實測的是 default profile 加合成模型的單一路徑，不是已證實的部門主管閉環**。下游 `t_a1c1b08b` 必須保持依賴等待，不能藉 complete 或 REQUEST_CHANGES 後 complete 放行。
+- 審查任務 `t_369a6f8c`，本次 run 370；上游 `t_b0f90986`；受測 source `~/.hermes/hermes-agent`，`git rev-parse HEAD` = `f0d94882e89ab8d4098b5bb2f166adfb9ee0a0ab`。
+- 對照計畫 `~/.hermes/plans/2026-11-05_132450-hermes-department-orchestrator-hackathon.md` §3、§6、§33–39，及 `.research/p0-report.md`。本報告覆蓋上游「核心路徑實證可行，可進入建置」的判斷：**P0 尚未通過；已實測的是 default profile 加合成模型的單一路徑，不是已證實的部門主管閉環**。下游 `t_a1c1b08b` 必須保持依賴等待，不能藉 complete 或 REQUEST_CHANGES 後 complete 放行。
 
 ## Findings（全部是 P0 blocker，按風險排序）
 
@@ -52,7 +52,7 @@
 
 4. **[P0] 故障恢復未證實；一次錯誤投遞可導致訂閱被刪。** 原 8 項沒有測 gateway 停機期間產生事件，或在 cursor claim 後但處理完成前 crash。`gateway/kanban_watchers_notifier.py:302–323` 先 claim；`:491–496` 明言 wake admission 不是執行或最終回應 receipt；`:544–554,802–816` 一般連續失敗達上限會 unsubscribe（與 `WakeNotAccepted` 的持續 rewind 不同）。我的第一輪複本試驗因複製 session 造成 `HTTP 409 profile_mismatch`（環境建置問題，不歸因為產品跨 profile 缺陷），在真 gateway 重試 12 次後 log 顯示 `dropping subscription`，SQLite 查詢該卡 subscription 數為 0；證明不能把 cursor 或「沒重複醒來」當成完成處理保證。**補證**：以正確建立的 profile/session 測停機期間 event、claim 後 kill、admission 後 manager 未完成、執行中 kill、重複與亂序；檢查持久 receipt、獨立補償／dead-letter、有限重試與有界警示。任何被刪的訂閱都不得被誤認已處理。
 
-5. **[P0] Desktop 與公開 Kanban adapter 路徑未被 P0 證實。** 上游承認 Desktop 未載入，且建議 `plugin_api.py` 直接讀 `kanban.db` 或 CLI（`.research/p0-report.md:137–142,203`），但沒有證明 DB schema 是公開穩定契約或插件透過受支援 API 可執行全部必要讀／寫／事件／權限操作；不應將內部 `_inherit_notify_subs`、`claim_unseen_events_for_sub`、直接引用 `hermes_cli.kanban_db*` 或 DB schema 推定為公開 plugin API。`host.request` 缺少查詢 RPC 的 source 調查不是已驗證的替代實作。**補證**：逐項列官方公開介面、確切輸入輸出、最小版本與權限，隔離跑通 task 查詢、profile 綁定、事件與 acceptance；以公開 CLI 或其他明確文件化介面為候選，但須先驗證隔離、多 board、原子性與授權，不能因 CLI 存在就判定可行。另在代表性的真 Desktop 載入 unified package，用 SDK 呼叫真 backend route 並呈現結果，區分 local、remote OAuth；不可拿 SDK mock 當真 Desktop。若缺受支援 API 或沒有 Desktop 測試能力，維持 block，請求適當環境／上游 API，或由 Oneal 決定縮減需求，不 patch core。
+5. **[P0] Desktop 與公開 Kanban adapter 路徑未被 P0 證實。** 上游承認 Desktop 未載入，且建議 `plugin_api.py` 直接讀 `kanban.db` 或 CLI（`.research/p0-report.md:137–142,203`），但沒有證明 DB schema 是公開穩定契約或插件透過受支援 API 可執行全部必要讀／寫／事件／權限操作；不應將內部 `_inherit_notify_subs`、`claim_unseen_events_for_sub`、直接引用 `hermes_cli.kanban_db*` 或 DB schema 推定為公開 plugin API。`host.request` 缺少查詢 RPC 的 source 調查不是已驗證的替代實作。**補證**：逐項列官方公開介面、確切輸入輸出、最小版本與權限，隔離跑通 task 查詢、profile 綁定、事件與 acceptance；以公開 CLI 或其他明確文件化介面為候選，但須先驗證隔離、多 board、原子性與授權，不能因 CLI 存在就判定可行。另在代表性的真 Desktop 載入 unified package，用 SDK 呼叫真 backend route 並呈現結果，區分 local、remote OAuth；不可拿 SDK mock 當真 Desktop。若缺受支援 API 或沒有 Desktop 測試能力，維持 block，請求適當環境／上游 API，或由 maintainer 決定縮減需求，不 patch core。
 
 ## 可重複檢查：已證明什麼、沒有證明什麼
 

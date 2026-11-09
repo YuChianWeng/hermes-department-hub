@@ -2,8 +2,8 @@
 
 - **任務**：Kanban `t_b0f90986`（P0，能力實測；不建產品）
 - **日期**：2026-11-05（Asia/Taipei）
-- **受測 Hermes**：v0.22.6 (2026.9.24) stable，git `f0d94882e89ab8d4098b5bb2f166adfb9ee0a0ab`（2026-11-02），install `/home/ubuntu/.hermes/hermes-agent`，**未修改任何 core 檔**
-- **隔離根**：`/home/ubuntu/projects/hermes-department-orchestrator/.research/lab/`
+- **受測 Hermes**：v0.22.6 (2026.9.24) stable，git `f0d94882e89ab8d4098b5bb2f166adfb9ee0a0ab`（2026-11-02），install `~/.hermes/hermes-agent`，**未修改任何 core 檔**
+- **隔離根**：`<repo>/.research/lab/`
 - **結論**：**核心路徑實證可行，不需 patch core，可進入建置**。但「主管可動作」不是預設行為——必須在主管 profile 啟用 `kanban` toolset，否則主管只收到文字通知、無法處理（本輪抓到的真缺口）。Desktop 僅 source-derived，未 runtime 驗證（本機無桌面 App）。
 
 ---
@@ -30,7 +30,7 @@
 
 **真實**（未修改的 Hermes 本體）：
 - Gateway 製程：`hermes gateway run`，只開 `api_server`，綁 `127.0.0.1:18122`。
-- Kanban：獨立 board `p0`，DB 在 `lab/kanban/kanban/boards/p0/kanban.db`（**與正式 `/home/ubuntu/.hermes/kanban.db` 不同檔**）。
+- Kanban：獨立 board `p0`，DB 在 `lab/kanban/kanban/boards/p0/kanban.db`（**與正式 `~/.hermes/kanban.db` 不同檔**）。
 - Notifier / wake / kanban tools / CLI 全部走 Hermes 原始碼路徑。
 
 **合成（lab 測試替身，報告中一律視為 mock）**：
@@ -41,8 +41,8 @@
 ```
 $ tr '\0' '\n' < /proc/<gateway-pid>/environ | grep -E 'HERMES_(HOME|KANBAN_HOME|KANBAN_BOARD|KANBAN_DB|DELEGATED|PROFILE)='
 HERMES_KANBAN_BOARD=p0
-HERMES_KANBAN_HOME=/home/ubuntu/projects/hermes-department-orchestrator/.research/lab/kanban
-HERMES_HOME=/home/ubuntu/projects/hermes-department-orchestrator/.research/lab/home
+HERMES_KANBAN_HOME=<repo>/.research/lab/kanban
+HERMES_HOME=<repo>/.research/lab/home
 ```
 （正式 pins `HERMES_KANBAN_DB` / `HERMES_DELEGATED_CHILD_CONTEXT` / `HERMES_PROFILE` 均已 unset。）
 
@@ -218,7 +218,7 @@ default ──kanban_create(assignee=dept-manager)──▶ 主管卡（部門�
 ## 12. 重跑方式（固定、可重現）
 
 ```bash
-LAB=/home/ubuntu/projects/hermes-department-orchestrator/.research/lab
+LAB=<repo>/.research/lab
 cd "$LAB"
 ./scripts/run-stub.sh            # 前景或背景：合成模型 127.0.0.1:18121
 ./scripts/run-gateway.sh         # 背景：隔離 gateway 127.0.0.1:18122
@@ -246,4 +246,4 @@ EXIT_STATUS=0
 - `lab/kanban/kanban/boards/p0/kanban.db`
 - `evidence/p0-e2e-test.log`
 
-**未動到**：`/home/ubuntu/.hermes`（正式 board/gateway/settings/profiles）、`hermes-freshtape`、任何 credentials、任何對外服務。
+**未動到**：`~/.hermes`（正式 board/gateway/settings/profiles）、`hermes-freshtape`、任何 credentials、任何對外服務。

@@ -2,7 +2,7 @@
   "assertions": [
     {
       "assertion": "fail-before-start rejects HERMES_KANBAN_DB",
-      "detail": "HERMES_KANBAN_DB: resolves outside lab (/home/ubuntu/.hermes/kanban.db)",
+      "detail": "HERMES_KANBAN_DB: resolves outside lab (~/.hermes/kanban.db)",
       "pass": true
     },
     {
@@ -495,5 +495,5 @@
     }
   ],
   "error": "AssertionError('live delivery crashed at effect/receipt boundary')",
-  "traceback": "Traceback (most recent call last):\n  File \"/home/ubuntu/projects/hermes-department-orchestrator/.research/prototype-v2/scripts/live_stage.py\", line 669, in <module>\n    run()\n  File \"/home/ubuntu/projects/hermes-department-orchestrator/.research/prototype-v2/scripts/live_stage.py\", line 619, in run\n    check(\"live delivery crashed at effect/receipt boundary\", p.returncode == 137,\n  File \"/home/ubuntu/projects/hermes-department-orchestrator/.research/prototype-v2/scripts/live_stage.py\", line 69, in check\n    raise AssertionError(name)\nAssertionError: live delivery crashed at effect/receipt boundary\n"
+  "traceback": "Traceback (most recent call last):\n  File \"<repo>/.research/prototype-v2/scripts/live_stage.py\", line 669, in <module>\n    run()\n  File \"<repo>/.research/prototype-v2/scripts/live_stage.py\", line 619, in run\n    check(\"live delivery crashed at effect/receipt boundary\", p.returncode == 137,\n  File \"<repo>/.research/prototype-v2/scripts/live_stage.py\", line 69, in check\n    raise AssertionError(name)\nAssertionError: live delivery crashed at effect/receipt boundary\n"
 }

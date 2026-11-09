@@ -1,4 +1,4 @@
-# command: HERMES_HOME=/home/ubuntu/.hermes/profiles/medium-worker hermes plugins validate . --json
+# command: HERMES_HOME=~/.hermes/profiles/medium-worker hermes plugins validate . --json
 # subject: project dir with .research/ temporarily set aside (moved, not deleted) so the validator's file-walking security scan sees only the plugin + repo
 # recorded_at_asia_taipei: 2026-11-06T15:31:16+08:00
 ---- output ----

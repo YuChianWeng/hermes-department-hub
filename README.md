@@ -318,7 +318,7 @@ Run from the **repository root** (there is no `product/` subdirectory):
 ```bash
 PYTHONDONTWRITEBYTECODE=1 PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 \
   env -u PYTHONPATH \
-  /home/ubuntu/.hermes/hermes-agent/venv/bin/python -m pytest tests -q -p no:cacheprovider
+  ~/.hermes/hermes-agent/venv/bin/python -m pytest tests -q -p no:cacheprovider
 
 node --check desktop/department-hub/plugin.js
 node tests/js/run.mjs
@@ -358,8 +358,8 @@ doctor . --ci` reports 7 tools / 2 hooks and rc=0.
 scratch directory (it refuses to run against a non-isolated board):
 
 ```bash
-PYTHONPATH=/home/ubuntu/.hermes/hermes-agent:. \
-  /home/ubuntu/.hermes/hermes-agent/venv/bin/python \
+PYTHONPATH=~/.hermes/hermes-agent:. \
+  ~/.hermes/hermes-agent/venv/bin/python \
   .research/m2-e2e.py <scratch>/m2-e2e-run
 ```
 
@@ -396,7 +396,7 @@ report back from the plugin SQLite `deliveries.body_json`.
 That file is retained as historical evidence and **must not be used as an install
 guide**. It describes a v4.1 candidate installed from
 `t_c410652a/candidate`, and its warning *「不要安裝
-`/home/ubuntu/projects/hermes-department-orchestrator/`」* became false when the
+`<repo>/`」* became false when the
 reviewed candidate was integrated on 2026-11-06 — one operator had already
 followed it. The correct install source is **this repository root**; the steps
 above supersede it. Its config-backup/rollback pattern is still sound and is

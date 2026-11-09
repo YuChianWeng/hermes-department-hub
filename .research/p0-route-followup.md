@@ -2,7 +2,7 @@
 
 - 卡 `t_e22ed05f` / run **377**；對照 `p0-review.md` Finding 1/2/4/5、`p0-report.md` 與計畫 §24–39。
 - Installed Hermes source **`f0d94882e89ab8d4098b5bb2f166adfb9ee0a0ab`**；既有 venv Python **3.11.15**。版本標籤沿用前報告 v0.22.6，但本次相容性依據是 exact commit，未證最低版本。
-- 新 lab：`/home/ubuntu/projects/hermes-department-orchestrator/.research/route-lab-377`（下稱 `$LAB`）。未重用舊 lab、未複製正式 session/config/credentials。
+- 新 lab：`<repo>/.research/route-lab-377`（下稱 `$LAB`）。未重用舊 lab、未複製正式 session/config/credentials。
 - **結論：真正 manager profile 的 child event wake 與 Kanban 工具執行已補證；訂閱繼承的產品級政策、故障恢復、acceptance 與 Desktop 仍有缺口。保留 `t_369a6f8c` blocked、`t_a1c1b08b` todo 等待。**
 
 ## 1. 本輪已驗證與未驗證
@@ -77,7 +77,7 @@ P1/P2 的原 session 各收到恰一個相關 completed wake 是觀察窗內事�
 2. 全域 shared board 的 `kanban_show` 會把 recent-work 摘要放進 report 的 worker_context；即使沒有 child event wake，default 仍可能看到 child metadata。
 3. 本輪 report 是測試器直接完成的 synthetic control，**不是 manager 核對 fresh independent PASS 後才完成的 final**。因此「只能上報已接受結果」尚無實證。
 
-**建議最小可行選項（待 Oneal／orchestrator 決策，未自行縮減需求）：**採「單一部門、受信任單寫入者、detached report、部門關聯另存插件、共享 board 可讀」的 routing-only slice；明列不保證任意 CLI/UI link 的隔離，先補 acceptance/recovery gate 再談產品。若要求對任意建卡者也保證不穿透，停止建置並請上游提供下列正式 hook。
+**建議最小可行選項（待 maintainer／orchestrator 決策，未自行縮減需求）：**採「單一部門、受信任單寫入者、detached report、部門關聯另存插件、共享 board 可讀」的 routing-only slice；明列不保證任意 CLI/UI link 的隔離，先補 acceptance/recovery gate 再談產品。若要求對任意建卡者也保證不穿透，停止建置並請上游提供下列正式 hook。
 
 **仍缺的公開契約／hook：**
 
@@ -121,11 +121,11 @@ API synthetic key 與 synthetic model placeholder 都是 lab 新建，不是 pro
 所有呼叫限定 lab，完整參數、rc、stdout/stderr 在各段 `cli.jsonl`；HTTP inputs/status 在 `http.jsonl`。以下為**本輪原始執行順序**，不是對既有 lab 可重複寫入的 idempotent 指令：
 
 ```bash
-LAB=/home/ubuntu/projects/hermes-department-orchestrator/.research/route-lab-377
+LAB=<repo>/.research/route-lab-377
 "$LAB/scripts/sandbox.sh"                # 原始 stage：N2 mismatch → exit 1（保留）
 "$LAB/scripts/sandbox-continuation.sh"   # N2b + 建卡，parent guard → exit 1（保留）
 "$LAB/scripts/sandbox-final.sh"          # route assertions 成功；BLOB export → exit 1（保留）
-/home/ubuntu/.hermes/hermes-agent/venv/bin/python "$LAB/scripts/audit.py" # offline 38/38, exit 0
+~/.hermes/hermes-agent/venv/bin/python "$LAB/scripts/audit.py" # offline 38/38, exit 0
 ```
 
 **不要直接重跑現有 lab 的 live scripts**：final stage 刻意綁定保留的 synthetic IDs，且 runner 會新建 session/card；不是 fresh-portable harness。新 reviewer 應以新目錄重建同配置／namespace，從公開 CLI `--json` 捕捉新 task IDs，不複製 session DB。可重現的核心 CLI 序列如下（`hk` 必須是在 namespace、通過 preflight 的 `scripts/cli.py` wrapper；不可在正式環境照貼）：
@@ -150,7 +150,7 @@ hk kanban show "$C1" --json
 
 ## 7. Fail-before-start / OS 隔離與清理
 
-- `unshare --user --map-root-user --mount --net --pid --fork --kill-child --mount-proc` **實際成功**。Namespace 內 mount private；把正式 `/home/ubuntu` 換成 tmpfs，只重新掛回新 lab 與 read-only installed source / uv Python runtime。
+- `unshare --user --map-root-user --mount --net --pid --fork --kill-child --mount-proc` **實際成功**。Namespace 內 mount private；把正式 `$HOME` 換成 tmpfs，只重新掛回新 lab 與 read-only installed source / uv Python runtime。
 - `/run`、`/tmp` 各自 tmpfs；正式家目錄的 profiles、board、credentials、gateway sockets 不可見。source/venv 是 read-only dependency，不是正式 HERMES_HOME。
 - network namespace 只有 **lo**、`ip -j route` **[]**，只開 `127.0.0.1:18231/18232`；外網沒有路由，沒有調用 web/remote provider。此輪不依賴 Python monkeypatch 作網路安全邊界。
 - `env -i` allowlist；啟動每個 Hermes CLI / gateway / model 前檢查 HOME、HERMES_HOME、HERMES_KANBAN_HOME/DB、所有 XDG、TMPDIR/TMP/TEMP 的 resolved path 均在 lab；排除 task/run/session/delegated pins、SSH socket、D-Bus、HTTP proxy。socket direct path 與長路徑 fallback 的 XDG runtime / TMPDIR 均在 lab，且正式 /run 不可見。

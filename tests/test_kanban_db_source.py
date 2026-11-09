@@ -28,7 +28,7 @@ def board_env(tmp_path, monkeypatch):
     # throwaway board under tmp_path, so unfence *this isolated test process*
     # only. The adapter under test still opens the file strictly read-only.
     monkeypatch.delenv("HERMES_DELEGATED_CHILD_CONTEXT", raising=False)
-    agent_root = Path(os.environ.get("HERMES_AGENT_ROOT", "/home/ubuntu/.hermes/hermes-agent"))
+    agent_root = Path(os.path.expanduser(os.environ.get("HERMES_AGENT_ROOT", "~/.hermes/hermes-agent")))
     if str(agent_root) not in sys.path:
         sys.path.insert(0, str(agent_root))
     from hermes_cli import kanban_db

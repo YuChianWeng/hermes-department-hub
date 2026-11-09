@@ -1,6 +1,6 @@
 # Department Hub 原型 v2｜測試報告（可重跑）
 
-所有命令在 `/home/ubuntu/projects/hermes-department-orchestrator/.research/prototype-v2` 執行。Python：`/home/ubuntu/.hermes/hermes-agent/venv/bin/python`（3.11.15）。pytest 9.0.2。
+所有命令在 `<repo>/.research/prototype-v2` 執行。Python：`~/.hermes/hermes-agent/venv/bin/python`（3.11.15）。pytest 9.0.2。
 
 > 本報告只涵蓋 v2；v1 的原始測試報告與證據仍留在 `prototype-v1/`，未被覆蓋（v1 manifest 193/193 通過）。
 
@@ -83,7 +83,7 @@ venv/bin/python -m pytest tests/test_p1_regressions.py tests/test_v2_verificatio
 
 - namespaces：mount/net/pid/user 皆與 host 不同；uid 0（user namespace 內）。`preflight.json`（SHA-256 `78408bdcc1f4dea73f5caa7d35a579974070150322b0d4d4599c2c48d0c60244`）。
 - network：`interfaces=["lo"]`、`routes=[]`。
-- 正式資源遮蔽：`/home/ubuntu/.hermes/profiles`、正式 `kanban.db`、`/run/user/1000`、Obsidian vault 皆不存在；installed source 與 uv Python 寫入 probe 皆 EROFS。
+- 正式資源遮蔽：`~/.hermes/profiles`、正式 `kanban.db`、`/run/user/1000`、Obsidian vault 皆不存在；installed source 與 uv Python 寫入 probe 皆 EROFS。
 - 啟動前負向：production `HERMES_KANBAN_DB`、`/run/user/1000`、`HERMES_KANBAN_TASK` 都在 spawn 前被拒。
 - cleanup：gateway SIGTERM rc=1、model rc=-15，全部 reaped；`ss -lntup` 僅表頭（`cleanup.json`，SHA-256 `e2c5d21206f5170b7565b2383608dccbe34f298be6b008ef7b872defae196b4b`）。
 
@@ -110,7 +110,7 @@ v1 manifest：`26f6046b714f0289b9aafa6e9c6df360b27d30180629f7127899943d51645b97`
 ## 6. 重跑入口
 
 ```bash
-cd /home/ubuntu/projects/hermes-department-orchestrator/.research/prototype-v2
+cd <repo>/.research/prototype-v2
 ./scripts/run_unit.sh          # focused + full unit (57)
 ./scripts/sandbox.sh --probe   # namespace 能力檢查；不可用時 rc=78
 ./scripts/sandbox.sh unit      # 完整 unit 在 namespace 內

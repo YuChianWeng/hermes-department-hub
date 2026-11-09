@@ -1,4 +1,4 @@
-{"assertion": "fail-before-start rejects HERMES_KANBAN_DB", "pass": true, "detail": "HERMES_KANBAN_DB: resolves outside lab (/home/ubuntu/.hermes/kanban.db)"}
+{"assertion": "fail-before-start rejects HERMES_KANBAN_DB", "pass": true, "detail": "HERMES_KANBAN_DB: resolves outside lab (~/.hermes/kanban.db)"}
 {"assertion": "fail-before-start rejects XDG_RUNTIME_DIR", "pass": true, "detail": "XDG_RUNTIME_DIR: resolves outside lab (/run/user/1000)"}
 {"assertion": "fail-before-start rejects HERMES_KANBAN_TASK", "pass": true, "detail": "HERMES_KANBAN_TASK: worker/proxy/socket pin present"}
 {"assertion": "production profiles masked", "pass": true, "detail": null}

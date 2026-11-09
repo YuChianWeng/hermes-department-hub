@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euo pipefail
-LAB=/home/ubuntu/projects/hermes-department-orchestrator/.research/route-lab-377
-SRC=/home/ubuntu/.hermes/hermes-agent
+LAB=<repo>/.research/route-lab-377
+SRC=~/.hermes/hermes-agent
 if [[ ${1:-} != inside ]]; then
   exec unshare --user --map-root-user --mount --net --pid --fork --kill-child --mount-proc "$0" inside
 fi
@@ -9,15 +9,15 @@ mount --make-rprivate /
 mount -t tmpfs tmpfs /mnt
 mkdir /mnt/source /mnt/lab /mnt/python
 # The installed venv's interpreter is a symlink into uv's Python runtime.
-mount --bind /home/ubuntu/.local/share/uv/python /mnt/python
+mount --bind ~/.local/share/uv/python /mnt/python
 mount -o remount,bind,ro /mnt/python
 mount --bind "$SRC" /mnt/source
 mount -o remount,bind,ro /mnt/source
 mount --bind "$LAB" /mnt/lab
 # The real home, profiles, board, credentials, sockets, other projects vanish.
-mount -t tmpfs tmpfs /home/ubuntu
-mkdir -p "$SRC" "$LAB" /home/ubuntu/.local/share/uv/python
-mount --bind /mnt/python /home/ubuntu/.local/share/uv/python
+mount -t tmpfs tmpfs $HOME
+mkdir -p "$SRC" "$LAB" ~/.local/share/uv/python
+mount --bind /mnt/python ~/.local/share/uv/python
 mount --bind /mnt/source "$SRC"
 mount --bind /mnt/lab "$LAB"
 mount -t tmpfs tmpfs /run

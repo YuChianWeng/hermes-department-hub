@@ -1,6 +1,6 @@
 {
   "primary": {
-    "project_dir": "/home/ubuntu/projects/hermes-department-orchestrator",
+    "project_dir": "<repo>",
     "git": {
       "log": "research/evidence/m2-rerun-git.log",
       "git_status_exit": 128,
@@ -83,9 +83,9 @@
     }
   },
   "supplement_v5_candidate": {
-    "target": "/home/ubuntu/.hermes/kanban/workspaces/t_68287415/candidate (copy run in scratch)",
+    "target": "~/.hermes/kanban/workspaces/t_68287415/candidate (copy run in scratch)",
     "manifest": {
-      "file": "/home/ubuntu/.hermes/kanban/workspaces/t_750e8a14/bundle-v5/candidate-manifest.sha256",
+      "file": "~/.hermes/kanban/workspaces/t_750e8a14/bundle-v5/candidate-manifest.sha256",
       "sha256": "5280ab3e578529a01f9c15a55891845ba204f5eba903d3fab2d64968acf56247",
       "entries": 56,
       "ok": 56,

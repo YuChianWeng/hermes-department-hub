@@ -56,5 +56,5 @@ tests/test_routing.py: OK
 tests/test_store.py: OK
 ---- end ----
 exit_code: 0
-manifest_source: /home/ubuntu/.hermes/kanban/workspaces/t_750e8a14/bundle-v5/candidate-manifest.sha256 (sha256 5280ab3e578529a01f9c15a55891845ba204f5eba903d3fab2d64968acf56247)
-checked_copy: /home/ubuntu/.hermes/profiles/medium-worker/cache/scratch/m2v5-candidate-run
+manifest_source: ~/.hermes/kanban/workspaces/t_750e8a14/bundle-v5/candidate-manifest.sha256 (sha256 5280ab3e578529a01f9c15a55891845ba204f5eba903d3fab2d64968acf56247)
+checked_copy: ~/.hermes/profiles/medium-worker/cache/scratch/m2v5-candidate-run

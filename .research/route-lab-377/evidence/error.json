@@ -1,4 +1,4 @@
 {
   "error": "AssertionError('N2 default session cannot execute in manager')",
-  "traceback": "Traceback (most recent call last):\n  File \"/home/ubuntu/projects/hermes-department-orchestrator/.research/route-lab-377/scripts/runner.py\", line 108, in <module>\n    check('N2 default session cannot execute in manager',badsession['status'] in [403,404,409],badsession)\n  File \"/home/ubuntu/projects/hermes-department-orchestrator/.research/route-lab-377/scripts/runner.py\", line 9, in check\n    if not ok: raise AssertionError(name)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: N2 default session cannot execute in manager\n"
+  "traceback": "Traceback (most recent call last):\n  File \"<repo>/.research/route-lab-377/scripts/runner.py\", line 108, in <module>\n    check('N2 default session cannot execute in manager',badsession['status'] in [403,404,409],badsession)\n  File \"<repo>/.research/route-lab-377/scripts/runner.py\", line 9, in check\n    if not ok: raise AssertionError(name)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: N2 default session cannot execute in manager\n"
 }

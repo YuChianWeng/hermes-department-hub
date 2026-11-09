@@ -38,7 +38,7 @@ from deptproto.store import Store
 
 LAB = Path(os.environ["PROTO_LAB"])
 PROTO = Path(os.environ["PROTO_ROOT"])
-SRC = Path("/home/ubuntu/.hermes/hermes-agent")
+SRC = Path("~/.hermes/hermes-agent")
 PY = str(SRC / "venv/bin/python")
 CLI = str(PROTO / "scripts/hermes_cli.py")
 E = LAB / "evidence"
@@ -271,7 +271,7 @@ def run() -> None:
 
     # Fail-before-start negatives: a production DB path or a real XDG runtime
     # path must be rejected before any child process exists.
-    for key, bad in [("HERMES_KANBAN_DB", "/home/ubuntu/.hermes/kanban.db"),
+    for key, bad in [("HERMES_KANBAN_DB", "~/.hermes/kanban.db"),
                      ("XDG_RUNTIME_DIR", "/run/user/1000"),
                      ("HERMES_KANBAN_TASK", "t_leaked")]:
         badenv = dict(os.environ)
@@ -284,10 +284,10 @@ def run() -> None:
             check(f"fail-before-start rejects {key}", False)
 
     # Isolation facts.
-    check("production profiles masked", not Path("/home/ubuntu/.hermes/profiles").exists())
-    check("production board masked", not Path("/home/ubuntu/.hermes/kanban.db").exists())
+    check("production profiles masked", not Path("~/.hermes/profiles").exists())
+    check("production board masked", not Path("~/.hermes/kanban.db").exists())
     check("production runtime socket masked", not Path("/run/user/1000").exists())
-    check("obsidian vault masked", not Path("/home/ubuntu/ObsidianVault").exists())
+    check("obsidian vault masked", not Path("~/ObsidianVault").exists())
     try:
         Path(SRC / ".write-probe").write_text("x")
         source_ro = False
@@ -295,7 +295,7 @@ def run() -> None:
         source_ro = True
     check("installed source read-only", source_ro)
     try:
-        Path("/home/ubuntu/.local/share/uv/python/.write-probe").write_text("x")
+        Path("~/.local/share/uv/python/.write-probe").write_text("x")
         python_ro = False
     except OSError:
         python_ro = True

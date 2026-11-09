@@ -3,7 +3,7 @@
 - 卡片：`t_baf15a68`；狀態：**prototype complete，僅供獨立審查**。
 - **這不是 P0 PASS、不是 M1 授權、不解除 `t_369a6f8c`、不放行 `t_a1c1b08b`。**
 - 未修改任何既有研究／封存、正式 profile、正式 board、gateway、Hermes core、FreshTape；未安裝、未 push、未付費、未對外訊息。
-- 受測 runtime：`/home/ubuntu/.hermes/hermes-agent`，`git rev-parse HEAD = f0d94882e89ab8d4098b5bb2f166adfb9ee0a0ab`，venv Python 3.11.15。
+- 受測 runtime：`~/.hermes/hermes-agent`，`git rev-parse HEAD = f0d94882e89ab8d4098b5bb2f166adfb9ee0a0ab`，venv Python 3.11.15。
 - 模型：**deterministic synthetic model（無推理、無 provider、無外網）**；真 gateway／真 profile／真 Kanban 工具路徑。所有 live 證據明確標示 synthetic。
 
 ## 1. 目標與實際做到什麼
@@ -81,7 +81,7 @@ Live 真 board：`t_de718ca5`（dept-crash，delivery `dlv-b5bc425d37e1`，marke
 
 ## 6. 隔離與 fail-before-start
 
-- `unshare --user --map-root-user --mount --net --pid --fork --kill-child --mount-proc` 實際成功；`/home/ubuntu` 換 tmpfs 後只 bind 回 prototype 樹（rw）、installed source（ro）、uv Python runtime（ro）；`/run`、`/tmp` tmpfs。
+- `unshare --user --map-root-user --mount --net --pid --fork --kill-child --mount-proc` 實際成功；`$HOME` 換 tmpfs 後只 bind 回 prototype 樹（rw）、installed source（ro）、uv Python runtime（ro）；`/run`、`/tmp` tmpfs。
 - 網路：只有 `lo`、`routes=[]`；無外網 provider。preflight 記錄 mount/net/pid/user namespace inode。
 - `assert_lab_env` 要求 HOME/HERMES_HOME/HERMES_KANBAN_*/XDG_*/TMPDIR 等 12 個路徑全部 resolve 在 lab；拒絕 worker pins、SSH/D-Bus/proxy 變數與 lazy install（`HERMES_DISABLE_LAZY_INSTALLS=1`、`UV_OFFLINE=1`、`PIP_NO_INDEX=1`）。負向輸入（production DB、`/run/user/1000`、`HERMES_KANBAN_TASK`）皆 fail-before-start（`preflight.json` + `assertions.json` 前 3 項）。symlink 逃逸由 unit test 覆蓋。
 - `unshare` 不可用時 launcher 直接 exit 78，不啟動任何 Hermes 程序（`sandbox.sh --probe` 於本機回 `unshare-ok`）。

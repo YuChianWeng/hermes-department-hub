@@ -1,4 +1,4 @@
-# command: /home/ubuntu/.nvm/versions/node/v22.22.2/bin/node tests/js/run.mjs
+# command: ~/.nvm/versions/node/v22.22.2/bin/node tests/js/run.mjs
 # recorded_at_asia_taipei: 2026-11-06T15:02:18+08:00
 ---- output ----
 ok   plugin id is department-hub

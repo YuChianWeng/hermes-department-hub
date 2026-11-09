@@ -47,7 +47,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url'
 const here = dirname(fileURLToPath(import.meta.url))
 
 /** Default install root of the Hermes Desktop v0.23.0 source tree. */
-export const DEFAULT_APP_ROOT = '/home/ubuntu/.hermes/hermes-agent'
+export const DEFAULT_APP_ROOT = join(process.env.HOME || '', '.hermes', 'hermes-agent')
 
 /** The file whose presence defines "this directory is a Desktop source tree". */
 export const RUNTIME_REL = 'apps/desktop/src/i18n/runtime.ts'

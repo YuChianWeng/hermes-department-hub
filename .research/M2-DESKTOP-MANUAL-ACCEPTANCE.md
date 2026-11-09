@@ -2,14 +2,14 @@
 
 - 版本：M2 candidate（對齊 `department-hub/m1-contract/v4.1`）
 - 審查卡：`t_750e8a14`（reviewer）
-- 安裝來源：`/home/ubuntu/.hermes/kanban/workspaces/t_c410652a/candidate`
-- 封裝檔：`/home/ubuntu/.hermes/kanban/workspaces/t_750e8a14/department-hub-m2-candidate.tar.gz`
+- 安裝來源：`~/.hermes/kanban/workspaces/t_c410652a/candidate`
+- 封裝檔：`~/.hermes/kanban/workspaces/t_750e8a14/department-hub-m2-candidate.tar.gz`
   - sha256 `cdd15ad32adc239979b19c88844f95385fb88f106877ff56dd8cdf4c662d6ef6`
 - 逐檔 manifest：`candidate-manifest.sha256`
   - sha256 `b86be90380b0b46d8cdea07a6a2e6ad32d925edd2f46366997e97f550feeac16`
   - 52/52 `sha256sum -c` 已在本次審查通過
 
-> **不要安裝 `/home/ubuntu/projects/hermes-department-orchestrator/`。**
+> **不要安裝 `<repo>/`。**
 > 該目錄仍是 M1 v1 + 第一輪 M2（202 tests），不是本次對齊 v4.1 的候選；缺少
 > `department_lib/artifacts.py`、`docs/m1-v4-contract.md`、M2 契約測試與 M1 v2–v4.1 修復。
 > 本次只授權安裝上面的 candidate 封裝。
@@ -18,7 +18,7 @@
 
 ## 0. 安裝前檢查（全部必須符合，任一不符就停止並回報）
 
-在跑 gateway 的主機（這台 Oracle，`/home/ubuntu`）執行：
+在跑 gateway 的主機（這台 Oracle，`$HOME`）執行：
 
 ```bash
 test ! -e ~/.hermes/plugins/department-hub && echo "OK agent-half absent"
@@ -41,7 +41,7 @@ ss -ltnp | grep 8644 || true
 | `GET /api/plugins/department-hub/health` | 目前 404（plugin 尚未安裝，符合預期） |
 
 若上述任何一項已經存在（同名 plugin、symlink、config 已有 `department-hub`）：
-**停止，不要覆寫**；先回報既有項目與來源，由 Oneal 決定是否 `--force` 或改用其他 id。
+**停止，不要覆寫**；先回報既有項目與來源，由 maintainer 決定是否 `--force` 或改用其他 id。
 
 另外確認：
 
@@ -62,7 +62,7 @@ cp -a ~/.hermes/config.yaml ~/.hermes/config.yaml.pre-department-hub.$STAMP
 sha256sum ~/.hermes/config.yaml > ~/.hermes/config.yaml.pre-department-hub.$STAMP.sha256
 
 STAGE=~/m2r-stage
-BUNDLE=/home/ubuntu/.hermes/kanban/workspaces/t_750e8a14/department-hub-m2-candidate.tar.gz
+BUNDLE=~/.hermes/kanban/workspaces/t_750e8a14/department-hub-m2-candidate.tar.gz
 rm -rf "$STAGE"; mkdir -p "$STAGE"
 tar -xzf "$BUNDLE" -C "$STAGE"
 cd "$STAGE"
@@ -103,7 +103,7 @@ install -m 0644 "$STAGE/desktop/department-hub/plugin.js" \
 test -s ~/.hermes/desktop-plugins/department-hub/plugin.js
 ```
 
-資料夾名稱必須是 `department-hub`（等於 plugin id）。若 Oneal 的 Desktop 是原生跑在
+資料夾名稱必須是 `department-hub`（等於 plugin id）。若 maintainer 的 Desktop 是原生跑在
 Mac、使用 Mac 自己的 `~/.hermes`，同一份 `plugin.js` 也要放到 Mac 的
 `~/.hermes/desktop-plugins/department-hub/`；本包的 gateway 步驟只適用這台 Oracle。
 
@@ -134,7 +134,7 @@ plugins:
   entries:                    # ← 這個 key 原本不存在
     department-hub:
       settings:
-        state_path: /home/ubuntu/.hermes/department-hub/state.db
+        state_path: ~/.hermes/department-hub/state.db
         departments:
           - id: dev
             name: Development
@@ -224,7 +224,7 @@ worker / reviewer profile 若要自己呼叫 `department_submit` / `department_i
 5. 直接 route：`/department-hub`。
 
 > 真實畫面本次審查**沒有**觀察過（此主機沒有 Desktop app；`~/.hermes/desktop` 只有一個
-> `interrupted_turns.json.lock`）。以下文字是程式與 SDK mock 的**預期**輸出；必須由 Oneal
+> `interrupted_turns.json.lock`）。以下文字是程式與 SDK mock 的**預期**輸出；必須由 maintainer
 > 看到畫面後才能標成 PASS。
 
 ### 3.1 頁面固定元素
@@ -367,7 +367,7 @@ ready caveat 文字：Y/N
 - 後端授權 probe：auth-required 8/8 401；mutation 3/3 409 且不建 service；header 不能冒充 caller；
   無 escalation/deliver mutation route。
 
-**未做（必須由 Oneal 手動）**
+**未做（必須由 maintainer 手動）**
 
 - 真實 Desktop 載入、像素渲染、native grant/OAuth、實際 `/department-hub` 畫面。
 - gateway 重啟與真實 auth token 呼叫。

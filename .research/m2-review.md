@@ -2,18 +2,18 @@
 
 - 審查卡：`t_750e8a14`（reviewer，唯讀）
 - 審查時間：2026-11-06 06:17–06:45 UTC（Asia/Taipei 14:17–14:45）
-- 受審候選：`/home/ubuntu/.hermes/kanban/workspaces/t_68287415/candidate`（56 檔）
-- 封裝：`/home/ubuntu/.hermes/kanban/workspaces/t_750e8a14/department-hub-m2-v5-candidate.tar.gz`
+- 受審候選：`~/.hermes/kanban/workspaces/t_68287415/candidate`（56 檔）
+- 封裝：`~/.hermes/kanban/workspaces/t_750e8a14/department-hub-m2-v5-candidate.tar.gz`
   - sha256 `e5cba34c638ecdd516df24937925a853326a541cac7d0c3f904dbf31ce885faa`
 - 逐檔 manifest：`candidate-manifest.sha256`
   - sha256 `5280ab3e578529a01f9c15a55891845ba204f5eba903d3fab2d64968acf56247`
   - 審查前後皆 **56/56 OK**
 - 對齊報告：`t_68287415/ALIGNMENT-M2-v5.md`
   - sha256 `6347e9bc1e8b66d9e3f0834431134a912f89dfbe2358560d67d7360031c12f8a`
-- 證據包：`/home/ubuntu/.hermes/kanban/workspaces/t_750e8a14/m2r-v5-evidence.tar.gz`
+- 證據包：`~/.hermes/kanban/workspaces/t_750e8a14/m2r-v5-evidence.tar.gz`
   （sha256 見 block metadata 與 `verify-v5/evidence-bundle.sha256`；內容含本報告、
   封裝、手動驗收包與全部 probe log）
-- 手動驗收包：`/home/ubuntu/.hermes/kanban/workspaces/t_750e8a14/M2-DESKTOP-MANUAL-ACCEPTANCE-v5.md`
+- 手動驗收包：`~/.hermes/kanban/workspaces/t_750e8a14/M2-DESKTOP-MANUAL-ACCEPTANCE-v5.md`
 
 ---
 
@@ -28,12 +28,12 @@
 | 獨立隔離 E2E（真實 kanban CLI＋dispatcher transition＋真實 service＋真實 M2 dashboard） | **PASS**（48/48） |
 | 獨立 UI contract（SDK mock，非畫面） | **PASS**（60/60） |
 | 後端授權／資料最小化 | **PASS**（auth 8/8 401；mutation 3/3 409 且不建 service；payload 無 chat id/platform） |
-| 任務 body 指名的「整合產物」`/home/ubuntu/projects/hermes-department-orchestrator/` | **FAIL（P1-H，仍是 stale pre-alignment 專案）** |
+| 任務 body 指名的「整合產物」`<repo>/` | **FAIL（P1-H，仍是 stale pre-alignment 專案）** |
 | 真實 Desktop rendering／gateway 載入／live wake | **UNVERIFIED — 沒有任何人在本次審查中看過畫面** |
 
 **Overall：不能給 M2-R PASS。**
 離線 candidate 是 PASS；阻擋的是任務指名的整合目錄仍 stale，以及真實 Desktop 完全沒有被觀察。
-本卡以 `needs_input` block，等 Oneal 依手動驗收包安裝並提供畫面；在手動畫面出現前不得宣稱 M2-R PASS。
+本卡以 `needs_input` block，等 maintainer 依手動驗收包安裝並提供畫面；在手動畫面出現前不得宣稱 M2-R PASS。
 
 ---
 
@@ -82,9 +82,9 @@ rc=0
 
 ## 3. 離線測試（全部由我重跑）
 
-環境：`/home/ubuntu/.hermes/hermes-agent/venv/bin/python`（3.11.15）、
+環境：`~/.hermes/hermes-agent/venv/bin/python`（3.11.15）、
 `PYTHONDONTWRITEBYTECODE=1`、`PYTEST_DISABLE_PLUGIN_AUTOLOAD=1`、`-p no:cacheprovider`；
-Node 使用 `/home/ubuntu/.hermes/tools/node-26.12.1-linux-arm64/bin/node`。
+Node 使用 `~/.hermes/tools/node-26.12.1-linux-arm64/bin/node`。
 **注意**：系統預設 `/usr/bin/node` 是 v10，會把 ESM import 判成 syntax error；
 用 v10 得到的 `node --check` 失敗不是產品缺陷。用 v26 的結果如下。
 
@@ -238,7 +238,7 @@ E2E 的 `bind` 回 `report.ok=false`，但 `ensured=(root, child)`；原因是
 
 ### P1-H（blocking for 「整合產物」驗收）— 任務指名的 project 目錄仍是 stale
 
-`/home/ubuntu/projects/hermes-department-orchestrator/` 現在是 **202 passed** 的
+`<repo>/` 現在是 **202 passed** 的
 M1 v1 + 第一輪 M2 專案，不是本次 v5 candidate：
 
 - 缺 `department_lib/artifacts.py`（`department_submit` 的 producer 模組）。
@@ -258,7 +258,7 @@ M1 v1 + 第一輪 M2 專案，不是本次 v5 candidate：
 ### P2-D（non-blocking）— candidate 文件仍指向 stale project 與不存在的 v4.1 E2E
 
 - `docs/m2-desktop.md:6` 的「專案」與 `:284` 的 `cd` 都是
-  `/home/ubuntu/projects/hermes-department-orchestrator`；照做得到 202 tests。
+  `<repo>`；照做得到 202 tests。
 - `docs/m2-desktop.md` §10 要 M2-R「重跑 `.research/m2-e2e.py`，確認 44 checks」；
   該檔不在 candidate，且是 v4.1 時代證據。v5 沒有作者重跑的 E2E（alignment §10.2
   如實承認）。我已用自寫的 v5 E2E 48/48 取代，但文件本身仍誤導。
@@ -318,7 +318,7 @@ dead_letter；實際 dead_letter 的 detail 是 `retry budget exhausted`，所�
 
 - 這台主機沒有 Desktop app（`~/.hermes/desktop` 只有 lock 檔）。
 - 安裝會動 `~/.hermes/plugins/`、`~/.hermes/desktop-plugins/`、`config.yaml`，
-  且需要重啟 gateway（會中斷正在跑的 worker）；依指示必須由 Oneal 執行。
+  且需要重啟 gateway（會中斷正在跑的 worker）；依指示必須由 maintainer 執行。
 - 因此以下全部 **UNVERIFIED**：
   - Settings → Plugins 是否出現 Department Hub、能否啟用；
   - sidebar `Departments` / palette `Open departments` / route `/department-hub`；
@@ -339,7 +339,7 @@ dead_letter；實際 dead_letter 的 detail 是 `retry budget exhausted`，所�
 - 沒有修改 candidate、project 產品檔、profile、config、board、通知或服務。
 - 沒有 install / gateway restart / push / deploy / X / catalog PR / FreshTape。
 - 所有 runtime/E2E 寫入都在
-  `/home/ubuntu/.hermes/kanban/workspaces/t_750e8a14/verify-v5/` 的 temp/isolated
+  `~/.hermes/kanban/workspaces/t_750e8a14/verify-v5/` 的 temp/isolated
   `HERMES_HOME`、`HERMES_KANBAN_HOME` 與 temp SQLite；E2E 明確檢查
   `kanban_db_path()` 在 scratch 內才繼續。
 - 審查後 candidate 已清除測試產生的 `__pycache__`，manifest 再驗 56/56 OK。
@@ -348,7 +348,7 @@ dead_letter；實際 dead_letter 的 detail 是 `retry budget exhausted`，所�
 
 ---
 
-## 10. 必要後續 live proof（給 Oneal）
+## 10. 必要後續 live proof（給 maintainer）
 
 1. 依手動驗收包 §0 做碰撞檢查；全部 absent 才安裝 candidate tarball。
 2. 安裝 agent half + desktop half、改 config、重啟 gateway（idle 時段）。

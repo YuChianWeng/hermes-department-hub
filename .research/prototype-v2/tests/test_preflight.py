@@ -44,13 +44,13 @@ class PreflightTests(unittest.TestCase):
         self.assertEqual(out["resolved_root"], str(self.lab))
 
     def test_production_board_path_is_rejected_before_start(self):
-        env = dict(self.env, HERMES_KANBAN_DB="/home/ubuntu/.hermes/kanban.db")
+        env = dict(self.env, HERMES_KANBAN_DB="~/.hermes/kanban.db")
         with self.assertRaises(PreflightError) as cm:
             assert_lab_env(env, self.lab)
         self.assertIn("HERMES_KANBAN_DB", str(cm.exception))
 
     def test_home_outside_lab_is_rejected(self):
-        env = dict(self.env, HOME="/home/ubuntu")
+        env = dict(self.env, HOME=os.path.expanduser("~"))
         with self.assertRaises(PreflightError):
             assert_lab_env(env, self.lab)
 

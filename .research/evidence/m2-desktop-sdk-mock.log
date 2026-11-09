@@ -1,8 +1,8 @@
 # M2-R rerun: Desktop SDK surface mock test
 # recorded_at_utc: 2026-11-06T06:50:02+00:00
 # recorded_at_asia_taipei: 2026-11-06T14:50:02+08:00
-# cwd: /home/ubuntu/projects/hermes-department-orchestrator
-# command: /home/ubuntu/.nvm/versions/node/v22.22.2/bin/node tests/js/run.mjs
+# cwd: <repo>
+# command: ~/.nvm/versions/node/v22.22.2/bin/node tests/js/run.mjs
 # mock mode: YES — @hermes/plugin-sdk, react, react/jsx-runtime are replaced by tests/js/mocks/*; this is NOT a real Desktop render.
 ---- output ----
 ok   plugin id is department-hub

@@ -24,8 +24,8 @@ No production profile, board, gateway, notification or FreshTape is touched:
 delegated-child fence marker is removed for this isolated subprocess only.
 
 Run:
-  PYTHONPATH=/home/ubuntu/.hermes/hermes-agent:. \
-  /home/ubuntu/.hermes/hermes-agent/venv/bin/python .research/m2-e2e.py <scratch-root>
+  PYTHONPATH=~/.hermes/hermes-agent:. \
+  ~/.hermes/hermes-agent/venv/bin/python .research/m2-e2e.py <scratch-root>
 """
 from __future__ import annotations
 
@@ -40,8 +40,8 @@ PROJECT = Path(__file__).resolve().parent.parent
 SCRATCH = Path(sys.argv[1]).resolve() if len(sys.argv) > 1 else PROJECT / ".research" / "m2-e2e-run"
 HOME = SCRATCH / "home"
 KANBAN_HOME = SCRATCH / "kanban-home"
-HERMES_CLI = os.environ.get("HERMES_CLI") or "/home/ubuntu/.hermes/hermes-agent/venv/bin/hermes"
-AGENT_ROOT = Path(os.environ.get("HERMES_AGENT_ROOT", "/home/ubuntu/.hermes/hermes-agent"))
+HERMES_CLI = os.environ.get("HERMES_CLI") or "~/.hermes/hermes-agent/venv/bin/hermes"
+AGENT_ROOT = Path(os.environ.get("HERMES_AGENT_ROOT", "~/.hermes/hermes-agent"))
 # A caller-declared digest that never went through ``department_submit``. v5
 # must refuse to treat it as identity (``artifact_unbound``), so it is
 # deliberately *not* the produced SHA.

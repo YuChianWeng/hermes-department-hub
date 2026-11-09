@@ -1,5 +1,5 @@
-# command: /home/ubuntu/.hermes/hermes-agent/venv/bin/python -m pytest tests -q -p no:cacheprovider
-# cwd: /home/ubuntu/projects/hermes-department-orchestrator
+# command: ~/.hermes/hermes-agent/venv/bin/python -m pytest tests -q -p no:cacheprovider
+# cwd: <repo>
 # recorded_at_asia_taipei: 2026-11-06T15:01:37+08:00
 ........................................................................ [ 17%]
 ........................................................................ [ 35%]

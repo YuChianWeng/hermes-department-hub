@@ -1,4 +1,4 @@
-# command: /home/ubuntu/.nvm/versions/node/v22.22.2/bin/node --check /home/ubuntu/.hermes/kanban/workspaces/t_55b1926c/nodecheck/plugin.mjs  (copy of desktop/department-hub/plugin.js)
+# command: ~/.nvm/versions/node/v22.22.2/bin/node --check ~/.hermes/kanban/workspaces/t_55b1926c/nodecheck/plugin.mjs  (copy of desktop/department-hub/plugin.js)
 # recorded_at_asia_taipei: 2026-11-06T15:02:18+08:00
 ---- output ----
 exit_code: 0

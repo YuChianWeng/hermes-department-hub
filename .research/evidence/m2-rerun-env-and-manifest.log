@@ -1,22 +1,22 @@
 == M2-R 複跑：環境與內容 manifest ==
 recorded_at_utc: 2026-11-06T06:49:38+00:00
 recorded_at_asia_taipei: 2026-11-06T14:49:38+08:00
-cwd: /home/ubuntu/projects/hermes-department-orchestrator
+cwd: <repo>
 host: Linux-5.15.0-1081-oracle-aarch64-with-glibc2.31 / aarch64
 user: id -un -> rc=0: ubuntu
 
 == 工具版本 ==
-/home/ubuntu/.hermes/hermes-agent/venv/bin/python --version -> rc=0: Python 3.11.15
-/home/ubuntu/.hermes/hermes-agent/venv/bin/python -m pytest --version -> rc=0: pytest 9.0.2
-/home/ubuntu/.local/bin/hermes --version -> rc=0: Hermes Agent v0.23.0 (2026.9.24) · stable · local 2bd378ed1b8d
-Install directory: /home/ubuntu/.hermes/hermes-agent
+~/.hermes/hermes-agent/venv/bin/python --version -> rc=0: Python 3.11.15
+~/.hermes/hermes-agent/venv/bin/python -m pytest --version -> rc=0: pytest 9.0.2
+~/.local/bin/hermes --version -> rc=0: Hermes Agent v0.23.0 (2026.9.24) · stable · local 2bd378ed1b8d
+Install directory: ~/.hermes/hermes-agent
 Install method: git
 Python: 3.14.9
 OpenAI SDK: 2.54.0
 Up to date
 node --version -> rc=0: v10.19.0
-/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node --version -> rc=0: v22.22.2
-/home/ubuntu/.hermes/tools/node-26.12.1-linux-arm64/bin/node --version -> rc=0: v26.12.1
+~/.nvm/versions/node/v22.22.2/bin/node --version -> rc=0: v22.22.2
+~/.hermes/tools/node-26.12.1-linux-arm64/bin/node --version -> rc=0: v26.12.1
 
 == 專案檔案 SHA256（排除 .research / .git / __pycache__ / .pytest_cache / tests-js-.tmp）==
 838b105ded3d289427104fc4b0da81538e58e4e7c64f63c76bbcf1d2fd26c936  README.md

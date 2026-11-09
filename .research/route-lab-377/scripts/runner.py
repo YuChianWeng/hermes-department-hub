@@ -1,7 +1,7 @@
 """ONE bounded live probe. Only public CLI/HTTP mutate lab; SQLite read-only evidence."""
 import os, sys, json, subprocess, time, urllib.request, urllib.error, sqlite3, traceback, socket
 from pathlib import Path
-LAB=Path(__file__).resolve().parents[1]; E=LAB/'evidence'; SRC=Path('/home/ubuntu/.hermes/hermes-agent'); PY=str(SRC/'venv/bin/python')
+LAB=Path(__file__).resolve().parents[1]; E=LAB/'evidence'; SRC=Path('~/.hermes/hermes-agent'); PY=str(SRC/'venv/bin/python')
 HOME=Path(os.environ['HERMES_HOME']); procs=[]; ledger=[]
 def save(n,v): (E/n).write_text(json.dumps(v,indent=2,ensure_ascii=False))
 def check(name,ok,detail=None):
@@ -14,8 +14,8 @@ def preflight(env):
     for k in ['HERMES_KANBAN_TASK','HERMES_KANBAN_RUN_ID','HERMES_GATEWAY_SESSION','HERMES_DELEGATED_CHILD_CONTEXT','DBUS_SESSION_BUS_ADDRESS','SSH_AUTH_SOCK','HTTP_PROXY','HTTPS_PROXY','ALL_PROXY']:
         assert k not in env,k
     assert env['HERMES_DISABLE_LAZY_INSTALLS']=='1' and env['UV_OFFLINE']=='1'
-    assert not Path('/home/ubuntu/.hermes/kanban.db').exists()
-    assert not Path('/home/ubuntu/.hermes/profiles').exists()
+    assert not Path('~/.hermes/kanban.db').exists()
+    assert not Path('~/.hermes/profiles').exists()
     assert not Path('/run/user/1000').exists()
     assert within(HOME/'gateway.sock')
     assert subprocess.check_output(['ip','-j','route']).strip()==b'[]'
@@ -71,7 +71,7 @@ def snapshot(name):
 try:
     save('preflight.json',preflight(os.environ))
     # Negative pre-start guard: leaked pins and socket/runtime paths cannot start a process.
-    for key,bad in [('HERMES_KANBAN_DB','/home/ubuntu/.hermes/kanban.db'),('XDG_RUNTIME_DIR','/run/user/1000')]:
+    for key,bad in [('HERMES_KANBAN_DB','~/.hermes/kanban.db'),('XDG_RUNTIME_DIR','/run/user/1000')]:
         badenv=os.environ.copy();badenv[key]=bad
         try:preflight(badenv)
         except AssertionError:check('fail-before-start rejects '+key,True)

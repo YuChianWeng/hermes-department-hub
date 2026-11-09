@@ -1,4 +1,4 @@
-# command: HERMES_HOME=/home/ubuntu/.hermes/profiles/medium-worker hermes plugins validate /home/ubuntu/.hermes/kanban/workspaces/t_55b1926c/staging-plugin --json
+# command: HERMES_HOME=~/.hermes/profiles/medium-worker hermes plugins validate ~/.hermes/kanban/workspaces/t_55b1926c/staging-plugin --json
 # subject: clean staging copy of the integrated plugin (git archive HEAD, .research removed; identical bytes to the 55 committed product files)
 # reason: the validator's security scan walks every file under the target dir; given '.' it also walks .research/ (28 361 files / 823 MB of unrelated lab archives) and does not finish inside any practical budget (see plugin-validate-direct.log)
 # recorded_at_asia_taipei: 2026-11-06T15:14:45+08:00

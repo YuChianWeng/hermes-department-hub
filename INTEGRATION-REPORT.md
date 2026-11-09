@@ -1,7 +1,7 @@
 # INTEGRATION-REPORT — Department Hub 整合（M1 v5.1 ＋ M2 v5）
 
 - 產生時間：2026-11-06T15:34:38+08:00（Asia/Taipei；逐項 log 內另有各自的 `recorded_at_asia_taipei`）
-- 專案目錄：`/home/ubuntu/projects/hermes-department-orchestrator`
+- 專案目錄：`<repo>`
 - 分支：`main`／整合 commit：`014f372a3048fc054bd146caa17705f51233a5bb`
 - 本報告與 `INTEGRATION-MANIFEST.sha256` 在本報告所在的第二個 commit（evidence commit）提交；報告不寫死該 commit 的 hash（避免自指），用 `git log -1 --format=%H` 取得。
 
@@ -19,9 +19,9 @@
 
 | 角色 | 路徑 | 識別 hash |
 |---|---|---|
-| M1 v5.1 受審 product（`t_090d5884` REVIEW: PASS） | `/home/ubuntu/.hermes/kanban/workspaces/t_fb24c666/product` | `department_lib/delivery.py` = `85e22203335f6756a93bd074fbf77c0678fb3039fc337355b0ff78c0439effb7`；`plugin.yaml` = `f0c6328c49f34efa4a9c251a2f92e1a79013184d20053f715f4acc030a64a5d9` |
-| M2 v5 對齊候選（`t_68287415`，56 檔） | `/home/ubuntu/.hermes/kanban/workspaces/t_68287415/candidate` | manifest `/home/ubuntu/.hermes/kanban/attachments/t_68287415/candidate-manifest.sha256` = `5280ab3e578529a01f9c15a55891845ba204f5eba903d3fab2d64968acf56247` |
-| 整合前專案（v1, 無 git） | `/home/ubuntu/projects/hermes-department-orchestrator` | 42 個非 `.research` 檔；`plugin.yaml` 0.1.0；逐檔 hash 見 `.research/pre-integration-backup-20261106T150011+0800.files.sha256` |
+| M1 v5.1 受審 product（`t_090d5884` REVIEW: PASS） | `~/.hermes/kanban/workspaces/t_fb24c666/product` | `department_lib/delivery.py` = `85e22203335f6756a93bd074fbf77c0678fb3039fc337355b0ff78c0439effb7`；`plugin.yaml` = `f0c6328c49f34efa4a9c251a2f92e1a79013184d20053f715f4acc030a64a5d9` |
+| M2 v5 對齊候選（`t_68287415`，56 檔） | `~/.hermes/kanban/workspaces/t_68287415/candidate` | manifest `~/.hermes/kanban/attachments/t_68287415/candidate-manifest.sha256` = `5280ab3e578529a01f9c15a55891845ba204f5eba903d3fab2d64968acf56247` |
+| 整合前專案（v1, 無 git） | `<repo>` | 42 個非 `.research` 檔；`plugin.yaml` 0.1.0；逐檔 hash 見 `.research/pre-integration-backup-20261106T150011+0800.files.sha256` |
 
 整合後再驗：`department_lib/delivery.py` 與 `plugin.yaml` 的 sha256 與上表**完全相同**（見 §4）。
 
@@ -143,7 +143,7 @@ $ git rev-list --max-parents=0 HEAD      # 整合 commit（root）
 
 ## 4. 實測結果（全部在專案目錄內執行，保留原始 log）
 
-環境：`/home/ubuntu/.hermes/hermes-agent/venv/bin/python`（Python 3.11.15、pytest 9.0.2）；`node v22.22.2`（PATH 預設 node 是 v10，太舊，明確指定 v22；與 `tests/test_desktop_plugin.py` 使用的候選一致）；`hermes` v0.23.0（2026.9.24）。`PYTHONDONTWRITEBYTECODE=1`、`PYTEST_DISABLE_PLUGIN_AUTOLOAD=1`、`-p no:cacheprovider`。
+環境：`~/.hermes/hermes-agent/venv/bin/python`（Python 3.11.15、pytest 9.0.2）；`node v22.22.2`（PATH 預設 node 是 v10，太舊，明確指定 v22；與 `tests/test_desktop_plugin.py` 使用的候選一致）；`hermes` v0.23.0（2026.9.24）。`PYTHONDONTWRITEBYTECODE=1`、`PYTEST_DISABLE_PLUGIN_AUTOLOAD=1`、`-p no:cacheprovider`。
 
 | 命令 | rc | 結果摘要 | log |
 |---|---|---|---|
@@ -164,7 +164,7 @@ $ git rev-list --max-parents=0 HEAD      # 整合 commit（root）
 ### 5.1 產品檔（56/56）
 
 ```
-$ sha256sum -c /home/ubuntu/.hermes/kanban/attachments/t_68287415/candidate-manifest.sha256
+$ sha256sum -c ~/.hermes/kanban/attachments/t_68287415/candidate-manifest.sha256
 … 56 lines …
 # OK lines: 56 / 56
 ```
@@ -202,21 +202,21 @@ $ sha256sum -c /home/ubuntu/.hermes/kanban/attachments/t_68287415/candidate-mani
 - **沒有** push、deploy、發文、建 catalog PR；repo 無 remote。
 - **沒有**修改正式 board／profile／credentials／gateway／Hermes core／FreshTape。
 - `.research/` 未刪除、未改寫；只用 `.gitignore` 把執行環境 sandbox 排除在版控之外。
-- **沒有**安裝到 Oneal 的 Desktop、**沒有**做真實 Desktop 畫面驗收（維持 UNVERIFIED；SDK-mock 與 doctor 只證明載入與資料投影）。
+- **沒有**安裝到 maintainer 的 Desktop、**沒有**做真實 Desktop 畫面驗收（維持 UNVERIFIED；SDK-mock 與 doctor 只證明載入與資料投影）。
 - 未改動任何產品語意；所有產品檔位元組直接來自受審候選。
 
 ## 8. 重現／驗證指令
 
 ```bash
-cd /home/ubuntu/projects/hermes-department-orchestrator
+cd <repo>
 git rev-list --max-parents=0 HEAD           # 整合 commit = 014f372a3048fc054bd146caa17705f51233a5bb
 git log -1 --format=%H                      # 本報告所在的 evidence commit
 git status --short                          # 應為空（clean）
 sha256sum -c INTEGRATION-MANIFEST.sha256    # 全 OK（本 manifest 不含自身與本報告）
-sha256sum -c /home/ubuntu/.hermes/kanban/attachments/t_68287415/candidate-manifest.sha256  # 56/56 OK
-/home/ubuntu/.hermes/hermes-agent/venv/bin/python -m pytest tests -q -p no:cacheprovider
-/home/ubuntu/.nvm/versions/node/v22.22.2/bin/node tests/js/run.mjs
-/home/ubuntu/.local/bin/hermes plugins doctor . --ci
+sha256sum -c ~/.hermes/kanban/attachments/t_68287415/candidate-manifest.sha256  # 56/56 OK
+~/.hermes/hermes-agent/venv/bin/python -m pytest tests -q -p no:cacheprovider
+~/.nvm/versions/node/v22.22.2/bin/node tests/js/run.mjs
+~/.local/bin/hermes plugins doctor . --ci
 ```
 
 ## 9. 已知限制（給 reviewer）
@@ -276,3 +276,14 @@ manifest 的「磁碟內容」語義不變。新 manifest sha256 =
 真實 Desktop 畫面（渲染／native grant／OAuth）仍 **UNVERIFIED**；本修訂只補文件與 harness，
 不改變這個事實。載入器層級（v0.23.0 `runtime-loader.ts`）對 `plugin.js` 的實測見 README 與
 `docs/m2-desktop.md` §7.2。
+
+---
+
+## 附錄：公開釋出時的清理（2026-11-09）
+
+本報告寫成於整合當日；之後為了把這個 repo 公開，做了兩項**不改程式行為**的整理，兩者都在同一個 commit：
+
+1. **識別資訊清理**：89 個被追蹤的檔案把維護者的家目錄、專案路徑與名字換成中性寫法——專案絕對路徑 → `<repo>`、家目錄前綴 → `~/…`、單獨出現的家目錄（文件與腳本裡）→ `$HOME`（Python 測試裡 → `os.path.expanduser("~")`）、維護者名字 → `maintainer`、Windows 使用者資料夾 → `C:\Users\<you>`。**只改字串，不動邏輯**；每個檔案的增刪行數對稱。另有 5 處是**功能性預設值**（Node 候選路徑、Hermes agent root 的預設），改成執行時展開，因此 `pytest` 與 `node tests/js/run.mjs` 仍能真的找到來源，而不是靜默跳過。
+2. **`INTEGRATION-MANIFEST.sha256` 重新產生**：舊 manifest 有 **272** 條，其中兩條（`.research/department-hub-m2-candidate.tar.gz`、`.research/p0-route-followup-evidence.zip`）是 **gitignored、不在 repo 裡**的磁碟檔，所以 clone 下來無法逐條驗證。新 manifest 只涵蓋 **被追蹤的檔案**（排除自身與本報告），共 **270** 條；`sha256sum -c INTEGRATION-MANIFEST.sha256` 在乾淨 clone 上應全 OK。
+
+**本報告前面的數字是清理前的狀態**：第 224 行「涵蓋 261 個檔案、sha256 `fe479a2c…`」與第 257 行「仍是 261 條並涵蓋這兩個磁碟檔」描述的是當時的 manifest，保留作為歷史紀錄；現在的條數與 sha256 以本附錄與 repo 內的檔案為準。程式（`department_lib/`、`dashboard/`、`tests/`、`desktop/`、`plugin.yaml`）在這次清理中沒有任何行為變更。
